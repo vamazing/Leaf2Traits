@@ -1,0 +1,1194 @@
+species,genus,dataset,novelty_score,known_hyperacc,prior_boost,composite_score
+Nelumbo nucifera,Nelumbo,aqgrad,0.03276944588988116,False,0.0,0.03276944588988116
+Nelumbo nucifera,Nelumbo,aqgrad,0.04941323044369723,False,0.0,0.04941323044369723
+Nelumbo nucifera,Nelumbo,aqgrad,0.046614874275229846,False,0.0,0.046614874275229846
+Nelumbo nucifera,Nelumbo,aqgrad,0.058067713880192905,False,0.0,0.058067713880192905
+Nelumbo nucifera,Nelumbo,aqgrad,0.09547745707506215,False,0.0,0.09547745707506215
+Nelumbo nucifera,Nelumbo,aqgrad,0.06485879755060071,False,0.0,0.06485879755060071
+Nelumbo nucifera,Nelumbo,aqgrad,0.10460283261401152,False,0.0,0.10460283261401152
+Nelumbo nucifera,Nelumbo,aqgrad,0.11722803017320921,False,0.0,0.11722803017320921
+Nelumbo nucifera,Nelumbo,aqgrad,0.1069392619259478,False,0.0,0.1069392619259478
+Nelumbo nucifera,Nelumbo,aqgrad,0.09731853456326445,False,0.0,0.09731853456326445
+Trapa natans,Trapa,aqgrad,0.2546093303890641,False,0.0,0.2546093303890641
+Trapa natans,Trapa,aqgrad,0.316536812711333,False,0.0,0.316536812711333
+Trapa natans,Trapa,aqgrad,0.2787528448972439,False,0.0,0.2787528448972439
+Trapa natans,Trapa,aqgrad,0.150356589582198,False,0.0,0.150356589582198
+Trapa natans,Trapa,aqgrad,0.13195631783899156,False,0.0,0.13195631783899156
+Trapa natans,Trapa,aqgrad,0.15668290866470153,False,0.0,0.15668290866470153
+Trapa natans,Trapa,aqgrad,0.13892602699854648,False,0.0,0.13892602699854648
+Trapa natans,Trapa,aqgrad,0.15145047587062593,False,0.0,0.15145047587062593
+Trapa natans,Trapa,aqgrad,0.09423048004831365,False,0.0,0.09423048004831365
+Trapa natans,Trapa,aqgrad,0.21479075529502065,False,0.0,0.21479075529502065
+Nuphar lutea,Nuphar,aqgrad,0.28459072302790717,False,0.0,0.28459072302790717
+Nuphar lutea,Nuphar,aqgrad,0.2899754374987057,False,0.0,0.2899754374987057
+Nuphar lutea,Nuphar,aqgrad,0.39799738636615395,False,0.0,0.39799738636615395
+Nuphar lutea,Nuphar,aqgrad,0.27637354025168165,False,0.0,0.27637354025168165
+Nuphar lutea,Nuphar,aqgrad,0.28718466085492417,False,0.0,0.28718466085492417
+Nuphar lutea,Nuphar,aqgrad,0.3231738916814467,False,0.0,0.3231738916814467
+Nuphar lutea,Nuphar,aqgrad,0.3616910739549728,False,0.0,0.3616910739549728
+Nuphar lutea,Nuphar,aqgrad,0.29585125578515686,False,0.0,0.29585125578515686
+Nuphar lutea,Nuphar,aqgrad,0.32675034694782534,False,0.0,0.32675034694782534
+Nuphar lutea,Nuphar,aqgrad,0.3399952907208025,False,0.0,0.3399952907208025
+Nuphar lutea,Nuphar,aqgrad,0.2599686460529158,False,0.0,0.2599686460529158
+Nuphar lutea,Nuphar,aqgrad,0.23817318322162212,False,0.0,0.23817318322162212
+Nuphar lutea,Nuphar,aqgrad,0.3785416599049851,False,0.0,0.3785416599049851
+Nuphar lutea,Nuphar,aqgrad,0.4573323488120266,False,0.0,0.4573323488120266
+Nuphar lutea,Nuphar,aqgrad,0.29831540379333693,False,0.0,0.29831540379333693
+Nuphar lutea,Nuphar,aqgrad,0.2650751608067501,False,0.0,0.2650751608067501
+Nuphar lutea,Nuphar,aqgrad,0.2931160198810579,False,0.0,0.2931160198810579
+Nuphar lutea,Nuphar,aqgrad,0.2718845993484013,False,0.0,0.2718845993484013
+Nuphar lutea,Nuphar,aqgrad,0.37188114914374104,False,0.0,0.37188114914374104
+Nuphar lutea,Nuphar,aqgrad,0.2706434224392086,False,0.0,0.2706434224392086
+Nelumbo nucifera,Nelumbo,aqgrad,0.05953940998152696,False,0.0,0.05953940998152696
+Nelumbo nucifera,Nelumbo,aqgrad,0.08488991973486933,False,0.0,0.08488991973486933
+Nelumbo nucifera,Nelumbo,aqgrad,0.30754762861193974,False,0.0,0.30754762861193974
+Nelumbo nucifera,Nelumbo,aqgrad,0.05392205543753437,False,0.0,0.05392205543753437
+Nelumbo nucifera,Nelumbo,aqgrad,0.09219109447965294,False,0.0,0.09219109447965294
+Nelumbo nucifera,Nelumbo,aqgrad,0.0622238298179356,False,0.0,0.0622238298179356
+Nelumbo nucifera,Nelumbo,aqgrad,0.05955518508326938,False,0.0,0.05955518508326938
+Nelumbo nucifera,Nelumbo,aqgrad,0.12350840901770962,False,0.0,0.12350840901770962
+Nelumbo nucifera,Nelumbo,aqgrad,0.2782034070577752,False,0.0,0.2782034070577752
+Nelumbo nucifera,Nelumbo,aqgrad,0.11670369031611702,False,0.0,0.11670369031611702
+Nelumbo nucifera,Nelumbo,aqgrad,0.059887370391164936,False,0.0,0.059887370391164936
+Nelumbo nucifera,Nelumbo,aqgrad,0.20920201119717327,False,0.0,0.20920201119717327
+Nelumbo nucifera,Nelumbo,aqgrad,0.09159983627589065,False,0.0,0.09159983627589065
+Nelumbo nucifera,Nelumbo,aqgrad,0.08324342286731905,False,0.0,0.08324342286731905
+Nelumbo nucifera,Nelumbo,aqgrad,0.07151876418249369,False,0.0,0.07151876418249369
+Nelumbo nucifera,Nelumbo,aqgrad,0.1308017943382748,False,0.0,0.1308017943382748
+Nelumbo nucifera,Nelumbo,aqgrad,0.04463645112560208,False,0.0,0.04463645112560208
+Nelumbo nucifera,Nelumbo,aqgrad,0.04047610640879791,False,0.0,0.04047610640879791
+Nelumbo nucifera,Nelumbo,aqgrad,0.02324763047252817,False,0.0,0.02324763047252817
+Nelumbo nucifera,Nelumbo,aqgrad,0.03397536042853537,False,0.0,0.03397536042853537
+nan nan,nan,aqgrad,0.10355950372838622,False,0.0,0.10355950372838622
+nan nan,nan,aqgrad,0.07369757243917151,False,0.0,0.07369757243917151
+nan nan,nan,aqgrad,0.0920193970648951,False,0.0,0.0920193970648951
+nan nan,nan,aqgrad,0.0877801662190065,False,0.0,0.0877801662190065
+nan nan,nan,aqgrad,0.28924415260349035,False,0.0,0.28924415260349035
+nan nan,nan,aqgrad,0.07927941336755358,False,0.0,0.07927941336755358
+nan nan,nan,aqgrad,0.08131679200653277,False,0.0,0.08131679200653277
+nan nan,nan,aqgrad,0.06700083821369143,False,0.0,0.06700083821369143
+nan nan,nan,aqgrad,0.06290540382812583,False,0.0,0.06290540382812583
+nan nan,nan,aqgrad,0.25972945016660964,False,0.0,0.25972945016660964
+nan nan,nan,aqgrad,0.03823351872631836,False,0.0,0.03823351872631836
+nan nan,nan,aqgrad,0.1012731424214424,False,0.0,0.1012731424214424
+nan nan,nan,aqgrad,0.03787472669542775,False,0.0,0.03787472669542775
+nan nan,nan,aqgrad,0.03141532386922453,False,0.0,0.03141532386922453
+nan nan,nan,aqgrad,0.07976722443411584,False,0.0,0.07976722443411584
+nan nan,nan,aqgrad,0.0939550156799785,False,0.0,0.0939550156799785
+nan nan,nan,aqgrad,0.15657010941517852,False,0.0,0.15657010941517852
+nan nan,nan,aqgrad,0.06619998374908528,False,0.0,0.06619998374908528
+nan nan,nan,aqgrad,0.20865202935831734,False,0.0,0.20865202935831734
+nan nan,nan,aqgrad,0.4652526777015295,False,0.0,0.4652526777015295
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.11699563553265319,False,0.0,0.11699563553265319
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.1085529714259264,False,0.0,0.1085529714259264
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.09503030546055727,False,0.0,0.09503030546055727
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.08323668039183131,False,0.0,0.08323668039183131
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.10577274736775609,False,0.0,0.10577274736775609
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.1448910505508916,False,0.0,0.1448910505508916
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.13536402128916072,False,0.0,0.13536402128916072
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.11705271446829742,False,0.0,0.11705271446829742
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.1317098937504071,False,0.0,0.1317098937504071
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.13535119515967367,False,0.0,0.13535119515967367
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.03269143732585941,False,0.0,0.03269143732585941
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.09750318926256164,False,0.0,0.09750318926256164
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.07702747552685398,False,0.0,0.07702747552685398
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.044521513990018476,False,0.0,0.044521513990018476
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.11600846658966876,False,0.0,0.11600846658966876
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.15014127899907348,False,0.0,0.15014127899907348
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.11656839788278008,False,0.0,0.11656839788278008
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.10201485167546698,False,0.0,0.10201485167546698
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.05419687970661062,False,0.0,0.05419687970661062
+Phragmites australis ssp. australis,Phragmites,aqgrad,0.14063857345960487,False,0.0,0.14063857345960487
+Carex richardsonii,Carex,aqgrad,0.2642152949172763,False,0.0,0.2642152949172763
+Carex richardsonii,Carex,aqgrad,0.14049358962764708,False,0.0,0.14049358962764708
+Carex richardsonii,Carex,aqgrad,0.23719686914625562,False,0.0,0.23719686914625562
+Carex richardsonii,Carex,aqgrad,0.2768345088876795,False,0.0,0.2768345088876795
+Carex richardsonii,Carex,aqgrad,0.23746336607708401,False,0.0,0.23746336607708401
+Carex richardsonii,Carex,aqgrad,0.30988238737310586,False,0.0,0.30988238737310586
+Carex richardsonii,Carex,aqgrad,0.2759691615598279,False,0.0,0.2759691615598279
+Carex richardsonii,Carex,aqgrad,0.2923529583098352,False,0.0,0.2923529583098352
+Carex richardsonii,Carex,aqgrad,0.2204009822838688,False,0.0,0.2204009822838688
+Carex richardsonii,Carex,aqgrad,0.19621870528532268,False,0.0,0.19621870528532268
+Carex richardsonii,Carex,aqgrad,0.3491806640609524,False,0.0,0.3491806640609524
+Carex richardsonii,Carex,aqgrad,0.44699495483798285,False,0.0,0.44699495483798285
+Carex richardsonii,Carex,aqgrad,0.28629314976409065,False,0.0,0.28629314976409065
+Carex richardsonii,Carex,aqgrad,0.2529973249844303,False,0.0,0.2529973249844303
+Carex richardsonii,Carex,aqgrad,0.3537435234094066,False,0.0,0.3537435234094066
+Carex richardsonii,Carex,aqgrad,0.424166264909493,False,0.0,0.424166264909493
+Carex richardsonii,Carex,aqgrad,0.6974191155200314,False,0.0,0.6974191155200314
+Carex richardsonii,Carex,aqgrad,0.5289075729798646,False,0.0,0.5289075729798646
+Carex richardsonii,Carex,aqgrad,0.6434877266127611,False,0.0,0.6434877266127611
+Carex richardsonii,Carex,aqgrad,0.3124624585180527,False,0.0,0.3124624585180527
+Salix alba,Salix,aqgrad,0.1784591654989188,False,0.0,0.1784591654989188
+Salix alba,Salix,aqgrad,0.17603599332436115,False,0.0,0.17603599332436115
+Salix alba,Salix,aqgrad,0.15826833145387187,False,0.0,0.15826833145387187
+Salix alba,Salix,aqgrad,0.14857084748735744,False,0.0,0.14857084748735744
+Salix alba,Salix,aqgrad,0.09531939270896711,False,0.0,0.09531939270896711
+Salix cinerea,Salix,aqgrad,0.07732300686105725,False,0.0,0.07732300686105725
+Salix cinerea,Salix,aqgrad,0.11211387154759637,False,0.0,0.11211387154759637
+Salix cinerea,Salix,aqgrad,0.13843088096812445,False,0.0,0.13843088096812445
+Salix cinerea,Salix,aqgrad,0.29212956973847337,False,0.0,0.29212956973847337
+Salix cinerea,Salix,aqgrad,0.11679125546039446,False,0.0,0.11679125546039446
+Salix alba,Salix,aqgrad,0.06437366292806528,False,0.0,0.06437366292806528
+Salix alba,Salix,aqgrad,0.09927456816408843,False,0.0,0.09927456816408843
+Salix alba,Salix,aqgrad,0.08388513982733244,False,0.0,0.08388513982733244
+Salix alba,Salix,aqgrad,0.04502162499940813,False,0.0,0.04502162499940813
+Salix alba,Salix,aqgrad,0.12896089575845604,False,0.0,0.12896089575845604
+Salix cinerea,Salix,aqgrad,0.1713252218701629,False,0.0,0.1713252218701629
+Salix cinerea,Salix,aqgrad,0.07539455515423253,False,0.0,0.07539455515423253
+Salix cinerea,Salix,aqgrad,0.07037786505432021,False,0.0,0.07037786505432021
+Salix cinerea,Salix,aqgrad,0.09765115631359247,False,0.0,0.09765115631359247
+Salix cinerea,Salix,aqgrad,0.08326782842259779,False,0.0,0.08326782842259779
+Humulus lupulus,Humulus,aqgrad,0.12919614825349152,False,0.0,0.12919614825349152
+Humulus lupulus,Humulus,aqgrad,0.07602537755241935,False,0.0,0.07602537755241935
+Humulus lupulus,Humulus,aqgrad,0.25123913255250374,False,0.0,0.25123913255250374
+Humulus lupulus,Humulus,aqgrad,0.3022115531871364,False,0.0,0.3022115531871364
+Humulus lupulus,Humulus,aqgrad,0.2990207118321155,False,0.0,0.2990207118321155
+Humulus lupulus,Humulus,aqgrad,0.09908631013689562,False,0.0,0.09908631013689562
+Humulus lupulus,Humulus,aqgrad,0.08396037487404792,False,0.0,0.08396037487404792
+Humulus lupulus,Humulus,aqgrad,0.04987001543072238,False,0.0,0.04987001543072238
+Humulus lupulus,Humulus,aqgrad,0.22901424948342253,False,0.0,0.22901424948342253
+Humulus lupulus,Humulus,aqgrad,0.050834543553492505,False,0.0,0.050834543553492505
+Humulus lupulus,Humulus,aqgrad,0.24317215411003798,False,0.0,0.24317215411003798
+Humulus lupulus,Humulus,aqgrad,0.06380417631053104,False,0.0,0.06380417631053104
+Humulus lupulus,Humulus,aqgrad,0.24471616485455888,False,0.0,0.24471616485455888
+Humulus lupulus,Humulus,aqgrad,0.14349234793756246,False,0.0,0.14349234793756246
+Humulus lupulus,Humulus,aqgrad,0.30076562741513485,False,0.0,0.30076562741513485
+Humulus lupulus,Humulus,aqgrad,0.06341587854969236,False,0.0,0.06341587854969236
+Humulus lupulus,Humulus,aqgrad,0.19324114049706348,False,0.0,0.19324114049706348
+Humulus lupulus,Humulus,aqgrad,0.18917755112579432,False,0.0,0.18917755112579432
+Humulus lupulus,Humulus,aqgrad,0.09437450835717341,False,0.0,0.09437450835717341
+Humulus lupulus,Humulus,aqgrad,0.1126015562080934,False,0.0,0.1126015562080934
+Quercus robur,Quercus,aqgrad,0.13023872274561143,False,0.0,0.13023872274561143
+Quercus robur,Quercus,aqgrad,0.14729179431706702,False,0.0,0.14729179431706702
+Quercus robur,Quercus,aqgrad,0.14896681941131526,False,0.0,0.14896681941131526
+Quercus robur,Quercus,aqgrad,0.12742364652968408,False,0.0,0.12742364652968408
+Quercus robur,Quercus,aqgrad,0.17671472270154095,False,0.0,0.17671472270154095
+Carpinus betulus,Carpinus,aqgrad,0.25531051040699715,False,0.0,0.25531051040699715
+Carpinus betulus,Carpinus,aqgrad,0.24830752003623693,False,0.0,0.24830752003623693
+Carpinus betulus,Carpinus,aqgrad,0.23762985893204905,False,0.0,0.23762985893204905
+Carpinus betulus,Carpinus,aqgrad,0.2856349589478178,False,0.0,0.2856349589478178
+Carpinus betulus,Carpinus,aqgrad,0.18320128645355488,False,0.0,0.18320128645355488
+Trifolium pratense,Trifolium,aqgrad,0.08931002113731824,False,0.0,0.08931002113731824
+Trifolium pratense,Trifolium,aqgrad,0.0898244082835025,False,0.0,0.0898244082835025
+Trifolium pratense,Trifolium,aqgrad,0.09321778293098779,False,0.0,0.09321778293098779
+Trifolium pratense,Trifolium,aqgrad,0.05503762164441164,False,0.0,0.05503762164441164
+Trifolium pratense,Trifolium,aqgrad,0.10420934705961496,False,0.0,0.10420934705961496
+Quercus robur,Quercus,aqgrad,0.2293878066217459,False,0.0,0.2293878066217459
+Quercus robur,Quercus,aqgrad,0.14494287344137513,False,0.0,0.14494287344137513
+Quercus robur,Quercus,aqgrad,0.10711764883150068,False,0.0,0.10711764883150068
+Quercus robur,Quercus,aqgrad,0.14124732579913118,False,0.0,0.14124732579913118
+Quercus robur,Quercus,aqgrad,0.09441678052701168,False,0.0,0.09441678052701168
+Carpinus betulus,Carpinus,aqgrad,0.37275350993337,False,0.0,0.37275350993337
+Carpinus betulus,Carpinus,aqgrad,0.39536833831272433,False,0.0,0.39536833831272433
+Carpinus betulus,Carpinus,aqgrad,0.3654856073624257,False,0.0,0.3654856073624257
+Carpinus betulus,Carpinus,aqgrad,0.38057788177986157,False,0.0,0.38057788177986157
+Carpinus betulus,Carpinus,aqgrad,0.37340740618875123,False,0.0,0.37340740618875123
+Taraxacum officinale,Taraxacum,aqgrad,0.09096438066299127,False,0.0,0.09096438066299127
+Taraxacum officinale,Taraxacum,aqgrad,0.12362667387839033,False,0.0,0.12362667387839033
+Taraxacum officinale,Taraxacum,aqgrad,0.11366954845205238,False,0.0,0.11366954845205238
+Taraxacum officinale,Taraxacum,aqgrad,0.0973183998128644,False,0.0,0.0973183998128644
+Taraxacum officinale,Taraxacum,aqgrad,0.09009547399498528,False,0.0,0.09009547399498528
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3238711723282122,False,0.0,0.3238711723282122
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.33592083166195924,False,0.0,0.33592083166195924
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3544732375976569,False,0.0,0.3544732375976569
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3733020391636141,False,0.0,0.3733020391636141
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3237983672063361,False,0.0,0.3237983672063361
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2694487400193719,False,0.0,0.2694487400193719
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.24112785417992838,False,0.0,0.24112785417992838
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3190506856620324,False,0.0,0.3190506856620324
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.35029624054958747,False,0.0,0.35029624054958747
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3004794731394901,False,0.0,0.3004794731394901
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.23791574666866974,False,0.0,0.23791574666866974
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.40892613853495713,False,0.0,0.40892613853495713
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3400304859937354,False,0.0,0.3400304859937354
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2913688408315905,False,0.0,0.2913688408315905
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2606978699043306,False,0.0,0.2606978699043306
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3043692106143817,False,0.0,0.3043692106143817
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.23551895748462487,False,0.0,0.23551895748462487
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3281799048888403,False,0.0,0.3281799048888403
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2796634840386047,False,0.0,0.2796634840386047
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.25450103820774306,False,0.0,0.25450103820774306
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.24859175185795623,False,0.0,0.24859175185795623
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.30306084674797934,False,0.0,0.30306084674797934
+Quercus kelloggii,Quercus,sierranevada2023,0.2858654887548287,False,0.0,0.2858654887548287
+Quercus kelloggii,Quercus,sierranevada2023,0.24831554464697894,False,0.0,0.24831554464697894
+Quercus kelloggii,Quercus,sierranevada2023,0.05373365374059965,False,0.0,0.05373365374059965
+Quercus kelloggii,Quercus,sierranevada2023,0.10651394931389353,False,0.0,0.10651394931389353
+Quercus kelloggii,Quercus,sierranevada2023,0.06425053520851078,False,0.0,0.06425053520851078
+Quercus kelloggii,Quercus,sierranevada2023,0.0972674515215245,False,0.0,0.0972674515215245
+Quercus kelloggii,Quercus,sierranevada2023,0.14591622025262938,False,0.0,0.14591622025262938
+Quercus kelloggii,Quercus,sierranevada2023,0.05062072251246763,False,0.0,0.05062072251246763
+Quercus kelloggii,Quercus,sierranevada2023,0.06679544995123678,False,0.0,0.06679544995123678
+Quercus kelloggii,Quercus,sierranevada2023,0.06952374727841036,False,0.0,0.06952374727841036
+Quercus kelloggii,Quercus,sierranevada2023,0.0777285364927563,False,0.0,0.0777285364927563
+Sambucus cerulea,Sambucus,sierranevada2023,0.06805527075001744,False,0.0,0.06805527075001744
+Sambucus cerulea,Sambucus,sierranevada2023,0.15800892838215105,False,0.0,0.15800892838215105
+Sambucus cerulea,Sambucus,sierranevada2023,0.11995969149504074,False,0.0,0.11995969149504074
+Sambucus cerulea,Sambucus,sierranevada2023,0.13219861312086859,False,0.0,0.13219861312086859
+Sambucus cerulea,Sambucus,sierranevada2023,0.047570920621578486,False,0.0,0.047570920621578486
+Sambucus cerulea,Sambucus,sierranevada2023,0.08795598658392743,False,0.0,0.08795598658392743
+Sambucus cerulea,Sambucus,sierranevada2023,0.08579601012254165,False,0.0,0.08579601012254165
+Sambucus cerulea,Sambucus,sierranevada2023,0.161915568939276,False,0.0,0.161915568939276
+Sambucus cerulea,Sambucus,sierranevada2023,0.08182817875541741,False,0.0,0.08182817875541741
+Sambucus cerulea,Sambucus,sierranevada2023,0.057416713274837855,False,0.0,0.057416713274837855
+Sambucus cerulea,Sambucus,sierranevada2023,0.06710822257100087,False,0.0,0.06710822257100087
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.062050835020045235,False,0.0,0.062050835020045235
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.1866260594766986,False,0.0,0.1866260594766986
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.16213350850425537,False,0.0,0.16213350850425537
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.13405645336115013,False,0.0,0.13405645336115013
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.07168642377842298,False,0.0,0.07168642377842298
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.10144828732307003,False,0.0,0.10144828732307003
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.05082204822588335,False,0.0,0.05082204822588335
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.06002941236766271,False,0.0,0.06002941236766271
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.1188536895135543,False,0.0,0.1188536895135543
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.13746714655734382,False,0.0,0.13746714655734382
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.09950208247308595,False,0.0,0.09950208247308595
+Quercus kelloggii,Quercus,sierranevada2023,0.054815114720046416,False,0.0,0.054815114720046416
+Quercus kelloggii,Quercus,sierranevada2023,0.048388281541219685,False,0.0,0.048388281541219685
+Quercus kelloggii,Quercus,sierranevada2023,0.043639666569012865,False,0.0,0.043639666569012865
+Quercus kelloggii,Quercus,sierranevada2023,0.05198437705738511,False,0.0,0.05198437705738511
+Quercus kelloggii,Quercus,sierranevada2023,0.11222524213316179,False,0.0,0.11222524213316179
+Quercus kelloggii,Quercus,sierranevada2023,0.09127444684311244,False,0.0,0.09127444684311244
+Quercus kelloggii,Quercus,sierranevada2023,0.04944249216639506,False,0.0,0.04944249216639506
+Quercus kelloggii,Quercus,sierranevada2023,0.06693280809074281,False,0.0,0.06693280809074281
+Quercus kelloggii,Quercus,sierranevada2023,0.09428690876377037,False,0.0,0.09428690876377037
+Quercus kelloggii,Quercus,sierranevada2023,0.06288415877952683,False,0.0,0.06288415877952683
+Quercus kelloggii,Quercus,sierranevada2023,0.09622526018926192,False,0.0,0.09622526018926192
+Alnus rhombifolia,Alnus,sierranevada2023,0.10979212220489884,False,0.0,0.10979212220489884
+Alnus rhombifolia,Alnus,sierranevada2023,0.04948349600975658,False,0.0,0.04948349600975658
+Alnus rhombifolia,Alnus,sierranevada2023,0.04294438162001968,False,0.0,0.04294438162001968
+Alnus rhombifolia,Alnus,sierranevada2023,0.15400008851124933,False,0.0,0.15400008851124933
+Alnus rhombifolia,Alnus,sierranevada2023,0.07416542524699131,False,0.0,0.07416542524699131
+Alnus rhombifolia,Alnus,sierranevada2023,0.06893737498207189,False,0.0,0.06893737498207189
+Alnus rhombifolia,Alnus,sierranevada2023,0.08390811960084955,False,0.0,0.08390811960084955
+Alnus rhombifolia,Alnus,sierranevada2023,0.06700878822618632,False,0.0,0.06700878822618632
+Alnus rhombifolia,Alnus,sierranevada2023,0.08369160953122681,False,0.0,0.08369160953122681
+Alnus rhombifolia,Alnus,sierranevada2023,0.0840584748393351,False,0.0,0.0840584748393351
+Alnus rhombifolia,Alnus,sierranevada2023,0.0587789005509699,False,0.0,0.0587789005509699
+Acer macrophyllum,Acer,sierranevada2023,0.07977717786012237,False,0.0,0.07977717786012237
+Acer macrophyllum,Acer,sierranevada2023,0.05067585908234176,False,0.0,0.05067585908234176
+Acer macrophyllum,Acer,sierranevada2023,0.0966410677521674,False,0.0,0.0966410677521674
+Acer macrophyllum,Acer,sierranevada2023,0.12006970972542522,False,0.0,0.12006970972542522
+Acer macrophyllum,Acer,sierranevada2023,0.06582901283469116,False,0.0,0.06582901283469116
+Acer macrophyllum,Acer,sierranevada2023,0.07257963160486276,False,0.0,0.07257963160486276
+Acer macrophyllum,Acer,sierranevada2023,0.18369846088385539,False,0.0,0.18369846088385539
+Acer macrophyllum,Acer,sierranevada2023,0.14879966451863064,False,0.0,0.14879966451863064
+Acer macrophyllum,Acer,sierranevada2023,0.07386345428026529,False,0.0,0.07386345428026529
+Acer macrophyllum,Acer,sierranevada2023,0.10076442721946523,False,0.0,0.10076442721946523
+Acer macrophyllum,Acer,sierranevada2023,0.07310775176064445,False,0.0,0.07310775176064445
+Quercus chrysolepis,Quercus,sierranevada2023,0.08061238760243895,False,0.0,0.08061238760243895
+Quercus chrysolepis,Quercus,sierranevada2023,0.10391307672853357,False,0.0,0.10391307672853357
+Quercus chrysolepis,Quercus,sierranevada2023,0.144038372221901,False,0.0,0.144038372221901
+Quercus chrysolepis,Quercus,sierranevada2023,0.09734398956595865,False,0.0,0.09734398956595865
+Quercus chrysolepis,Quercus,sierranevada2023,0.13082480610769762,False,0.0,0.13082480610769762
+Quercus chrysolepis,Quercus,sierranevada2023,0.1661820766763058,False,0.0,0.1661820766763058
+Quercus chrysolepis,Quercus,sierranevada2023,0.15633879829295733,False,0.0,0.15633879829295733
+Quercus chrysolepis,Quercus,sierranevada2023,0.1839900048038276,False,0.0,0.1839900048038276
+Quercus chrysolepis,Quercus,sierranevada2023,0.196265268118573,False,0.0,0.196265268118573
+Quercus chrysolepis,Quercus,sierranevada2023,0.033218742358181085,False,0.0,0.033218742358181085
+Quercus chrysolepis,Quercus,sierranevada2023,0.1450709068942061,False,0.0,0.1450709068942061
+Quercus chrysolepis,Quercus,sierranevada2023,0.026245733127359214,False,0.0,0.026245733127359214
+Quercus chrysolepis,Quercus,sierranevada2023,0.17907756994496013,False,0.0,0.17907756994496013
+Quercus chrysolepis,Quercus,sierranevada2023,0.18415099206923577,False,0.0,0.18415099206923577
+Quercus chrysolepis,Quercus,sierranevada2023,0.1364849612633722,False,0.0,0.1364849612633722
+Quercus chrysolepis,Quercus,sierranevada2023,0.11300222340699526,False,0.0,0.11300222340699526
+Quercus chrysolepis,Quercus,sierranevada2023,0.11256628023865886,False,0.0,0.11256628023865886
+Quercus chrysolepis,Quercus,sierranevada2023,0.14160539061575095,False,0.0,0.14160539061575095
+Quercus chrysolepis,Quercus,sierranevada2023,0.1144463064710132,False,0.0,0.1144463064710132
+Quercus chrysolepis,Quercus,sierranevada2023,0.14671416099941098,False,0.0,0.14671416099941098
+Quercus chrysolepis,Quercus,sierranevada2023,0.38561070953555193,False,0.0,0.38561070953555193
+Quercus chrysolepis,Quercus,sierranevada2023,0.6733392724214865,False,0.0,0.6733392724214865
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.47469722099461287,False,0.0,0.47469722099461287
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5240469874175786,False,0.0,0.5240469874175786
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.27970459070075376,False,0.0,0.27970459070075376
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.3500545544547493,False,0.0,0.3500545544547493
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.6092730794541298,False,0.0,0.6092730794541298
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.25879462245136753,False,0.0,0.25879462245136753
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.28650424986147477,False,0.0,0.28650424986147477
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.2925561205639742,False,0.0,0.2925561205639742
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.2917032440734636,False,0.0,0.2917032440734636
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.3345033817164863,False,0.0,0.3345033817164863
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.2523321267225924,False,0.0,0.2523321267225924
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2668844579922307,False,0.0,0.2668844579922307
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2707944019315748,False,0.0,0.2707944019315748
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.4516662572581544,False,0.0,0.4516662572581544
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.40702887486295786,False,0.0,0.40702887486295786
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3298974973220948,False,0.0,0.3298974973220948
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3377197998076056,False,0.0,0.3377197998076056
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.36923098587577013,False,0.0,0.36923098587577013
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.02041634329754808,False,0.0,0.02041634329754808
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.05610252166023482,False,0.0,0.05610252166023482
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.0,False,0.0,0.0
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.07063638807059658,False,0.0,0.07063638807059658
+Prunus emarginata,Prunus,sierranevada2023,0.08365721462465277,False,0.0,0.08365721462465277
+Prunus emarginata,Prunus,sierranevada2023,0.052898565708072214,False,0.0,0.052898565708072214
+Prunus emarginata,Prunus,sierranevada2023,0.12495805451762013,False,0.0,0.12495805451762013
+Prunus emarginata,Prunus,sierranevada2023,0.0795179961910643,False,0.0,0.0795179961910643
+Prunus emarginata,Prunus,sierranevada2023,0.052282275195682196,False,0.0,0.052282275195682196
+Prunus emarginata,Prunus,sierranevada2023,0.05040090836491541,False,0.0,0.05040090836491541
+Prunus emarginata,Prunus,sierranevada2023,0.05393636407824985,False,0.0,0.05393636407824985
+Prunus emarginata,Prunus,sierranevada2023,0.0303439395018124,False,0.0,0.0303439395018124
+Prunus emarginata,Prunus,sierranevada2023,0.06938011425829516,False,0.0,0.06938011425829516
+Prunus emarginata,Prunus,sierranevada2023,0.09259392606666861,False,0.0,0.09259392606666861
+Prunus emarginata,Prunus,sierranevada2023,0.08047796943254515,False,0.0,0.08047796943254515
+Quercus kelloggii,Quercus,sierranevada2023,0.09651638161180273,False,0.0,0.09651638161180273
+Quercus kelloggii,Quercus,sierranevada2023,0.03797227365042689,False,0.0,0.03797227365042689
+Quercus kelloggii,Quercus,sierranevada2023,0.08025118014511959,False,0.0,0.08025118014511959
+Quercus kelloggii,Quercus,sierranevada2023,0.08503268469285359,False,0.0,0.08503268469285359
+Quercus kelloggii,Quercus,sierranevada2023,0.06567876994382298,False,0.0,0.06567876994382298
+Quercus kelloggii,Quercus,sierranevada2023,0.08828586394474508,False,0.0,0.08828586394474508
+Quercus kelloggii,Quercus,sierranevada2023,0.08364174038271162,False,0.0,0.08364174038271162
+Quercus kelloggii,Quercus,sierranevada2023,0.1030438887879413,False,0.0,0.1030438887879413
+Quercus kelloggii,Quercus,sierranevada2023,0.03720410131931134,False,0.0,0.03720410131931134
+Quercus kelloggii,Quercus,sierranevada2023,0.05630366990023089,False,0.0,0.05630366990023089
+Quercus kelloggii,Quercus,sierranevada2023,0.03677338442506795,False,0.0,0.03677338442506795
+Quercus kelloggii,Quercus,sierranevada2023,0.09370452206036112,False,0.0,0.09370452206036112
+Quercus kelloggii,Quercus,sierranevada2023,0.05087659526503704,False,0.0,0.05087659526503704
+Quercus kelloggii,Quercus,sierranevada2023,0.08531373603708683,False,0.0,0.08531373603708683
+Quercus kelloggii,Quercus,sierranevada2023,0.06676325771114638,False,0.0,0.06676325771114638
+Quercus kelloggii,Quercus,sierranevada2023,0.30496766506555617,False,0.0,0.30496766506555617
+Quercus kelloggii,Quercus,sierranevada2023,0.26977902926675074,False,0.0,0.26977902926675074
+Quercus kelloggii,Quercus,sierranevada2023,0.2669468228990112,False,0.0,0.2669468228990112
+Quercus kelloggii,Quercus,sierranevada2023,0.41534325132543637,False,0.0,0.41534325132543637
+Quercus kelloggii,Quercus,sierranevada2023,0.11867264895069034,False,0.0,0.11867264895069034
+Quercus kelloggii,Quercus,sierranevada2023,0.21498533267467193,False,0.0,0.21498533267467193
+Quercus kelloggii,Quercus,sierranevada2023,0.25370918982647633,False,0.0,0.25370918982647633
+Quercus kelloggii,Quercus,sierranevada2023,0.34576367700799643,False,0.0,0.34576367700799643
+Quercus kelloggii,Quercus,sierranevada2023,0.24915941213127626,False,0.0,0.24915941213127626
+Quercus kelloggii,Quercus,sierranevada2023,0.18377539351763886,False,0.0,0.18377539351763886
+Quercus kelloggii,Quercus,sierranevada2023,0.04282539714124351,False,0.0,0.04282539714124351
+Quercus kelloggii,Quercus,sierranevada2023,0.04274166045669084,False,0.0,0.04274166045669084
+Quercus kelloggii,Quercus,sierranevada2023,0.06611124891132691,False,0.0,0.06611124891132691
+Quercus kelloggii,Quercus,sierranevada2023,0.10282148400573973,False,0.0,0.10282148400573973
+Quercus kelloggii,Quercus,sierranevada2023,0.08335540460248071,False,0.0,0.08335540460248071
+Quercus kelloggii,Quercus,sierranevada2023,0.16040452097351823,False,0.0,0.16040452097351823
+Quercus kelloggii,Quercus,sierranevada2023,0.08937374613630271,False,0.0,0.08937374613630271
+Quercus kelloggii,Quercus,sierranevada2023,0.03442530887283502,False,0.0,0.03442530887283502
+Alnus rhombifolia,Alnus,sierranevada2023,0.0811332521868424,False,0.0,0.0811332521868424
+Alnus rhombifolia,Alnus,sierranevada2023,0.041452638835159206,False,0.0,0.041452638835159206
+Alnus rhombifolia,Alnus,sierranevada2023,0.09592271228773007,False,0.0,0.09592271228773007
+Alnus rhombifolia,Alnus,sierranevada2023,0.10758422280723316,False,0.0,0.10758422280723316
+Alnus rhombifolia,Alnus,sierranevada2023,0.10883274599932402,False,0.0,0.10883274599932402
+Alnus rhombifolia,Alnus,sierranevada2023,0.07281798173303691,False,0.0,0.07281798173303691
+Alnus rhombifolia,Alnus,sierranevada2023,0.1529751516493891,False,0.0,0.1529751516493891
+Alnus rhombifolia,Alnus,sierranevada2023,0.07234871249576376,False,0.0,0.07234871249576376
+Alnus rhombifolia,Alnus,sierranevada2023,0.07084569159005995,False,0.0,0.07084569159005995
+Alnus rhombifolia,Alnus,sierranevada2023,0.06126177517662585,False,0.0,0.06126177517662585
+Alnus rhombifolia,Alnus,sierranevada2023,0.09783830766245197,False,0.0,0.09783830766245197
+Salix lasiolepis,Salix,sierranevada2023,0.09730723793090743,False,0.0,0.09730723793090743
+Salix lasiolepis,Salix,sierranevada2023,0.09015479971391463,False,0.0,0.09015479971391463
+Salix lasiolepis,Salix,sierranevada2023,0.1137585358858404,False,0.0,0.1137585358858404
+Salix lasiolepis,Salix,sierranevada2023,0.06618615201948111,False,0.0,0.06618615201948111
+Salix lasiolepis,Salix,sierranevada2023,0.10005189278620008,False,0.0,0.10005189278620008
+Salix lasiolepis,Salix,sierranevada2023,0.10332778598739065,False,0.0,0.10332778598739065
+Salix lasiolepis,Salix,sierranevada2023,0.12970621945195776,False,0.0,0.12970621945195776
+Salix lasiolepis,Salix,sierranevada2023,0.07023356330473311,False,0.0,0.07023356330473311
+Salix lasiolepis,Salix,sierranevada2023,0.1592042960333313,False,0.0,0.1592042960333313
+Salix lasiolepis,Salix,sierranevada2023,0.11985008255834799,False,0.0,0.11985008255834799
+Salix lasiolepis,Salix,sierranevada2023,0.09674247761558835,False,0.0,0.09674247761558835
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.09328314636176642,False,0.0,0.09328314636176642
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.44550948479749797,False,0.0,0.44550948479749797
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.4715015929890846,False,0.0,0.4715015929890846
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.40802054504357915,False,0.0,0.40802054504357915
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.5099249596470455,False,0.0,0.5099249596470455
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.6123753549313974,False,0.0,0.6123753549313974
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.4035120305960866,False,0.0,0.4035120305960866
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.4804356021886354,False,0.0,0.4804356021886354
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.5917336285915167,False,0.0,0.5917336285915167
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.48269793437766667,False,0.0,0.48269793437766667
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.14900958424113456,False,0.0,0.14900958424113456
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.06392840597734582,False,0.0,0.06392840597734582
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.08968742616800109,False,0.0,0.08968742616800109
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.18201091775230424,False,0.0,0.18201091775230424
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.09954665105437925,False,0.0,0.09954665105437925
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.05189007426230423,False,0.0,0.05189007426230423
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.09465217491077595,False,0.0,0.09465217491077595
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.08904784889832297,False,0.0,0.08904784889832297
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.06508668423749495,False,0.0,0.06508668423749495
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.04769802680111839,False,0.0,0.04769802680111839
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.11055646427959799,False,0.0,0.11055646427959799
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.1556866493070857,False,0.0,0.1556866493070857
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.1387063931004132,False,0.0,0.1387063931004132
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.08524339439380411,False,0.0,0.08524339439380411
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.13874755405775502,False,0.0,0.13874755405775502
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.12545835457482496,False,0.0,0.12545835457482496
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.15447361277901217,False,0.0,0.15447361277901217
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.13947670889833524,False,0.0,0.13947670889833524
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.1240985125856203,False,0.0,0.1240985125856203
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.15354550229548633,False,0.0,0.15354550229548633
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.6894040393771385,False,0.0,0.6894040393771385
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.8148703569865576,False,0.0,0.8148703569865576
+Ceanothus integerrimus,Ceanothus,sierranevada2023,0.595290045521095,False,0.0,0.595290045521095
+Sambucus cerulea,Sambucus,sierranevada2023,0.5178093756592015,False,0.0,0.5178093756592015
+Sambucus cerulea,Sambucus,sierranevada2023,0.8032752062771698,False,0.0,0.8032752062771698
+Sambucus cerulea,Sambucus,sierranevada2023,0.6563743327613063,False,0.0,0.6563743327613063
+Sambucus cerulea,Sambucus,sierranevada2023,0.831281854161759,False,0.0,0.831281854161759
+Sambucus cerulea,Sambucus,sierranevada2023,0.6205459818920345,False,0.0,0.6205459818920345
+Sambucus cerulea,Sambucus,sierranevada2023,0.5746303423817705,False,0.0,0.5746303423817705
+Sambucus cerulea,Sambucus,sierranevada2023,0.6503055046489492,False,0.0,0.6503055046489492
+Sambucus cerulea,Sambucus,sierranevada2023,0.673250454946391,False,0.0,0.673250454946391
+Sambucus cerulea,Sambucus,sierranevada2023,0.5888437233810186,False,0.0,0.5888437233810186
+Sambucus cerulea,Sambucus,sierranevada2023,0.7029222104572898,False,0.0,0.7029222104572898
+Sambucus cerulea,Sambucus,sierranevada2023,0.6845814142194027,False,0.0,0.6845814142194027
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.6742083063011871,False,0.0,0.6742083063011871
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.7170038438244982,False,0.0,0.7170038438244982
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.7067522748344893,False,0.0,0.7067522748344893
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.672124182879486,False,0.0,0.672124182879486
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.6191817131841573,False,0.0,0.6191817131841573
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.6274663022008127,False,0.0,0.6274663022008127
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.1781890461179049,False,0.0,0.1781890461179049
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.25108943181906984,False,0.0,0.25108943181906984
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.17815623882592985,False,0.0,0.17815623882592985
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.11996820707230017,False,0.0,0.11996820707230017
+Ceanothus parvifolius,Ceanothus,sierranevada2023,0.16042968927863863,False,0.0,0.16042968927863863
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.13363158035419778,False,0.0,0.13363158035419778
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.14011726885879386,False,0.0,0.14011726885879386
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.1588046921928901,False,0.0,0.1588046921928901
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.14866236526113907,False,0.0,0.14866236526113907
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.2207328942983589,False,0.0,0.2207328942983589
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.5430368569592935,False,0.0,0.5430368569592935
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.40900376149404644,False,0.0,0.40900376149404644
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.4473608429949257,False,0.0,0.4473608429949257
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.3553626629323535,False,0.0,0.3553626629323535
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.6098007451220194,False,0.0,0.6098007451220194
+Ceanothus prostratus,Ceanothus,sierranevada2023,0.4912965218290746,False,0.0,0.4912965218290746
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.40860028053616376,False,0.0,0.40860028053616376
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5750995506642318,False,0.0,0.5750995506642318
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.39683732904303465,False,0.0,0.39683732904303465
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.3049413052397763,False,0.0,0.3049413052397763
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5070963660799902,False,0.0,0.5070963660799902
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5413658368209513,False,0.0,0.5413658368209513
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5526234689752668,False,0.0,0.5526234689752668
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.3645296881140412,False,0.0,0.3645296881140412
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5816316615373915,False,0.0,0.5816316615373915
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5301363187318324,False,0.0,0.5301363187318324
+Ceanothus cordulatus,Ceanothus,sierranevada2023,0.5484763812356624,False,0.0,0.5484763812356624
+Pteridium aquilinum,Pteridium,sierranevada2023,0.6739348437642616,False,0.0,0.6739348437642616
+Pteridium aquilinum,Pteridium,sierranevada2023,0.5232333789821157,False,0.0,0.5232333789821157
+Pteridium aquilinum,Pteridium,sierranevada2023,0.6592015348447059,False,0.0,0.6592015348447059
+Pteridium aquilinum,Pteridium,sierranevada2023,0.4233381657101361,False,0.0,0.4233381657101361
+Pteridium aquilinum,Pteridium,sierranevada2023,0.43790556451885065,False,0.0,0.43790556451885065
+Pteridium aquilinum,Pteridium,sierranevada2023,0.5200545707932294,False,0.0,0.5200545707932294
+Pteridium aquilinum,Pteridium,sierranevada2023,0.479422414442386,False,0.0,0.479422414442386
+Pteridium aquilinum,Pteridium,sierranevada2023,0.4464682833401562,False,0.0,0.4464682833401562
+Pteridium aquilinum,Pteridium,sierranevada2023,0.41885390143123574,False,0.0,0.41885390143123574
+Pteridium aquilinum,Pteridium,sierranevada2023,0.45294107868020106,False,0.0,0.45294107868020106
+Pteridium aquilinum,Pteridium,sierranevada2023,0.4932364650309432,False,0.0,0.4932364650309432
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.44588590228972197,False,0.0,0.44588590228972197
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.47079135817079215,False,0.0,0.47079135817079215
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.12834194570324664,False,0.0,0.12834194570324664
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.12542935801187766,False,0.0,0.12542935801187766
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.15760002737981466,False,0.0,0.15760002737981466
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.15011070386180123,False,0.0,0.15011070386180123
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2000382074126202,False,0.0,0.2000382074126202
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.24722743409281564,False,0.0,0.24722743409281564
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.17452575219330144,False,0.0,0.17452575219330144
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.36560179991154135,False,0.0,0.36560179991154135
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.25697869122926253,False,0.0,0.25697869122926253
+Quercus wislizeni,Quercus,sierranevada2023,0.22050730517721231,False,0.0,0.22050730517721231
+Quercus wislizeni,Quercus,sierranevada2023,0.0935104697769594,False,0.0,0.0935104697769594
+Quercus wislizeni,Quercus,sierranevada2023,0.03752824792091256,False,0.0,0.03752824792091256
+Quercus wislizeni,Quercus,sierranevada2023,0.05335273494435084,False,0.0,0.05335273494435084
+Quercus wislizeni,Quercus,sierranevada2023,0.07327250221534105,False,0.0,0.07327250221534105
+Quercus wislizeni,Quercus,sierranevada2023,0.08184843272239789,False,0.0,0.08184843272239789
+Quercus wislizeni,Quercus,sierranevada2023,0.08218620737267798,False,0.0,0.08218620737267798
+Quercus wislizeni,Quercus,sierranevada2023,0.0278768183422627,False,0.0,0.0278768183422627
+Quercus wislizeni,Quercus,sierranevada2023,0.13896752713854996,False,0.0,0.13896752713854996
+Quercus wislizeni,Quercus,sierranevada2023,0.12616834631793217,False,0.0,0.12616834631793217
+Quercus wislizeni,Quercus,sierranevada2023,0.12303890843858478,False,0.0,0.12303890843858478
+Alnus rhombifolia,Alnus,sierranevada2023,0.6245242572633476,False,0.0,0.6245242572633476
+Alnus rhombifolia,Alnus,sierranevada2023,0.3841188779675637,False,0.0,0.3841188779675637
+Alnus rhombifolia,Alnus,sierranevada2023,0.352538796091853,False,0.0,0.352538796091853
+Alnus rhombifolia,Alnus,sierranevada2023,0.23079807860539034,False,0.0,0.23079807860539034
+Alnus rhombifolia,Alnus,sierranevada2023,0.615410537921599,False,0.0,0.615410537921599
+Alnus rhombifolia,Alnus,sierranevada2023,0.6652113305317668,False,0.0,0.6652113305317668
+Alnus rhombifolia,Alnus,sierranevada2023,0.45752273370794233,False,0.0,0.45752273370794233
+Alnus rhombifolia,Alnus,sierranevada2023,0.6791596534915652,False,0.0,0.6791596534915652
+Alnus rhombifolia,Alnus,sierranevada2023,0.8947510608087449,False,0.0,0.8947510608087449
+Alnus rhombifolia,Alnus,sierranevada2023,0.6676139700657443,False,0.0,0.6676139700657443
+Alnus rhombifolia,Alnus,sierranevada2023,0.10064751630583968,False,0.0,0.10064751630583968
+Salix lasiolepis,Salix,sierranevada2023,0.07054458664941338,False,0.0,0.07054458664941338
+Salix lasiolepis,Salix,sierranevada2023,0.1279032190824442,False,0.0,0.1279032190824442
+Salix lasiolepis,Salix,sierranevada2023,0.12830474634326922,False,0.0,0.12830474634326922
+Salix lasiolepis,Salix,sierranevada2023,0.12954672089778113,False,0.0,0.12954672089778113
+Salix lasiolepis,Salix,sierranevada2023,0.1488661185928266,False,0.0,0.1488661185928266
+Salix lasiolepis,Salix,sierranevada2023,0.11054205358857694,False,0.0,0.11054205358857694
+Salix lasiolepis,Salix,sierranevada2023,0.18443689549947043,False,0.0,0.18443689549947043
+Salix lasiolepis,Salix,sierranevada2023,0.2066528264628379,False,0.0,0.2066528264628379
+Salix lasiolepis,Salix,sierranevada2023,0.09732403131749894,False,0.0,0.09732403131749894
+Salix lasiolepis,Salix,sierranevada2023,0.627840940534993,False,0.0,0.627840940534993
+Salix lasiolepis,Salix,sierranevada2023,0.6615666056978166,False,0.0,0.6615666056978166
+Pteridium aquilinum,Pteridium,sierranevada2023,0.6392923517826743,False,0.0,0.6392923517826743
+Pteridium aquilinum,Pteridium,sierranevada2023,0.5715685173634633,False,0.0,0.5715685173634633
+Pteridium aquilinum,Pteridium,sierranevada2023,0.5752170522970274,False,0.0,0.5752170522970274
+Pteridium aquilinum,Pteridium,sierranevada2023,0.6170894478848787,False,0.0,0.6170894478848787
+Pteridium aquilinum,Pteridium,sierranevada2023,0.5856441857978711,False,0.0,0.5856441857978711
+Pteridium aquilinum,Pteridium,sierranevada2023,0.7554421272245926,False,0.0,0.7554421272245926
+Pteridium aquilinum,Pteridium,sierranevada2023,0.5109678067310794,False,0.0,0.5109678067310794
+Pteridium aquilinum,Pteridium,sierranevada2023,0.684460176294344,False,0.0,0.684460176294344
+Pteridium aquilinum,Pteridium,sierranevada2023,0.20124165537477431,False,0.0,0.20124165537477431
+Pteridium aquilinum,Pteridium,sierranevada2023,0.15529398885013276,False,0.0,0.15529398885013276
+Pteridium aquilinum,Pteridium,sierranevada2023,0.19897112419414326,False,0.0,0.19897112419414326
+,Unknown,sierranevada2023,0.21257975896601483,False,0.0,0.21257975896601483
+,Unknown,sierranevada2023,0.22251817671967772,False,0.0,0.22251817671967772
+,Unknown,sierranevada2023,0.20192178307983694,False,0.0,0.20192178307983694
+,Unknown,sierranevada2023,0.20019560452805213,False,0.0,0.20019560452805213
+,Unknown,sierranevada2023,0.18754765388349914,False,0.0,0.18754765388349914
+,Unknown,sierranevada2023,0.19417445029165267,False,0.0,0.19417445029165267
+,Unknown,sierranevada2023,0.32400796113547925,False,0.0,0.32400796113547925
+,Unknown,sierranevada2023,0.364552140616604,False,0.0,0.364552140616604
+,Unknown,sierranevada2023,0.4148963528337737,False,0.0,0.4148963528337737
+,Unknown,sierranevada2023,0.3943109958239725,False,0.0,0.3943109958239725
+,Unknown,sierranevada2023,0.3503250512955902,False,0.0,0.3503250512955902
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.33638989425438054,False,0.0,0.33638989425438054
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3305220247747543,False,0.0,0.3305220247747543
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.2772479942177787,False,0.0,0.2772479942177787
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.27971216278208666,False,0.0,0.27971216278208666
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.36273242002574163,False,0.0,0.36273242002574163
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3321764631799705,False,0.0,0.3321764631799705
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.33564287723536546,False,0.0,0.33564287723536546
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3305169901459758,False,0.0,0.3305169901459758
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3643284225872779,False,0.0,0.3643284225872779
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3456298204017106,False,0.0,0.3456298204017106
+Arctostaphylos,Arctostaphylos,sierranevada2023,0.3377720764148418,False,0.0,0.3377720764148418
+Trifolium pratense L.,Trifolium,lopex93,0.39129513888190953,False,0.0,0.39129513888190953
+Trifolium pratense L.,Trifolium,lopex93,0.2835759444712593,False,0.0,0.2835759444712593
+Trifolium pratense L.,Trifolium,lopex93,0.3805292268533375,False,0.0,0.3805292268533375
+Trifolium pratense L.,Trifolium,lopex93,0.353650271552067,False,0.0,0.353650271552067
+Trifolium pratense L.,Trifolium,lopex93,0.41649479644837695,False,0.0,0.41649479644837695
+Trifolium pratense L.,Trifolium,lopex93,0.26927263046661293,False,0.0,0.26927263046661293
+Trifolium pratense L.,Trifolium,lopex93,0.39476528092995833,False,0.0,0.39476528092995833
+Trifolium pratense L.,Trifolium,lopex93,0.22379960426303533,False,0.0,0.22379960426303533
+Trifolium pratense L.,Trifolium,lopex93,0.44456530008134537,False,0.0,0.44456530008134537
+Trifolium pratense L.,Trifolium,lopex93,0.15426776559455938,False,0.0,0.15426776559455938
+Sorghum halepense L.,Sorghum,lopex93,0.37600501987263457,False,0.0,0.37600501987263457
+Sorghum halepense L.,Sorghum,lopex93,0.10713219564243519,False,0.0,0.10713219564243519
+Sorghum halepense L.,Sorghum,lopex93,0.30670412895140936,False,0.0,0.30670412895140936
+Sorghum halepense L.,Sorghum,lopex93,0.21177197781032467,False,0.0,0.21177197781032467
+Sorghum halepense L.,Sorghum,lopex93,0.4531645561136293,False,0.0,0.4531645561136293
+Sorghum halepense L.,Sorghum,lopex93,0.16577129814208916,False,0.0,0.16577129814208916
+Sorghum halepense L.,Sorghum,lopex93,0.319528634859513,False,0.0,0.319528634859513
+Sorghum halepense L.,Sorghum,lopex93,0.03682911769227805,False,0.0,0.03682911769227805
+Sorghum halepense L.,Sorghum,lopex93,0.5261938882363373,False,0.0,0.5261938882363373
+Sorghum halepense L.,Sorghum,lopex93,0.1555728065685207,False,0.0,0.1555728065685207
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.39308266110728624,False,0.0,0.39308266110728624
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.1725929896070796,False,0.0,0.1725929896070796
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.3402084456533349,False,0.0,0.3402084456533349
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.15499157444504183,False,0.0,0.15499157444504183
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.4196724841752274,False,0.0,0.4196724841752274
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.20546698437273186,False,0.0,0.20546698437273186
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.36883179080486594,False,0.0,0.36883179080486594
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.19244349539642377,False,0.0,0.19244349539642377
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.42860257934324336,False,0.0,0.42860257934324336
+Vitis vinifera L. ssp. Sylvestris,Vitis,lopex93,0.1789592359787885,False,0.0,0.1789592359787885
+Fraxinus excelsior L.,Fraxinus,lopex93,0.15912665368313791,False,0.0,0.15912665368313791
+Fraxinus excelsior L.,Fraxinus,lopex93,0.022244174629431186,False,0.0,0.022244174629431186
+Fraxinus excelsior L.,Fraxinus,lopex93,0.1645825039326509,False,0.0,0.1645825039326509
+Fraxinus excelsior L.,Fraxinus,lopex93,0.040828794995968636,False,0.0,0.040828794995968636
+Fraxinus excelsior L.,Fraxinus,lopex93,0.1626076140367777,False,0.0,0.1626076140367777
+Fraxinus excelsior L.,Fraxinus,lopex93,0.038226858632269885,False,0.0,0.038226858632269885
+Fraxinus excelsior L.,Fraxinus,lopex93,0.19582946146861405,False,0.0,0.19582946146861405
+Fraxinus excelsior L.,Fraxinus,lopex93,0.01867282728798206,False,0.0,0.01867282728798206
+Fraxinus excelsior L.,Fraxinus,lopex93,0.2278820002895009,False,0.0,0.2278820002895009
+Fraxinus excelsior L.,Fraxinus,lopex93,0.05570147887552394,False,0.0,0.05570147887552394
+Lactuca sativa L.,Lactuca,lopex93,0.33107277162421545,False,0.0,0.33107277162421545
+Lactuca sativa L.,Lactuca,lopex93,0.5529599764472803,False,0.0,0.5529599764472803
+Lactuca sativa L.,Lactuca,lopex93,0.2983056876163779,False,0.0,0.2983056876163779
+Lactuca sativa L.,Lactuca,lopex93,0.3819487311694953,False,0.0,0.3819487311694953
+Lactuca sativa L.,Lactuca,lopex93,0.36209002933597084,False,0.0,0.36209002933597084
+Prunus laurocerasus L.,Prunus,lopex93,0.3143210855449386,False,0.0,0.3143210855449386
+Prunus laurocerasus L.,Prunus,lopex93,0.07790785338928921,False,0.0,0.07790785338928921
+Prunus laurocerasus L.,Prunus,lopex93,0.28038234431726594,False,0.0,0.28038234431726594
+Prunus laurocerasus L.,Prunus,lopex93,0.0677991797544598,False,0.0,0.0677991797544598
+Prunus laurocerasus L.,Prunus,lopex93,0.2983766046972788,False,0.0,0.2983766046972788
+Prunus laurocerasus L.,Prunus,lopex93,0.07182812275216584,False,0.0,0.07182812275216584
+Prunus laurocerasus L.,Prunus,lopex93,0.36521686951241683,False,0.0,0.36521686951241683
+Prunus laurocerasus L.,Prunus,lopex93,0.06717714309070466,False,0.0,0.06717714309070466
+Prunus laurocerasus L.,Prunus,lopex93,0.2591720520198773,False,0.0,0.2591720520198773
+Prunus laurocerasus L.,Prunus,lopex93,0.2563090807070852,False,0.0,0.2563090807070852
+Populus x canadensis,Populus,lopex93,0.37432853549084455,False,0.0,0.37432853549084455
+Populus x canadensis,Populus,lopex93,0.2061029600040333,False,0.0,0.2061029600040333
+Populus x canadensis,Populus,lopex93,0.5540681292502166,False,0.0,0.5540681292502166
+Populus x canadensis,Populus,lopex93,0.23891135168836775,False,0.0,0.23891135168836775
+Populus x canadensis,Populus,lopex93,0.4296674188478759,False,0.0,0.4296674188478759
+Populus x canadensis,Populus,lopex93,0.2063836730039018,False,0.0,0.2063836730039018
+Populus x canadensis,Populus,lopex93,0.7126214038969803,False,0.0,0.7126214038969803
+Populus x canadensis,Populus,lopex93,0.3648217930007152,False,0.0,0.3648217930007152
+Populus x canadensis,Populus,lopex93,0.4031037003860323,False,0.0,0.4031037003860323
+Populus x canadensis,Populus,lopex93,0.2659594624690973,False,0.0,0.2659594624690973
+Medicago sativa L.,Medicago,lopex93,0.42762508563695567,False,0.0,0.42762508563695567
+Medicago sativa L.,Medicago,lopex93,0.40309337659604594,False,0.0,0.40309337659604594
+Medicago sativa L.,Medicago,lopex93,0.3613633225757017,False,0.0,0.3613633225757017
+Medicago sativa L.,Medicago,lopex93,0.3747786699257879,False,0.0,0.3747786699257879
+Medicago sativa L.,Medicago,lopex93,0.30613838790085063,False,0.0,0.30613838790085063
+Medicago sativa L.,Medicago,lopex93,0.21450796071362332,False,0.0,0.21450796071362332
+Medicago sativa L.,Medicago,lopex93,0.5294328712970697,False,0.0,0.5294328712970697
+Medicago sativa L.,Medicago,lopex93,0.28325558538852236,False,0.0,0.28325558538852236
+Medicago sativa L.,Medicago,lopex93,0.25955768544786845,False,0.0,0.25955768544786845
+Zea mays L.,Zea,lopex93,0.3049181537195689,False,0.0,0.3049181537195689
+Zea mays L.,Zea,lopex93,0.12175497400792061,False,0.0,0.12175497400792061
+Zea mays L.,Zea,lopex93,0.3002013436433775,False,0.0,0.3002013436433775
+Zea mays L.,Zea,lopex93,0.11808457644328454,False,0.0,0.11808457644328454
+Zea mays L.,Zea,lopex93,0.1525867561758341,False,0.0,0.1525867561758341
+Zea mays L.,Zea,lopex93,0.034225295537808106,False,0.0,0.034225295537808106
+Zea mays L.,Zea,lopex93,0.21771294080318573,False,0.0,0.21771294080318573
+Zea mays L.,Zea,lopex93,0.12180930331368435,False,0.0,0.12180930331368435
+Zea mays L.,Zea,lopex93,0.16746390821923962,False,0.0,0.16746390821923962
+Zea mays L.,Zea,lopex93,0.0743786968391264,False,0.0,0.0743786968391264
+Solanum tuberosum L.,Solanum,lopex93,0.2641055666603326,False,0.0,0.2641055666603326
+Solanum tuberosum L.,Solanum,lopex93,0.18011227745331906,False,0.0,0.18011227745331906
+Solanum tuberosum L.,Solanum,lopex93,0.2639830365506972,False,0.0,0.2639830365506972
+Solanum tuberosum L.,Solanum,lopex93,0.2058122245323091,False,0.0,0.2058122245323091
+Solanum tuberosum L.,Solanum,lopex93,0.2989556321820137,False,0.0,0.2989556321820137
+Solanum tuberosum L.,Solanum,lopex93,0.20595078824874868,False,0.0,0.20595078824874868
+Solanum tuberosum L.,Solanum,lopex93,0.2676098792958262,False,0.0,0.2676098792958262
+Solanum tuberosum L.,Solanum,lopex93,0.32819278709914584,False,0.0,0.32819278709914584
+Solanum tuberosum L.,Solanum,lopex93,0.2888119285048543,False,0.0,0.2888119285048543
+Solanum tuberosum L.,Solanum,lopex93,0.08675978179098863,False,0.0,0.08675978179098863
+Zea mays L.,Zea,lopex93,0.3004458261498343,False,0.0,0.3004458261498343
+Zea mays L.,Zea,lopex93,0.009608421740681283,False,0.0,0.009608421740681283
+Zea mays L.,Zea,lopex93,0.3966592154347558,False,0.0,0.3966592154347558
+Zea mays L.,Zea,lopex93,0.04204740338289577,False,0.0,0.04204740338289577
+Zea mays L.,Zea,lopex93,0.38119263901993017,False,0.0,0.38119263901993017
+Zea mays L.,Zea,lopex93,0.05474983424608149,False,0.0,0.05474983424608149
+Zea mays L.,Zea,lopex93,0.45715968922218075,False,0.0,0.45715968922218075
+Zea mays L.,Zea,lopex93,0.04448911932122079,False,0.0,0.04448911932122079
+Zea mays L.,Zea,lopex93,0.4394521484066938,False,0.0,0.4394521484066938
+Zea mays L.,Zea,lopex93,0.03792062129107931,False,0.0,0.03792062129107931
+Prunus laurocerasus L.,Prunus,lopex93,0.2936411861742623,False,0.0,0.2936411861742623
+Prunus laurocerasus L.,Prunus,lopex93,0.1955477555086262,False,0.0,0.1955477555086262
+Prunus laurocerasus L.,Prunus,lopex93,0.2521035691840004,False,0.0,0.2521035691840004
+Prunus laurocerasus L.,Prunus,lopex93,0.18847094567478437,False,0.0,0.18847094567478437
+Prunus laurocerasus L.,Prunus,lopex93,0.2701411968182153,False,0.0,0.2701411968182153
+Prunus laurocerasus L.,Prunus,lopex93,0.22184890114931902,False,0.0,0.22184890114931902
+Prunus laurocerasus L.,Prunus,lopex93,0.3817629468114932,False,0.0,0.3817629468114932
+Prunus laurocerasus L.,Prunus,lopex93,0.21602944264397939,False,0.0,0.21602944264397939
+Prunus laurocerasus L.,Prunus,lopex93,0.38351107149860586,False,0.0,0.38351107149860586
+Prunus laurocerasus L.,Prunus,lopex93,0.21862544912471732,False,0.0,0.21862544912471732
+Fagus sylvatica L.,Fagus,lopex93,0.32334402064199935,False,0.0,0.32334402064199935
+Fagus sylvatica L.,Fagus,lopex93,0.08959663323212931,False,0.0,0.08959663323212931
+Fagus sylvatica L.,Fagus,lopex93,0.27821961190750616,False,0.0,0.27821961190750616
+Fagus sylvatica L.,Fagus,lopex93,0.08624314638806273,False,0.0,0.08624314638806273
+Fagus sylvatica L.,Fagus,lopex93,0.28782913823606043,False,0.0,0.28782913823606043
+Fagus sylvatica L.,Fagus,lopex93,0.0864482041993132,False,0.0,0.0864482041993132
+Fagus sylvatica L.,Fagus,lopex93,0.3382558605012685,False,0.0,0.3382558605012685
+Fagus sylvatica L.,Fagus,lopex93,0.08176917812256228,False,0.0,0.08176917812256228
+Fagus sylvatica L.,Fagus,lopex93,0.34929789774214176,False,0.0,0.34929789774214176
+Fagus sylvatica L.,Fagus,lopex93,0.10943570058320437,False,0.0,0.10943570058320437
+Laurus nobilis L.,Laurus,lopex93,0.470961056445621,False,0.0,0.470961056445621
+Laurus nobilis L.,Laurus,lopex93,0.5752065144134105,False,0.0,0.5752065144134105
+Laurus nobilis L.,Laurus,lopex93,0.2524888822109654,False,0.0,0.2524888822109654
+Laurus nobilis L.,Laurus,lopex93,0.1538247835740743,False,0.0,0.1538247835740743
+Laurus nobilis L.,Laurus,lopex93,0.4595921171463911,False,0.0,0.4595921171463911
+Laurus nobilis L.,Laurus,lopex93,0.31038769546738204,False,0.0,0.31038769546738204
+Laurus nobilis L.,Laurus,lopex93,0.3379436404749547,False,0.0,0.3379436404749547
+Laurus nobilis L.,Laurus,lopex93,0.2826625003243466,False,0.0,0.2826625003243466
+Laurus nobilis L.,Laurus,lopex93,0.5802284355071833,False,0.0,0.5802284355071833
+Laurus nobilis L.,Laurus,lopex93,0.4524216518070874,False,0.0,0.4524216518070874
+Robinia pseudoacacia L.,Robinia,lopex93,0.4231445444112672,False,0.0,0.4231445444112672
+Robinia pseudoacacia L.,Robinia,lopex93,0.08456693659816489,False,0.0,0.08456693659816489
+Robinia pseudoacacia L.,Robinia,lopex93,0.41755690263861084,False,0.0,0.41755690263861084
+Robinia pseudoacacia L.,Robinia,lopex93,0.12425734933575104,False,0.0,0.12425734933575104
+Robinia pseudoacacia L.,Robinia,lopex93,0.2541906206059499,False,0.0,0.2541906206059499
+Robinia pseudoacacia L.,Robinia,lopex93,0.0415123606247056,False,0.0,0.0415123606247056
+Robinia pseudoacacia L.,Robinia,lopex93,0.25266852576727433,False,0.0,0.25266852576727433
+Robinia pseudoacacia L.,Robinia,lopex93,0.03882222141396241,False,0.0,0.03882222141396241
+Robinia pseudoacacia L.,Robinia,lopex93,0.24824752288127575,False,0.0,0.24824752288127575
+Robinia pseudoacacia L.,Robinia,lopex93,0.029272056695067095,False,0.0,0.029272056695067095
+Helianthus annuus L.,Helianthus,lopex93,0.20670981770530314,False,0.0,0.20670981770530314
+Helianthus annuus L.,Helianthus,lopex93,0.0596454691787376,False,0.0,0.0596454691787376
+Helianthus annuus L.,Helianthus,lopex93,0.19938213092101678,False,0.0,0.19938213092101678
+Helianthus annuus L.,Helianthus,lopex93,0.05902442142798067,False,0.0,0.05902442142798067
+Helianthus annuus L.,Helianthus,lopex93,0.1994071598114242,False,0.0,0.1994071598114242
+Helianthus annuus L.,Helianthus,lopex93,0.061736976569851484,False,0.0,0.061736976569851484
+Helianthus annuus L.,Helianthus,lopex93,0.21885560420213426,False,0.0,0.21885560420213426
+Helianthus annuus L.,Helianthus,lopex93,0.043884644328557806,False,0.0,0.043884644328557806
+Helianthus annuus L.,Helianthus,lopex93,0.18575653643571996,False,0.0,0.18575653643571996
+Helianthus annuus L.,Helianthus,lopex93,0.0487709558388276,False,0.0,0.0487709558388276
+Tilia platyphyllos,Tilia,lopex93,0.25809295312446784,False,0.0,0.25809295312446784
+Tilia platyphyllos,Tilia,lopex93,0.062108183771895385,False,0.0,0.062108183771895385
+Tilia platyphyllos,Tilia,lopex93,0.29728446309433876,False,0.0,0.29728446309433876
+Tilia platyphyllos,Tilia,lopex93,0.08450044358402842,False,0.0,0.08450044358402842
+Tilia platyphyllos,Tilia,lopex93,0.2956432143020117,False,0.0,0.2956432143020117
+Tilia platyphyllos,Tilia,lopex93,0.1099644693485025,False,0.0,0.1099644693485025
+Tilia platyphyllos,Tilia,lopex93,0.23832074643695753,False,0.0,0.23832074643695753
+Tilia platyphyllos,Tilia,lopex93,0.22777672781245262,False,0.0,0.22777672781245262
+Tilia platyphyllos,Tilia,lopex93,0.31965262006638057,False,0.0,0.31965262006638057
+Tilia platyphyllos,Tilia,lopex93,0.07945960277971059,False,0.0,0.07945960277971059
+Juglans regia L.,Juglans,lopex93,0.27313006414132834,False,0.0,0.27313006414132834
+Juglans regia L.,Juglans,lopex93,0.09937986377879825,False,0.0,0.09937986377879825
+Juglans regia L.,Juglans,lopex93,0.4215557662954789,False,0.0,0.4215557662954789
+Juglans regia L.,Juglans,lopex93,0.06927026367389313,False,0.0,0.06927026367389313
+Juglans regia L.,Juglans,lopex93,0.1940315643612216,False,0.0,0.1940315643612216
+Juglans regia L.,Juglans,lopex93,0.05408903407571062,False,0.0,0.05408903407571062
+Juglans regia L.,Juglans,lopex93,0.2092972030338943,False,0.0,0.2092972030338943
+Juglans regia L.,Juglans,lopex93,0.10028143744688472,False,0.0,0.10028143744688472
+Juglans regia L.,Juglans,lopex93,0.19773362431493374,False,0.0,0.19773362431493374
+Juglans regia L.,Juglans,lopex93,0.09446659417468632,False,0.0,0.09446659417468632
+Beta vulgaris L.,Beta,lopex93,0.2280598685693373,False,0.0,0.2280598685693373
+Beta vulgaris L.,Beta,lopex93,0.07477760960695243,False,0.0,0.07477760960695243
+Beta vulgaris L.,Beta,lopex93,0.196577266410021,False,0.0,0.196577266410021
+Beta vulgaris L.,Beta,lopex93,0.0934866589035046,False,0.0,0.0934866589035046
+Beta vulgaris L.,Beta,lopex93,0.24019387058540603,False,0.0,0.24019387058540603
+Beta vulgaris L.,Beta,lopex93,0.09359902504260321,False,0.0,0.09359902504260321
+Beta vulgaris L.,Beta,lopex93,0.18738497784336308,False,0.0,0.18738497784336308
+Beta vulgaris L.,Beta,lopex93,0.064828145219249,False,0.0,0.064828145219249
+Beta vulgaris L.,Beta,lopex93,0.24728490400051759,False,0.0,0.24728490400051759
+Beta vulgaris L.,Beta,lopex93,0.0479037089450466,False,0.0,0.0479037089450466
+Urtica dioica L.,Urtica,lopex93,0.6346865166076346,False,0.0,0.6346865166076346
+Urtica dioica L.,Urtica,lopex93,0.08075591913583575,False,0.0,0.08075591913583575
+Urtica dioica L.,Urtica,lopex93,0.42983645456692376,False,0.0,0.42983645456692376
+Urtica dioica L.,Urtica,lopex93,0.08600771295862529,False,0.0,0.08600771295862529
+Urtica dioica L.,Urtica,lopex93,0.24753557674506946,False,0.0,0.24753557674506946
+Urtica dioica L.,Urtica,lopex93,0.10387788215715156,False,0.0,0.10387788215715156
+Urtica dioica L.,Urtica,lopex93,0.3074944312323922,False,0.0,0.3074944312323922
+Urtica dioica L.,Urtica,lopex93,0.10670350828396236,False,0.0,0.10670350828396236
+Urtica dioica L.,Urtica,lopex93,0.267248660884526,False,0.0,0.267248660884526
+Urtica dioica L.,Urtica,lopex93,0.07646027164985074,False,0.0,0.07646027164985074
+Oryza sativa L.,Oryza,lopex93,0.34874914206551727,False,0.0,0.34874914206551727
+Oryza sativa L.,Oryza,lopex93,0.13270222288692016,False,0.0,0.13270222288692016
+Oryza sativa L.,Oryza,lopex93,0.390600716699191,False,0.0,0.390600716699191
+Oryza sativa L.,Oryza,lopex93,0.1439224959256226,False,0.0,0.1439224959256226
+Oryza sativa L.,Oryza,lopex93,0.3838978969879703,False,0.0,0.3838978969879703
+Oryza sativa L.,Oryza,lopex93,0.15891601158008123,False,0.0,0.15891601158008123
+Oryza sativa L.,Oryza,lopex93,0.29272685741333815,False,0.0,0.29272685741333815
+Oryza sativa L.,Oryza,lopex93,0.1428975541799226,False,0.0,0.1428975541799226
+Oryza sativa L.,Oryza,lopex93,0.35214598424912347,False,0.0,0.35214598424912347
+Oryza sativa L.,Oryza,lopex93,0.12744617596166674,False,0.0,0.12744617596166674
+Phleum pratense L.,Phleum,lopex93,0.4909712982028567,False,0.0,0.4909712982028567
+Phleum pratense L.,Phleum,lopex93,0.30815833334062603,False,0.0,0.30815833334062603
+Phleum pratense L.,Phleum,lopex93,0.3141664026588506,False,0.0,0.3141664026588506
+Phleum pratense L.,Phleum,lopex93,0.11632319631386495,False,0.0,0.11632319631386495
+Phleum pratense L.,Phleum,lopex93,0.6934075293799645,False,0.0,0.6934075293799645
+Phleum pratense L.,Phleum,lopex93,0.41576351243220505,False,0.0,0.41576351243220505
+Phleum pratense L.,Phleum,lopex93,0.35039522723451044,False,0.0,0.35039522723451044
+Phleum pratense L.,Phleum,lopex93,0.18960918093302462,False,0.0,0.18960918093302462
+Phleum pratense L.,Phleum,lopex93,0.3324263382944205,False,0.0,0.3324263382944205
+Phleum pratense L.,Phleum,lopex93,0.1190176403082146,False,0.0,0.1190176403082146
+Glycine max L.,Glycine,lopex93,0.7513939273921472,False,0.0,0.7513939273921472
+Glycine max L.,Glycine,lopex93,0.6852474979862374,False,0.0,0.6852474979862374
+Glycine max L.,Glycine,lopex93,0.7689794812390854,False,0.0,0.7689794812390854
+Glycine max L.,Glycine,lopex93,0.6894440636921294,False,0.0,0.6894440636921294
+Glycine max L.,Glycine,lopex93,0.7678406199801758,False,0.0,0.7678406199801758
+Glycine max L.,Glycine,lopex93,0.5991550036150991,False,0.0,0.5991550036150991
+Glycine max L.,Glycine,lopex93,0.7546378485259267,False,0.0,0.7546378485259267
+Glycine max L.,Glycine,lopex93,0.6518132326056315,False,0.0,0.6518132326056315
+Glycine max L.,Glycine,lopex93,0.6473696118473237,False,0.0,0.6473696118473237
+Glycine max L.,Glycine,lopex93,0.5466751033039638,False,0.0,0.5466751033039638
+Acer pseudoplatanus L.,Acer,lopex93,0.3846627183764142,False,0.0,0.3846627183764142
+Acer pseudoplatanus L.,Acer,lopex93,0.20129819135302113,False,0.0,0.20129819135302113
+Acer pseudoplatanus L.,Acer,lopex93,0.6890542385580553,False,0.0,0.6890542385580553
+Acer pseudoplatanus L.,Acer,lopex93,0.26731060775841325,False,0.0,0.26731060775841325
+Acer pseudoplatanus L.,Acer,lopex93,0.6817178336593495,False,0.0,0.6817178336593495
+Acer pseudoplatanus L.,Acer,lopex93,0.2862542326366338,False,0.0,0.2862542326366338
+Acer pseudoplatanus L.,Acer,lopex93,0.4012360426971713,False,0.0,0.4012360426971713
+Acer pseudoplatanus L.,Acer,lopex93,0.22329141692263962,False,0.0,0.22329141692263962
+Acer pseudoplatanus L.,Acer,lopex93,0.7164783711276138,False,0.0,0.7164783711276138
+Acer pseudoplatanus L.,Acer,lopex93,0.34266654731501567,False,0.0,0.34266654731501567
+Prunus armeniaca L.,Prunus,lopex93,0.3417904640735064,False,0.0,0.3417904640735064
+Prunus armeniaca L.,Prunus,lopex93,0.08216743898489695,False,0.0,0.08216743898489695
+Prunus armeniaca L.,Prunus,lopex93,0.3439192638826778,False,0.0,0.3439192638826778
+Prunus armeniaca L.,Prunus,lopex93,0.11811989933018255,False,0.0,0.11811989933018255
+Prunus armeniaca L.,Prunus,lopex93,0.3850991482133389,False,0.0,0.3850991482133389
+Prunus armeniaca L.,Prunus,lopex93,0.12380399253908539,False,0.0,0.12380399253908539
+Prunus armeniaca L.,Prunus,lopex93,0.4146381735011195,False,0.0,0.4146381735011195
+Prunus armeniaca L.,Prunus,lopex93,0.10976493336486719,False,0.0,0.10976493336486719
+Prunus armeniaca L.,Prunus,lopex93,0.3608883990967501,False,0.0,0.3608883990967501
+Prunus armeniaca L.,Prunus,lopex93,0.09617954821133919,False,0.0,0.09617954821133919
+Morus nigra L.,Morus,lopex93,0.24801195352117555,False,0.0,0.24801195352117555
+Morus nigra L.,Morus,lopex93,0.09886899341567652,False,0.0,0.09886899341567652
+Morus nigra L.,Morus,lopex93,0.28270228950931714,False,0.0,0.28270228950931714
+Morus nigra L.,Morus,lopex93,0.1239144109696107,False,0.0,0.1239144109696107
+Morus nigra L.,Morus,lopex93,0.2505170586088014,False,0.0,0.2505170586088014
+Morus nigra L.,Morus,lopex93,0.09577343810775032,False,0.0,0.09577343810775032
+Morus nigra L.,Morus,lopex93,0.3006780473705444,False,0.0,0.3006780473705444
+Morus nigra L.,Morus,lopex93,0.09788305758426422,False,0.0,0.09788305758426422
+Morus nigra L.,Morus,lopex93,0.3198512721335213,False,0.0,0.3198512721335213
+Morus nigra L.,Morus,lopex93,0.13081704977142694,False,0.0,0.13081704977142694
+Zea mays L.,Zea,lopex93,0.176500482158169,False,0.0,0.176500482158169
+Zea mays L.,Zea,lopex93,0.04139948312797587,False,0.0,0.04139948312797587
+Zea mays L.,Zea,lopex93,0.18286550620787456,False,0.0,0.18286550620787456
+Zea mays L.,Zea,lopex93,0.06271956690676372,False,0.0,0.06271956690676372
+Zea mays L.,Zea,lopex93,0.23844345986248122,False,0.0,0.23844345986248122
+Zea mays L.,Zea,lopex93,0.11351924229352764,False,0.0,0.11351924229352764
+Zea mays L.,Zea,lopex93,0.16775171221965698,False,0.0,0.16775171221965698
+Zea mays L.,Zea,lopex93,0.08141679135780211,False,0.0,0.08141679135780211
+Zea mays L.,Zea,lopex93,0.20139383297663518,False,0.0,0.20139383297663518
+Zea mays L.,Zea,lopex93,0.07829707368540252,False,0.0,0.07829707368540252
+Castanea sativa,Castanea,lopex93,0.43677047509040706,False,0.0,0.43677047509040706
+Castanea sativa,Castanea,lopex93,0.08656837829218736,False,0.0,0.08656837829218736
+Castanea sativa,Castanea,lopex93,0.485771811300196,False,0.0,0.485771811300196
+Castanea sativa,Castanea,lopex93,0.12215411633928686,False,0.0,0.12215411633928686
+Castanea sativa,Castanea,lopex93,0.4358910821740224,False,0.0,0.4358910821740224
+Castanea sativa,Castanea,lopex93,0.08210379999046599,False,0.0,0.08210379999046599
+Castanea sativa,Castanea,lopex93,0.4174940406731484,False,0.0,0.4174940406731484
+Castanea sativa,Castanea,lopex93,0.07513830355103537,False,0.0,0.07513830355103537
+Castanea sativa,Castanea,lopex93,0.38582507625507373,False,0.0,0.38582507625507373
+Castanea sativa,Castanea,lopex93,0.062204105118950616,False,0.0,0.062204105118950616
+Corylus avellana L.,Corylus,lopex93,0.20697197749908053,False,0.0,0.20697197749908053
+Corylus avellana L.,Corylus,lopex93,0.03935659764622304,False,0.0,0.03935659764622304
+Corylus avellana L.,Corylus,lopex93,0.3404630215568315,False,0.0,0.3404630215568315
+Corylus avellana L.,Corylus,lopex93,0.10679579393867626,False,0.0,0.10679579393867626
+Corylus avellana L.,Corylus,lopex93,0.31414274683062254,False,0.0,0.31414274683062254
+Corylus avellana L.,Corylus,lopex93,0.09991946569519172,False,0.0,0.09991946569519172
+Corylus avellana L.,Corylus,lopex93,0.3454719162622023,False,0.0,0.3454719162622023
+Corylus avellana L.,Corylus,lopex93,0.08642228516300893,False,0.0,0.08642228516300893
+Corylus avellana L.,Corylus,lopex93,0.36299072182288306,False,0.0,0.36299072182288306
+Corylus avellana L.,Corylus,lopex93,0.11904807112128138,False,0.0,0.11904807112128138
+Tilia platyphyllos,Tilia,lopex93,0.3098399627436878,False,0.0,0.3098399627436878
+Tilia platyphyllos,Tilia,lopex93,0.004666962037342637,False,0.0,0.004666962037342637
+Tilia platyphyllos,Tilia,lopex93,0.28684783832230193,False,0.0,0.28684783832230193
+Tilia platyphyllos,Tilia,lopex93,0.013911166411028422,False,0.0,0.013911166411028422
+Tilia platyphyllos,Tilia,lopex93,0.303217416863641,False,0.0,0.303217416863641
+Tilia platyphyllos,Tilia,lopex93,0.032851518282331724,False,0.0,0.032851518282331724
+Tilia platyphyllos,Tilia,lopex93,0.28077136562025934,False,0.0,0.28077136562025934
+Tilia platyphyllos,Tilia,lopex93,0.03320420730231946,False,0.0,0.03320420730231946
+Tilia platyphyllos,Tilia,lopex93,0.2911441878911086,False,0.0,0.2911441878911086
+Tilia platyphyllos,Tilia,lopex93,0.01738584442875547,False,0.0,0.01738584442875547
+Populus tremula L.,Populus,lopex93,0.23003431430912738,False,0.0,0.23003431430912738
+Populus tremula L.,Populus,lopex93,0.035327878567480986,False,0.0,0.035327878567480986
+Populus tremula L.,Populus,lopex93,0.2596692833858585,False,0.0,0.2596692833858585
+Populus tremula L.,Populus,lopex93,0.028400201650261477,False,0.0,0.028400201650261477
+Populus tremula L.,Populus,lopex93,0.24818923507613322,False,0.0,0.24818923507613322
+Populus tremula L.,Populus,lopex93,0.03942682062663825,False,0.0,0.03942682062663825
+Populus tremula L.,Populus,lopex93,0.32256398916217666,False,0.0,0.32256398916217666
+Populus tremula L.,Populus,lopex93,0.023103056657591502,False,0.0,0.023103056657591502
+Populus tremula L.,Populus,lopex93,0.248452855062604,False,0.0,0.248452855062604
+Populus tremula L.,Populus,lopex93,0.050380492722700655,False,0.0,0.050380492722700655
+Quercus pubescens,Quercus,lopex93,0.2301870420024897,False,0.0,0.2301870420024897
+Quercus pubescens,Quercus,lopex93,0.06899294287593966,False,0.0,0.06899294287593966
+Quercus pubescens,Quercus,lopex93,0.2614708939507358,False,0.0,0.2614708939507358
+Quercus pubescens,Quercus,lopex93,0.10273887957862735,False,0.0,0.10273887957862735
+Quercus pubescens,Quercus,lopex93,0.3558398574774189,False,0.0,0.3558398574774189
+Quercus pubescens,Quercus,lopex93,0.010553841217291223,False,0.0,0.010553841217291223
+Quercus pubescens,Quercus,lopex93,0.2261170894380063,False,0.0,0.2261170894380063
+Quercus pubescens,Quercus,lopex93,0.09816698716160804,False,0.0,0.09816698716160804
+Quercus pubescens,Quercus,lopex93,0.1958325029701469,False,0.0,0.1958325029701469
+Quercus pubescens,Quercus,lopex93,0.0798873317843101,False,0.0,0.0798873317843101
+Alnus glutinosa L.,Alnus,lopex93,0.21461939897199817,False,0.0,0.21461939897199817
+Alnus glutinosa L.,Alnus,lopex93,0.022307787313746757,False,0.0,0.022307787313746757
+Alnus glutinosa L.,Alnus,lopex93,0.18908611104864312,False,0.0,0.18908611104864312
+Alnus glutinosa L.,Alnus,lopex93,0.020079753168564158,False,0.0,0.020079753168564158
+Alnus glutinosa L.,Alnus,lopex93,0.17725170358970715,False,0.0,0.17725170358970715
+Alnus glutinosa L.,Alnus,lopex93,0.017715903598230026,False,0.0,0.017715903598230026
+Alnus glutinosa L.,Alnus,lopex93,0.1680484190423169,False,0.0,0.1680484190423169
+Alnus glutinosa L.,Alnus,lopex93,0.016379534676149516,False,0.0,0.016379534676149516
+Alnus glutinosa L.,Alnus,lopex93,0.15441256953570495,False,0.0,0.15441256953570495
+Alnus glutinosa L.,Alnus,lopex93,0.023341410311276366,False,0.0,0.023341410311276366
+Zea mays L.,Zea,lopex93,0.4575031261572144,False,0.0,0.4575031261572144
+Zea mays L.,Zea,lopex93,0.15947939635592573,False,0.0,0.15947939635592573
+Zea mays L.,Zea,lopex93,0.3561300142120956,False,0.0,0.3561300142120956
+Zea mays L.,Zea,lopex93,0.17600961246494481,False,0.0,0.17600961246494481
+Zea mays L.,Zea,lopex93,0.3828342926205695,False,0.0,0.3828342926205695
+Zea mays L.,Zea,lopex93,0.1692129291215922,False,0.0,0.1692129291215922
+Zea mays L.,Zea,lopex93,0.38318670647206493,False,0.0,0.38318670647206493
+Zea mays L.,Zea,lopex93,0.20309590930374685,False,0.0,0.20309590930374685
+Zea mays L.,Zea,lopex93,0.41784213459126196,False,0.0,0.41784213459126196
+Zea mays L.,Zea,lopex93,0.21224487715857426,False,0.0,0.21224487715857426
+Zea mays L.,Zea,lopex93,0.2690112557310859,False,0.0,0.2690112557310859
+Zea mays L.,Zea,lopex93,0.10459262398346503,False,0.0,0.10459262398346503
+Zea mays L.,Zea,lopex93,0.3599199757486509,False,0.0,0.3599199757486509
+Zea mays L.,Zea,lopex93,0.07909413827877115,False,0.0,0.07909413827877115
+Zea mays L.,Zea,lopex93,0.3823863567061639,False,0.0,0.3823863567061639
+Zea mays L.,Zea,lopex93,0.07756970626670849,False,0.0,0.07756970626670849
+Zea mays L.,Zea,lopex93,0.19487793774039391,False,0.0,0.19487793774039391
+Zea mays L.,Zea,lopex93,0.12060365607164807,False,0.0,0.12060365607164807
+Zea mays L.,Zea,lopex93,0.2935474157077772,False,0.0,0.2935474157077772
+Zea mays L.,Zea,lopex93,0.07742471413957229,False,0.0,0.07742471413957229
+Quercus rubra L.,Quercus,lopex93,0.23161715913606631,False,0.0,0.23161715913606631
+Quercus rubra L.,Quercus,lopex93,0.10936688458230934,False,0.0,0.10936688458230934
+Quercus rubra L.,Quercus,lopex93,0.2205725249911096,False,0.0,0.2205725249911096
+Quercus rubra L.,Quercus,lopex93,0.08294886489618439,False,0.0,0.08294886489618439
+Quercus rubra L.,Quercus,lopex93,0.23322513163453779,False,0.0,0.23322513163453779
+Quercus rubra L.,Quercus,lopex93,0.09197273719317121,False,0.0,0.09197273719317121
+Quercus rubra L.,Quercus,lopex93,0.283075624538077,False,0.0,0.283075624538077
+Quercus rubra L.,Quercus,lopex93,0.06229395951217082,False,0.0,0.06229395951217082
+Quercus rubra L.,Quercus,lopex93,0.22414778247886843,False,0.0,0.22414778247886843
+Quercus rubra L.,Quercus,lopex93,0.06494608286567899,False,0.0,0.06494608286567899
+Zea mays L.,Zea,lopex93,0.40861995983138055,False,0.0,0.40861995983138055
+Zea mays L.,Zea,lopex93,0.27826877677475453,False,0.0,0.27826877677475453
+Zea mays L.,Zea,lopex93,0.5229351219414542,False,0.0,0.5229351219414542
+Zea mays L.,Zea,lopex93,0.42181931784743765,False,0.0,0.42181931784743765
+Zea mays L.,Zea,lopex93,0.5806557595699494,False,0.0,0.5806557595699494
+Zea mays L.,Zea,lopex93,0.4385955376462468,False,0.0,0.4385955376462468
+Zea mays L.,Zea,lopex93,0.6456721690784036,False,0.0,0.6456721690784036
+Zea mays L.,Zea,lopex93,0.5712669528590043,False,0.0,0.5712669528590043
+Zea mays L.,Zea,lopex93,0.6092720457122032,False,0.0,0.6092720457122032
+Zea mays L.,Zea,lopex93,0.5950933906204624,False,0.0,0.5950933906204624
+Corylus avellana L.,Corylus,lopex93,0.1811086737596636,False,0.0,0.1811086737596636
+Corylus avellana L.,Corylus,lopex93,0.01597601179664338,False,0.0,0.01597601179664338
+Corylus avellana L.,Corylus,lopex93,0.1359649159821771,False,0.0,0.1359649159821771
+Corylus avellana L.,Corylus,lopex93,0.02593125169992687,False,0.0,0.02593125169992687
+Corylus avellana L.,Corylus,lopex93,0.1410016263571777,False,0.0,0.1410016263571777
+Corylus avellana L.,Corylus,lopex93,0.021345360885146974,False,0.0,0.021345360885146974
+Corylus avellana L.,Corylus,lopex93,0.14119367953505596,False,0.0,0.14119367953505596
+Corylus avellana L.,Corylus,lopex93,0.038015538211187326,False,0.0,0.038015538211187326
+Corylus avellana L.,Corylus,lopex93,0.2514841149691925,False,0.0,0.2514841149691925
+Corylus avellana L.,Corylus,lopex93,0.03880463400766423,False,0.0,0.03880463400766423
+Castanea sativa,Castanea,lopex93,0.32558055316070583,False,0.0,0.32558055316070583
+Castanea sativa,Castanea,lopex93,0.1360947127503683,False,0.0,0.1360947127503683
+Castanea sativa,Castanea,lopex93,0.30073170984068875,False,0.0,0.30073170984068875
+Castanea sativa,Castanea,lopex93,0.16761513912545195,False,0.0,0.16761513912545195
+Castanea sativa,Castanea,lopex93,0.30156637595391955,False,0.0,0.30156637595391955
+Castanea sativa,Castanea,lopex93,0.10626748466574434,False,0.0,0.10626748466574434
+Castanea sativa,Castanea,lopex93,0.22205839623681886,False,0.0,0.22205839623681886
+Castanea sativa,Castanea,lopex93,0.0339767131671853,False,0.0,0.0339767131671853
+Castanea sativa,Castanea,lopex93,0.21590595486078532,False,0.0,0.21590595486078532
+Castanea sativa,Castanea,lopex93,0.05868720247242653,False,0.0,0.05868720247242653
+Acer pseudoplatanus L.,Acer,lopex93,0.2185379403687851,False,0.0,0.2185379403687851
+Acer pseudoplatanus L.,Acer,lopex93,0.006448725527648528,False,0.0,0.006448725527648528
+Acer pseudoplatanus L.,Acer,lopex93,0.2588059862055062,False,0.0,0.2588059862055062
+Acer pseudoplatanus L.,Acer,lopex93,0.050150781865954674,False,0.0,0.050150781865954674
+Acer pseudoplatanus L.,Acer,lopex93,0.1869994986158667,False,0.0,0.1869994986158667
+Acer pseudoplatanus L.,Acer,lopex93,0.007632060688798311,False,0.0,0.007632060688798311
+Acer pseudoplatanus L.,Acer,lopex93,0.36578549572265284,False,0.0,0.36578549572265284
+Acer pseudoplatanus L.,Acer,lopex93,0.03223542952872587,False,0.0,0.03223542952872587
+Acer pseudoplatanus L.,Acer,lopex93,0.2762361171609332,False,0.0,0.2762361171609332
+Acer pseudoplatanus L.,Acer,lopex93,0.04565394641464892,False,0.0,0.04565394641464892
+Salvia officinalis L.,Salvia,lopex93,0.24925309322234357,False,0.0,0.24925309322234357
+Salvia officinalis L.,Salvia,lopex93,0.07128508751283168,False,0.0,0.07128508751283168
+Salvia officinalis L.,Salvia,lopex93,0.26837587730245677,False,0.0,0.26837587730245677
+Salvia officinalis L.,Salvia,lopex93,0.05287352984210589,False,0.0,0.05287352984210589
+Salvia officinalis L.,Salvia,lopex93,0.2712371784063794,False,0.0,0.2712371784063794
+Salvia officinalis L.,Salvia,lopex93,0.05332408725752142,False,0.0,0.05332408725752142
+Salvia officinalis L.,Salvia,lopex93,0.19753524552303245,False,0.0,0.19753524552303245
+Salvia officinalis L.,Salvia,lopex93,0.035333796359217184,False,0.0,0.035333796359217184
+Salvia officinalis L.,Salvia,lopex93,0.2255396945513285,False,0.0,0.2255396945513285
+Salvia officinalis L.,Salvia,lopex93,0.06651610568719268,False,0.0,0.06651610568719268
+Ficus carica L.,Ficus,lopex93,0.7622880700584069,False,0.0,0.7622880700584069
+Ficus carica L.,Ficus,lopex93,0.3252196708354704,False,0.0,0.3252196708354704
+Ficus carica L.,Ficus,lopex93,0.8243352136545334,False,0.0,0.8243352136545334
+Ficus carica L.,Ficus,lopex93,0.5198954207742305,False,0.0,0.5198954207742305
+Ficus carica L.,Ficus,lopex93,0.6304762496396648,False,0.0,0.6304762496396648
+Ficus carica L.,Ficus,lopex93,0.4342815465703245,False,0.0,0.4342815465703245
+Ficus carica L.,Ficus,lopex93,0.8596766057267536,False,0.0,0.8596766057267536
+Ficus carica L.,Ficus,lopex93,0.7337375418091552,False,0.0,0.7337375418091552
+Ficus carica L.,Ficus,lopex93,0.727424944357233,False,0.0,0.727424944357233
+Ficus carica L.,Ficus,lopex93,0.4844855974824027,False,0.0,0.4844855974824027
+Bambusa arundinacea,Bambusa,lopex93,0.2480117742122878,False,0.0,0.2480117742122878
+Bambusa arundinacea,Bambusa,lopex93,0.09564392813148467,False,0.0,0.09564392813148467
+Bambusa arundinacea,Bambusa,lopex93,0.29299781879080156,False,0.0,0.29299781879080156
+Bambusa arundinacea,Bambusa,lopex93,0.09145872426744543,False,0.0,0.09145872426744543
+Bambusa arundinacea,Bambusa,lopex93,0.35124245288079176,False,0.0,0.35124245288079176
+Bambusa arundinacea,Bambusa,lopex93,0.06261591113765713,False,0.0,0.06261591113765713
+Bambusa arundinacea,Bambusa,lopex93,0.2529591416153773,False,0.0,0.2529591416153773
+Bambusa arundinacea,Bambusa,lopex93,0.09529142166897671,False,0.0,0.09529142166897671
+Bambusa arundinacea,Bambusa,lopex93,0.2843196008748647,False,0.0,0.2843196008748647
+Bambusa arundinacea,Bambusa,lopex93,0.0953130634081582,False,0.0,0.0953130634081582
+Chamaerops humilis L.,Chamaerops,lopex93,0.6305884592323968,False,0.0,0.6305884592323968
+Chamaerops humilis L.,Chamaerops,lopex93,0.09825819649736431,False,0.0,0.09825819649736431
+Chamaerops humilis L.,Chamaerops,lopex93,0.3845351686190802,False,0.0,0.3845351686190802
+Chamaerops humilis L.,Chamaerops,lopex93,0.03445986780665933,False,0.0,0.03445986780665933
+Chamaerops humilis L.,Chamaerops,lopex93,0.3925295818753231,False,0.0,0.3925295818753231
+Chamaerops humilis L.,Chamaerops,lopex93,0.10771586286150672,False,0.0,0.10771586286150672
+Chamaerops humilis L.,Chamaerops,lopex93,0.5286340819070043,False,0.0,0.5286340819070043
+Chamaerops humilis L.,Chamaerops,lopex93,0.11060176068179978,False,0.0,0.11060176068179978
+Chamaerops humilis L.,Chamaerops,lopex93,0.6877539613297551,False,0.0,0.6877539613297551
+Chamaerops humilis L.,Chamaerops,lopex93,0.16058648791001687,False,0.0,0.16058648791001687
+Phragmites australis,Phragmites,lopex93,0.5143783323052865,False,0.0,0.5143783323052865
+Phragmites australis,Phragmites,lopex93,0.11727981391680768,False,0.0,0.11727981391680768
+Phragmites australis,Phragmites,lopex93,0.5715370277694114,False,0.0,0.5715370277694114
+Phragmites australis,Phragmites,lopex93,0.22366283606434675,False,0.0,0.22366283606434675
+Phragmites australis,Phragmites,lopex93,0.7237866211285061,False,0.0,0.7237866211285061
+Phragmites australis,Phragmites,lopex93,0.27249540082310225,False,0.0,0.27249540082310225
+Phragmites australis,Phragmites,lopex93,0.6651619317942493,False,0.0,0.6651619317942493
+Phragmites australis,Phragmites,lopex93,0.24088303574087602,False,0.0,0.24088303574087602
+Phragmites australis,Phragmites,lopex93,0.7076375075032589,False,0.0,0.7076375075032589
+Phragmites australis,Phragmites,lopex93,0.25955792958708007,False,0.0,0.25955792958708007
+Bambusa arundinacea,Bambusa,lopex93,0.5101139782658856,False,0.0,0.5101139782658856
+Bambusa arundinacea,Bambusa,lopex93,0.27099560612317003,False,0.0,0.27099560612317003
+Bambusa arundinacea,Bambusa,lopex93,0.8814641354200072,False,0.0,0.8814641354200072
+Bambusa arundinacea,Bambusa,lopex93,0.47078391717718215,False,0.0,0.47078391717718215
+Bambusa arundinacea,Bambusa,lopex93,0.6371675828001138,False,0.0,0.6371675828001138
+Bambusa arundinacea,Bambusa,lopex93,0.31836910651655626,False,0.0,0.31836910651655626
+Bambusa arundinacea,Bambusa,lopex93,0.8327621545507877,False,0.0,0.8327621545507877
+Bambusa arundinacea,Bambusa,lopex93,0.47930455388228255,False,0.0,0.47930455388228255
+Bambusa arundinacea,Bambusa,lopex93,0.7141746911975752,False,0.0,0.7141746911975752
+Bambusa arundinacea,Bambusa,lopex93,0.3223676999430297,False,0.0,0.3223676999430297
+Prunus armeniaca L.,Prunus,lopex93,0.26643907368025316,False,0.0,0.26643907368025316
+Prunus armeniaca L.,Prunus,lopex93,0.09004680528821168,False,0.0,0.09004680528821168
+Prunus armeniaca L.,Prunus,lopex93,0.27350220498225214,False,0.0,0.27350220498225214
+Prunus armeniaca L.,Prunus,lopex93,0.022617848533129335,False,0.0,0.022617848533129335
+Prunus armeniaca L.,Prunus,lopex93,0.30383876866388454,False,0.0,0.30383876866388454
+Prunus armeniaca L.,Prunus,lopex93,0.07082823966814358,False,0.0,0.07082823966814358
+Prunus armeniaca L.,Prunus,lopex93,0.34675472482759756,False,0.0,0.34675472482759756
+Prunus armeniaca L.,Prunus,lopex93,0.19211657547968553,False,0.0,0.19211657547968553
+Prunus armeniaca L.,Prunus,lopex93,0.21433644669879595,False,0.0,0.21433644669879595
+Prunus armeniaca L.,Prunus,lopex93,0.04673215125948135,False,0.0,0.04673215125948135
+Ulmus glabra,Ulmus,lopex93,0.10971536407749292,False,0.0,0.10971536407749292
+Ulmus glabra,Ulmus,lopex93,0.08118699528718593,False,0.0,0.08118699528718593
+Ulmus glabra,Ulmus,lopex93,0.2049284666740557,False,0.0,0.2049284666740557
+Ulmus glabra,Ulmus,lopex93,0.1141364999817018,False,0.0,0.1141364999817018
+Ulmus glabra,Ulmus,lopex93,0.10691814517707077,False,0.0,0.10691814517707077
+Ulmus glabra,Ulmus,lopex93,0.0372141491322646,False,0.0,0.0372141491322646
+Ulmus glabra,Ulmus,lopex93,0.16549592152429501,False,0.0,0.16549592152429501
+Ulmus glabra,Ulmus,lopex93,0.10967923483459366,False,0.0,0.10967923483459366
+Ulmus glabra,Ulmus,lopex93,0.10671574344521993,False,0.0,0.10671574344521993
+Ulmus glabra,Ulmus,lopex93,0.0492046126590934,False,0.0,0.0492046126590934
+Hedera helix L.,Hedera,lopex93,0.4170936542124207,False,0.0,0.4170936542124207
+Hedera helix L.,Hedera,lopex93,0.2212521830656154,False,0.0,0.2212521830656154
+Hedera helix L.,Hedera,lopex93,0.3494458732911192,False,0.0,0.3494458732911192
+Hedera helix L.,Hedera,lopex93,0.17675272989116625,False,0.0,0.17675272989116625
+Hedera helix L.,Hedera,lopex93,0.7454794512598015,False,0.0,0.7454794512598015
+Hedera helix L.,Hedera,lopex93,0.2093225400957966,False,0.0,0.2093225400957966
+Hedera helix L.,Hedera,lopex93,0.563585659746251,False,0.0,0.563585659746251
+Hedera helix L.,Hedera,lopex93,0.22724367055699757,False,0.0,0.22724367055699757
+Hedera helix L.,Hedera,lopex93,0.4281571820147207,False,0.0,0.4281571820147207
+Hedera helix L.,Hedera,lopex93,0.22879040106448087,False,0.0,0.22879040106448087
+Robinia pseudoacacia L.,Robinia,lopex93,0.2204513547445157,False,0.0,0.2204513547445157
+Robinia pseudoacacia L.,Robinia,lopex93,0.09793071230808756,False,0.0,0.09793071230808756
+Robinia pseudoacacia L.,Robinia,lopex93,0.21204264929104263,False,0.0,0.21204264929104263
+Robinia pseudoacacia L.,Robinia,lopex93,0.07022705396028615,False,0.0,0.07022705396028615
+Robinia pseudoacacia L.,Robinia,lopex93,0.24967949622033533,False,0.0,0.24967949622033533
+Robinia pseudoacacia L.,Robinia,lopex93,0.0775390917511361,False,0.0,0.0775390917511361
+Robinia pseudoacacia L.,Robinia,lopex93,0.2686854960966896,False,0.0,0.2686854960966896
+Robinia pseudoacacia L.,Robinia,lopex93,0.11361190793046481,False,0.0,0.11361190793046481
+Robinia pseudoacacia L.,Robinia,lopex93,0.2225128939610333,False,0.0,0.2225128939610333
+Robinia pseudoacacia L.,Robinia,lopex93,0.08702471306418937,False,0.0,0.08702471306418937
+Prunus serotina,Prunus,lopex93,0.20178390431374396,False,0.0,0.20178390431374396
+Prunus serotina,Prunus,lopex93,0.12745784449677933,False,0.0,0.12745784449677933
+Prunus serotina,Prunus,lopex93,0.2630945282130937,False,0.0,0.2630945282130937
+Prunus serotina,Prunus,lopex93,0.1278661160520993,False,0.0,0.1278661160520993
+Prunus serotina,Prunus,lopex93,0.22522234291738275,False,0.0,0.22522234291738275
+Prunus serotina,Prunus,lopex93,0.16205718298742625,False,0.0,0.16205718298742625
+Prunus serotina,Prunus,lopex93,0.16890169386600504,False,0.0,0.16890169386600504
+Prunus serotina,Prunus,lopex93,0.07955050645979155,False,0.0,0.07955050645979155
+Prunus serotina,Prunus,lopex93,0.3281863253483132,False,0.0,0.3281863253483132
+Prunus serotina,Prunus,lopex93,0.1912023432516518,False,0.0,0.1912023432516518
+Fraxinus excelsior L.,Fraxinus,lopex93,0.23152433570779432,False,0.0,0.23152433570779432
+Fraxinus excelsior L.,Fraxinus,lopex93,0.09079148714911536,False,0.0,0.09079148714911536
+Fraxinus excelsior L.,Fraxinus,lopex93,0.38254878506715045,False,0.0,0.38254878506715045
+Fraxinus excelsior L.,Fraxinus,lopex93,0.1694861884913379,False,0.0,0.1694861884913379
+Fraxinus excelsior L.,Fraxinus,lopex93,0.32071939405481265,False,0.0,0.32071939405481265
+Fraxinus excelsior L.,Fraxinus,lopex93,0.12346688580217331,False,0.0,0.12346688580217331
+Fraxinus excelsior L.,Fraxinus,lopex93,0.35571080292655605,False,0.0,0.35571080292655605
+Fraxinus excelsior L.,Fraxinus,lopex93,0.16655262326496972,False,0.0,0.16655262326496972
+Fraxinus excelsior L.,Fraxinus,lopex93,0.46517812143382115,False,0.0,0.46517812143382115
+Fraxinus excelsior L.,Fraxinus,lopex93,0.18797716088380748,False,0.0,0.18797716088380748
+Brassica oleracea L.,Brassica,lopex93,0.17812794717224964,True,0.15,0.32812794717224963
+Brassica oleracea L.,Brassica,lopex93,0.12053227698606947,True,0.15,0.27053227698606946
+Brassica oleracea L.,Brassica,lopex93,0.22373958429691002,True,0.15,0.37373958429691
+Brassica oleracea L.,Brassica,lopex93,0.1340553265250625,True,0.15,0.2840553265250625
+Brassica oleracea L.,Brassica,lopex93,0.17352122420944535,True,0.15,0.32352122420944535
+Brassica oleracea L.,Brassica,lopex93,0.07342664471360613,True,0.15,0.22342664471360613
+Brassica oleracea L.,Brassica,lopex93,0.18321987831245176,True,0.15,0.33321987831245176
+Brassica oleracea L.,Brassica,lopex93,0.10597356146527026,True,0.15,0.2559735614652703
+Brassica oleracea L.,Brassica,lopex93,0.15008279621497272,True,0.15,0.3000827962149727
+Brassica oleracea L.,Brassica,lopex93,0.08545672356778945,True,0.15,0.23545672356778946
+Iris germanica L.,Iris,lopex93,0.3975315537507782,False,0.0,0.3975315537507782
+Iris germanica L.,Iris,lopex93,0.14737542476587234,False,0.0,0.14737542476587234
+Iris germanica L.,Iris,lopex93,0.3478925704297986,False,0.0,0.3478925704297986
+Iris germanica L.,Iris,lopex93,0.1933735750736993,False,0.0,0.1933735750736993
+Iris germanica L.,Iris,lopex93,0.34114062286333846,False,0.0,0.34114062286333846
+Iris germanica L.,Iris,lopex93,0.08199761472283129,False,0.0,0.08199761472283129
+Iris germanica L.,Iris,lopex93,0.3667423405849099,False,0.0,0.3667423405849099
+Iris germanica L.,Iris,lopex93,0.1292842482718339,False,0.0,0.1292842482718339
+Iris germanica L.,Iris,lopex93,0.17102675983718324,False,0.0,0.17102675983718324
+Iris germanica L.,Iris,lopex93,0.0339564588595142,False,0.0,0.0339564588595142
+Vitis vinifera L.,Vitis,lopex93,0.3973408245889382,False,0.0,0.3973408245889382
+Vitis vinifera L.,Vitis,lopex93,0.09139803067148691,False,0.0,0.09139803067148691
+Vitis vinifera L.,Vitis,lopex93,0.42899360786720747,False,0.0,0.42899360786720747
+Vitis vinifera L.,Vitis,lopex93,0.0947538960770005,False,0.0,0.0947538960770005
+Vitis vinifera L.,Vitis,lopex93,0.40980389901813347,False,0.0,0.40980389901813347
+Vitis vinifera L.,Vitis,lopex93,0.12932518220557276,False,0.0,0.12932518220557276
+Vitis vinifera L.,Vitis,lopex93,0.44163119979218557,False,0.0,0.44163119979218557
+Vitis vinifera L.,Vitis,lopex93,0.11739878500293638,False,0.0,0.11739878500293638
+Vitis vinifera L.,Vitis,lopex93,0.44001533979914825,False,0.0,0.44001533979914825
+Vitis vinifera L.,Vitis,lopex93,0.12573325562708756,False,0.0,0.12573325562708756
+Morus alba L.,Morus,lopex93,0.28536552769476253,False,0.0,0.28536552769476253
+Morus alba L.,Morus,lopex93,0.1233786684204358,False,0.0,0.1233786684204358
+Morus alba L.,Morus,lopex93,0.30194535230709957,False,0.0,0.30194535230709957
+Morus alba L.,Morus,lopex93,0.1592750383462488,False,0.0,0.1592750383462488
+Morus alba L.,Morus,lopex93,0.2884567390337058,False,0.0,0.2884567390337058
+Morus alba L.,Morus,lopex93,0.12321802694723384,False,0.0,0.12321802694723384
+Morus alba L.,Morus,lopex93,0.2692557402454129,False,0.0,0.2692557402454129
+Morus alba L.,Morus,lopex93,0.18619767321405012,False,0.0,0.18619767321405012
+Morus alba L.,Morus,lopex93,0.3312597621369821,False,0.0,0.3312597621369821
+Morus alba L.,Morus,lopex93,0.16891959986497734,False,0.0,0.16891959986497734
+Salix alba L.,Salix,lopex93,0.16025080703143127,False,0.0,0.16025080703143127
+Salix alba L.,Salix,lopex93,0.05337402880169447,False,0.0,0.05337402880169447
+Salix alba L.,Salix,lopex93,0.14979956601075936,False,0.0,0.14979956601075936
+Salix alba L.,Salix,lopex93,0.05859108622477398,False,0.0,0.05859108622477398
+Salix alba L.,Salix,lopex93,0.1509719693162916,False,0.0,0.1509719693162916
+Salix alba L.,Salix,lopex93,0.0423147607602717,False,0.0,0.0423147607602717
+Salix alba L.,Salix,lopex93,0.2177024295445985,False,0.0,0.2177024295445985
+Salix alba L.,Salix,lopex93,0.14524590219184288,False,0.0,0.14524590219184288
+Salix alba L.,Salix,lopex93,0.22938575992930252,False,0.0,0.22938575992930252
+Salix alba L.,Salix,lopex93,0.14411967266613518,False,0.0,0.14411967266613518
+Vitis vinifera L.,Vitis,lopex93,0.3372207281593582,False,0.0,0.3372207281593582
+Vitis vinifera L.,Vitis,lopex93,0.0959890552014286,False,0.0,0.0959890552014286
+Vitis vinifera L.,Vitis,lopex93,0.3530879028949919,False,0.0,0.3530879028949919
+Vitis vinifera L.,Vitis,lopex93,0.1517993358973103,False,0.0,0.1517993358973103
+Vitis vinifera L.,Vitis,lopex93,0.3873116949208517,False,0.0,0.3873116949208517
+Vitis vinifera L.,Vitis,lopex93,0.11596520945557068,False,0.0,0.11596520945557068
+Vitis vinifera L.,Vitis,lopex93,0.43193200239062896,False,0.0,0.43193200239062896
+Vitis vinifera L.,Vitis,lopex93,0.17451244585720635,False,0.0,0.17451244585720635
+Vitis vinifera L.,Vitis,lopex93,0.4255585321642845,False,0.0,0.4255585321642845
+Vitis vinifera L.,Vitis,lopex93,0.1486064741930293,False,0.0,0.1486064741930293
+Ensete ventricosum,Ensete,lopex93,0.9782048429239524,False,0.0,0.9782048429239524
+Ensete ventricosum,Ensete,lopex93,0.7217695110288365,False,0.0,0.7217695110288365
+Ensete ventricosum,Ensete,lopex93,0.9999999689578846,False,0.0,0.9999999689578846
+Ensete ventricosum,Ensete,lopex93,0.8913415274553046,False,0.0,0.8913415274553046
+Ensete ventricosum,Ensete,lopex93,0.798631876468144,False,0.0,0.798631876468144
+Ensete ventricosum,Ensete,lopex93,0.8203311250023416,False,0.0,0.8203311250023416
+Castanea sativa,Castanea,lopex93,0.3434200207880418,False,0.0,0.3434200207880418
+Castanea sativa,Castanea,lopex93,0.15166468835488378,False,0.0,0.15166468835488378
+Castanea sativa,Castanea,lopex93,0.33579057778372384,False,0.0,0.33579057778372384
+Castanea sativa,Castanea,lopex93,0.1248215897107343,False,0.0,0.1248215897107343
+Castanea sativa,Castanea,lopex93,0.430864250906522,False,0.0,0.430864250906522
+Castanea sativa,Castanea,lopex93,0.1763568188628944,False,0.0,0.1763568188628944
+Castanea sativa,Castanea,lopex93,0.31517174220859373,False,0.0,0.31517174220859373
+Castanea sativa,Castanea,lopex93,0.11813704600032146,False,0.0,0.11813704600032146
+Castanea sativa,Castanea,lopex93,0.2831832100710318,False,0.0,0.2831832100710318
+Castanea sativa,Castanea,lopex93,0.08767095224246203,False,0.0,0.08767095224246203
+Betula pendula,Betula,lopex93,0.29450889580972134,False,0.0,0.29450889580972134
+Betula pendula,Betula,lopex93,0.11464954692434269,False,0.0,0.11464954692434269
+Betula pendula,Betula,lopex93,0.3267395041113924,False,0.0,0.3267395041113924
+Betula pendula,Betula,lopex93,0.10069718376232441,False,0.0,0.10069718376232441
+Betula pendula,Betula,lopex93,0.36914603875646107,False,0.0,0.36914603875646107
+Betula pendula,Betula,lopex93,0.2113809915038994,False,0.0,0.2113809915038994
+Betula pendula,Betula,lopex93,0.31742785133006846,False,0.0,0.31742785133006846
+Betula pendula,Betula,lopex93,0.08173624372782386,False,0.0,0.08173624372782386
+Betula pendula,Betula,lopex93,0.30145919153563167,False,0.0,0.30145919153563167
+Betula pendula,Betula,lopex93,0.17496685361299177,False,0.0,0.17496685361299177
+Medicago sativa L.,Medicago,lopex93,0.6884714313409374,False,0.0,0.6884714313409374
+Medicago sativa L.,Medicago,lopex93,0.31873509627030594,False,0.0,0.31873509627030594
+Medicago sativa L.,Medicago,lopex93,0.8002784188925275,False,0.0,0.8002784188925275
+Medicago sativa L.,Medicago,lopex93,0.35597428206279336,False,0.0,0.35597428206279336
+Medicago sativa L.,Medicago,lopex93,0.5444656970439551,False,0.0,0.5444656970439551
+Medicago sativa L.,Medicago,lopex93,0.3054695179266143,False,0.0,0.3054695179266143
+Medicago sativa L.,Medicago,lopex93,0.8452649040276583,False,0.0,0.8452649040276583
+Medicago sativa L.,Medicago,lopex93,0.40195028506833264,False,0.0,0.40195028506833264
+Medicago sativa L.,Medicago,lopex93,0.7428161061840884,False,0.0,0.7428161061840884
+Medicago sativa L.,Medicago,lopex93,0.35020451159900373,False,0.0,0.35020451159900373
+Lycopersicum esculentum,Lycopersicum,lopex93,0.29931706327400814,False,0.0,0.29931706327400814
+Lycopersicum esculentum,Lycopersicum,lopex93,0.16159624033375683,False,0.0,0.16159624033375683
+Lycopersicum esculentum,Lycopersicum,lopex93,0.29497419132019476,False,0.0,0.29497419132019476
+Lycopersicum esculentum,Lycopersicum,lopex93,0.12146900115719222,False,0.0,0.12146900115719222
+Lycopersicum esculentum,Lycopersicum,lopex93,0.35260137986647616,False,0.0,0.35260137986647616
+Lycopersicum esculentum,Lycopersicum,lopex93,0.1962983047454315,False,0.0,0.1962983047454315
+Lycopersicum esculentum,Lycopersicum,lopex93,0.2690326036233709,False,0.0,0.2690326036233709
+Lycopersicum esculentum,Lycopersicum,lopex93,0.12337414132036681,False,0.0,0.12337414132036681
+Lycopersicum esculentum,Lycopersicum,lopex93,0.29341031911470516,False,0.0,0.29341031911470516
+Lycopersicum esculentum,Lycopersicum,lopex93,0.13505427368228737,False,0.0,0.13505427368228737
+Glycine max L.,Glycine,lopex93,0.3480238638572777,False,0.0,0.3480238638572777
+Glycine max L.,Glycine,lopex93,0.07813321814116382,False,0.0,0.07813321814116382
+Glycine max L.,Glycine,lopex93,0.43435109624141705,False,0.0,0.43435109624141705
+Glycine max L.,Glycine,lopex93,0.16675314578613834,False,0.0,0.16675314578613834
+Glycine max L.,Glycine,lopex93,0.4426418981663087,False,0.0,0.4426418981663087
+Glycine max L.,Glycine,lopex93,0.11052081165762384,False,0.0,0.11052081165762384
+Glycine max L.,Glycine,lopex93,0.5602359527964462,False,0.0,0.5602359527964462
+Glycine max L.,Glycine,lopex93,0.11936886247147041,False,0.0,0.11936886247147041
+Glycine max L.,Glycine,lopex93,0.40521368371419925,False,0.0,0.40521368371419925
+Glycine max L.,Glycine,lopex93,0.1138210458155766,False,0.0,0.1138210458155766
+Oryza sativa L.,Oryza,lopex93,0.2740631777229638,False,0.0,0.2740631777229638
+Oryza sativa L.,Oryza,lopex93,0.11156918414104042,False,0.0,0.11156918414104042
+Oryza sativa L.,Oryza,lopex93,0.3421609006254465,False,0.0,0.3421609006254465
+Oryza sativa L.,Oryza,lopex93,0.27290321398656825,False,0.0,0.27290321398656825
+Oryza sativa L.,Oryza,lopex93,0.3513026009181563,False,0.0,0.3513026009181563
+Oryza sativa L.,Oryza,lopex93,0.16964896530846335,False,0.0,0.16964896530846335
+Oryza sativa L.,Oryza,lopex93,0.3220374233176396,False,0.0,0.3220374233176396
+Oryza sativa L.,Oryza,lopex93,0.08223661655544487,False,0.0,0.08223661655544487
+Oryza sativa L.,Oryza,lopex93,0.4064467713590375,False,0.0,0.4064467713590375
+Oryza sativa L.,Oryza,lopex93,0.4436942939499536,False,0.0,0.4436942939499536

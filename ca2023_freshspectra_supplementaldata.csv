@@ -1,0 +1,36 @@
+sampling_date,sample_id,sample_number,plot_name,latitude_of_plot,longitude_of_plot,trimble_location_within_plot,common_name,family,genus,species,plant_functional_type,part_of_plant,needle_age,young_needle_percent,old_needle_percent,tree_DBH_cm,NS_crown_width_m_,WE_crown_width_m,tree_height_m,crown_length_m,LMA_value_g/m2,leaf_water_content_percent,chlorophyll _mg/m2
+7/1/2023,CA2023_005,5,SL_003,37.071274,-119.182026,Center,Manzanita,Ericaceae,Arctostaphylos,,Shrub,Leaf,,,,,,,,,243.6088302,53.22778973,392
+7/1/2023,CA2023_006,6,SL_004,37.071626,-119.182431,Center,Manzanita,Ericaceae,Arctostaphylos,,Shrub,Leaf,,,,,,,,,240.8704926,51.20974761,338
+7/3/2023,CA2023_013,13,SL_013,37.041463,-119.209004,Center,Black oak,Fagaceae,Quercus ,kelloggii,Tree,Leaf,,,,86.3,15.1,13.3,10.9,13.516,126.474197,49.3669345,631
+7/2/2023,CA2023_017,17,SL_011,37.057994,-119.209525,Center,Elderberry,Adoxaceae,Sambucus,cerulea,Shrub,Leaf,,,,,,,,,88.6362353,65.63287154,444
+7/2/2023,CA2023_018,18,SL_012,37.058042,-119.209617,Center,Deerbrush,Rhamnaceae,Ceanothus ,integerrimus,Shrub,Leaf,,,,,,,,,51.85791157,68.33756806,483
+7/3/2023,CA2023_020,20,SL_014,37.041931,-119.209246,Center,Black oak,Fagaceae,Quercus,kelloggii,Tree,Leaf,,,,69.2,14.4,13.5,7.198,6.832,109.4537182,47.91657169,545
+7/3/2023,CA2023_021,21,SL_015,37.033977,-119.207857,Center,White alder,Betulaceae,Alnus,rhombifolia,Tree,Leaf,,,,59.2,,12.2,15.96,10.032,90.68567818,53.79420085,373
+7/3/2023,CA2023_022,22,SL_016,37.034105,-119.208078,Center,Big leaf maple,Sapindaceae,Acer,macrophyllum,Tree,Leaf,,,,43.5,11.6,9.85,9.114,9.114,45.77102893,60.80072793,537
+7/3/2023,CA2023_023,23,SL_018,37.032005,-119.217547,Center,Canyon live oak,Fagaceae,Quercus ,chrysolepis,Tree,Leaf,,,,21.4,9.9,10.9,4.5,3.875,195.1552657,44.96640827,512
+7/3/2023,CA2023_024,24,SL_017,37.03213,-119.217952,Center,Canyon live oak,Fagaceae,Quercus ,chrysolepis,Tree,Leaf,,,,25.8,6.75,19.4,5.395,5.395,224.3929461,44.5753152,472
+7/4/2023,CA2023_029,29,SL_023,37.161318,-119.246819,Center,Mountain whitethorn,Rhamnaceae,Ceanothus,cordulatus,Shrub,Leaf,,,,,,,,,65.44850731,61.20293848,465
+7/4/2023,CA2023_031,31,SL_023,37.161318,-119.246819,Center,Manzanita,Ericaceae,Arctostaphylos,,Shrub,Leaf,,,,,,,,,306.3438009,50.81712756,409
+7/4/2023,CA2023_032,32,SL_023,37.161318,-119.246819,Center,Bitter cherry,Rosaceae,Prunus,emarginata,Shrub,Leaf,,,,,,,,,66.12176492,63.27396098,482
+7/4/2023,CA2023_034,34,SL_025,37.161247,-119.248296,Center,Black oak,Fagaceae,Quercus ,kelloggii,Tree,Leaf,,,,35.72,16.05,14.65,8.357,7.946,117.2104717,52.52402487,548
+7/6/2023,CA2023_042,42,YV_002,37.530449,-119.628211,Center,Black oak,Fagaceae,Quercus,kelloggii,Tree,Leaf,,,,35.4,10.6,9.1,11.286,10.032,96.96677242,46.77833215,498
+7/6/2023,CA2023_046,46,YV_005,37.529885,-119.627016,Center,Black oak,Fagaceae,Quercus ,kelloggii,Tree,Leaf,,,,88.8,19.9,14.4,10.803,8.033,92.90826472,40.15833033,583
+7/6/2023,CA2023_048,48,YV_007,37.535947,-119.656929,Center,White alder,Betulaceae,Alnus,rhombifolia,Tree,Leaf,,,,30,,8.5,7.656,7.656,96.76906578,54.91753207,401
+7/6/2023,CA2023_049,49,YV_008,37.535868,-119.656909,Center,Arroyo willow,Salicaceae,Salix ,lasiolepis,Shrub,Leaf,,,,,,,,,84.9280069,61.65818922,598
+7/7/2023,CA2023_052,52,YV_010,37.690932,-119.703614,NW,Deerbrush,Rhamnaceae,Ceanothus,integerrimus,Shrub,Leaf,,,,,,,,,66.26752537,59.83744101,478
+7/7/2023,CA2023_053,53,YV_011,37.665809,-119.713111,NE,Littleleaf whitethorn,Rhamnaceae,Ceanothus,parvifolius,Shrub,Leaf,,,,,,,,,100.0658355,55.45535714,508
+7/7/2023,CA2023_054,54,YV_011,37.665809,-119.713111,NE,Deerbrush,Rhamnaceae,Ceanothus,integerrimus,Shrub,Leaf,,,,,,,,,80.26000741,60.36228901,385
+7/7/2023,CA2023_055,55,YV_012,37.665577,-119.713495,NE,Elderberry,Adoxaceae,Sambucus,cerulea,Shrub,Leaf,,,,,,,,,80.03509109,67.99272487,478
+7/7/2023,CA2023_056,56,YV_012,37.665577,-119.713495,NE,Littleleaf whitethorn,Rhamnaceae,Ceanothus,parvifolius,Shrub,Leaf,,,,,,,,,90.2490302,59.92652461,546
+7/7/2023,CA2023_057,57,YV_013,37.665684,-119.713525,Center,Pinemat,Rhamnaceae,Ceanothus,prostratus,Shrub,Leaf,,,,,,,,,221.7294325,59.11409396,835
+7/7/2023,CA2023_058,58,YV_014,37.655025,-119.703681,NE,Mountain whitethorn,Rhamnaceae,Ceanothus,cordulatus,Shrub,Leaf,,,,,,,,,69.03566036,59.73022685,434
+7/7/2023,CA2023_059,59,YV_014,37.655025,-119.703681,NE,Eagle fern,Dennstaedtiaceae,Pteridium,aquilinum,Forb,Leaf,,,,,,,,,92.91615879,64.26470588,371
+7/7/2023,CA2023_060,60,YV_015,37.562842,-119.693981,Center,Manzanita,Ericaceae,Arctostaphylos,,Shrub,Leaf,,,,,,,,,222.9467438,52.34659091,411
+7/7/2023,CA2023_061,61,YV_015,37.562842,-119.693981,Center,Bush interior live oak,Fagaceae,Quercus,wislizeni,Shrub,Leaf,,,,,,,,,192.3787704,47.19318849,423
+7/8/2023,CA2023_064,64,HH_001,37.944928,-119.783189,Center,White alder,Betulaceae,Alnus,rhombifolia,Shrub,Leaf,,,,,,,,,123.2711588,47.62208068,293
+7/8/2023,CA2023_065,65,HH_002,37.944877,-119.783208,Center,Arroyo willow,Salicaceae,Salix,lasiolepis,Shrub,Leaf,,,,,,,,,100.392387,55.18656716,517
+7/8/2023,CA2023_066,66,HH_003,37.944825,-119.783115,NE,Western brackenfern,Dennstaedtiaceae,Pteridium,aquilinum,Shrub,Leaf,,,,,,,,,80.75368623,62.37173282,322
+7/8/2023,CA2023_068,68,HH_004,37.94466,-119.783244,NE,Mint,Lamiaceae,,,Forb,Leaf,,,,,,,,,37.35645414,75.69008783,378
+7/9/2023,CA2023_074,74,HH_007,37.903041,-119.834752,Center,Manzanita,Ericaceae,Arctostaphylos,,Shrub,Leaf,,,,,,,,,231.0300696,52.21755472,318
+7/9/2023,CA2023_075,75,HH_008,37.902934,-119.834643,Center,Bush interior live oak,Fagaceae,Quercus,wislizeni,Shrub,Leaf,,,,,,,,,211.1753679,43.5,483
+7/9/2023,CA2023_076,76,HH_009,37.902857,-119.834692,Center,Manzanita,Ericaceae,Arctostaphylos,,Shrub,Leaf,,,,,,,,,227.4755956,54.64049304,311
