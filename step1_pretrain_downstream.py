@@ -497,9 +497,9 @@ def aggregate_sample_level(X_raw, Z, meta_df, sample_col="Sample_#"):
     Z_agg = np.vstack(
         [Z[np.asarray(grouped.indices[key], dtype=int)].mean(axis=0) for key in sample_keys]
     ).astype(np.float32)
-    meta_agg = grouped.first().reset_index(drop=True)
+    meta_agg = grouped.first().reset_index()
     meta_agg[sample_col] = np.asarray(sample_keys, dtype=int)
-    meta_agg = meta_agg.drop(columns=["__sample_group"])
+    meta_agg = meta_agg.drop(columns=["__sample_group"], errors="ignore")
     return X_raw_agg, Z_agg, meta_agg, True
 
 
