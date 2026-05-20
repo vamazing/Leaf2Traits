@@ -1,0 +1,11 @@
+numpy
+pandas
+matplotlib
+scikit-learn
+torch
+torchvision
+scipy
+openpyxl
+
+# Optional on Windows for DirectML acceleration
+torch-directml
