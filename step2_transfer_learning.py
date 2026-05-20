@@ -16,7 +16,7 @@ Run:
     python step2_transfer_learning.py
 """
 
-import io, urllib.request, warnings
+import io, json, urllib.request, warnings
 from itertools import permutations
 from pathlib import Path
 import numpy as np
@@ -27,8 +27,18 @@ from scipy.signal import savgol_filter
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 import torch, torch.nn as nn
+try:
+    import torch_directml
+except ImportError:
+    torch_directml = None
 
-from ecosis_loaders import AQGRAD_PACKAGE_ID, TALL2018_PACKAGE_ID, load_aqgrad, load_tall2018
+from ecosis_loaders import (
+    AQGRAD_PACKAGE_ID,
+    TALL2018_PACKAGE_ID,
+    filter_lopex_spectral_outliers,
+    load_aqgrad,
+    load_tall2018,
+)
 
 warnings.filterwarnings("ignore")
 
@@ -38,6 +48,7 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 SEED = 42; np.random.seed(SEED)
 TARGET_WL = np.arange(400, 2401, 10)
 MIN_SAMPLES = 5
+DEFAULT_AE_CONFIG = {"hidden": [1024, 512, 256, 128], "latent_dim": 192, "dropout": 0.05}
 
 ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
@@ -51,17 +62,23 @@ SHORT = {"aqgrad": "aqgr", "talladega2018": "tall",
 
 
 class Autoencoder(nn.Module):
-    def __init__(self, inp=201, hidden=None, latent=64):
+    def __init__(self, inp=201, hidden=None, latent=64, dropout=0.0):
         super().__init__()
         if hidden is None: hidden = [256, 128]
         enc = []; d = inp
         for h in hidden:
-            enc += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]; d = h
+            enc += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]
+            if dropout > 0:
+                enc.append(nn.Dropout(dropout))
+            d = h
         enc.append(nn.Linear(d, latent))
         self.encoder = nn.Sequential(*enc)
         dec = []; d = latent
         for h in reversed(hidden):
-            dec += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]; d = h
+            dec += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]
+            if dropout > 0:
+                dec.append(nn.Dropout(dropout))
+            d = h
         dec.append(nn.Linear(d, inp))
         self.decoder = nn.Sequential(*dec)
 
@@ -69,12 +86,33 @@ class Autoencoder(nn.Module):
     def encode(self, x):  return self.encoder(x)
 
 
+def resolve_device():
+    if torch.cuda.is_available():
+        return torch.device("cuda"), "cuda"
+    if torch_directml is not None:
+        return torch_directml.device(), "directml"
+    return torch.device("cpu"), "cpu"
+
+
 def load_encoder():
     pt = STAGE1_DIR/"encoder.pt"; mn = STAGE1_DIR/"scaler_mean.npy"; ms = STAGE1_DIR/"scaler_std.npy"
     if not all(p.exists() for p in [pt, mn, ms]):
         print("  WARN: Stage 1 encoder not found."); return None, None, None
-    m = Autoencoder(); m.load_state_dict(torch.load(pt, map_location="cpu")); m.eval()
-    print(f"  Loaded encoder from {pt}")
+    cfg_path = STAGE1_DIR / "ae_config.json"
+    cfg = DEFAULT_AE_CONFIG
+    if cfg_path.exists():
+        with open(cfg_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+    device, device_name = resolve_device()
+    m = Autoencoder(
+        hidden=cfg.get("hidden"),
+        latent=cfg.get("latent_dim", 64),
+        dropout=cfg.get("dropout", 0.0),
+    )
+    m.load_state_dict(torch.load(pt, map_location="cpu"))
+    m.to(device)
+    m.eval()
+    print(f"  Loaded encoder from {pt} on {device_name}")
     return m, np.load(mn), np.load(ms)
 
 
@@ -146,9 +184,10 @@ def preprocess(df):
 
 def embed(X, model, mu, std):
     if model is None: return X
+    device = next(model.parameters()).device
     Xn = (X - mu) / std
-    with torch.no_grad(): z = model.encode(torch.tensor(Xn, dtype=torch.float32))
-    return z.numpy()
+    with torch.no_grad(): z = model.encode(torch.tensor(Xn, dtype=torch.float32).to(device))
+    return z.cpu().numpy()
 
 
 def run_transfer(src_X, tgt_X, model, mu, std):
@@ -207,6 +246,8 @@ def main():
     for name, ids in DATASETS.items():
         df = load_dataset(name, ids)
         Xp, dfp = preprocess(df)
+        if name == "lopex93" and Xp.shape[0] > 0:
+            Xp, _ = filter_lopex_spectral_outliers(Xp, dfp)
         proc_data[name] = Xp
 
     print("\n[3/4] Running transfer experiments ...")

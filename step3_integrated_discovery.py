@@ -12,20 +12,34 @@ Run:
     python step3_integrated_discovery.py
 """
 
-import io, urllib.request, warnings
+import io, json, urllib.request, warnings
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
+from sklearn.base import BaseEstimator, RegressorMixin, clone
+from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
-from sklearn.ensemble import IsolationForest
-from sklearn.linear_model import Ridge
-from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import HistGradientBoostingRegressor, IsolationForest
+from sklearn.linear_model import RidgeCV
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 import torch, torch.nn as nn
+try:
+    import torch_directml
+except ImportError:
+    torch_directml = None
 
-from ecosis_loaders import AQGRAD_PACKAGE_ID, TALL2018_PACKAGE_ID, load_aqgrad, load_tall2018
+from ecosis_loaders import (
+    AQGRAD_PACKAGE_ID,
+    TALL2018_PACKAGE_ID,
+    filter_lopex_spectral_outliers,
+    load_aqgrad,
+    load_tall2018,
+)
 
 warnings.filterwarnings("ignore")
 
@@ -34,6 +48,8 @@ OUT_DIR    = Path("outputs/stage3")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 SEED = 42; np.random.seed(SEED)
 TARGET_WL = np.arange(400, 2401, 10)
+DEFAULT_AE_CONFIG = {"hidden": [1024, 512, 256, 128], "latent_dim": 192, "dropout": 0.05}
+RIDGE_ALPHAS = np.logspace(-3, 3, 13)
 
 LOPEX93_METADATA   = "lopex1993metadata.xlsx"
 LOPEX93_TRAIT_COLS = [
@@ -62,17 +78,23 @@ LABEL_MAP = {"aqgrad": 0, "talladega2018": 1, "lopex93": 2, "sierranevada2023": 
 
 # ── Autoencoder ───────────────────────────────────────────────────────────────
 class Autoencoder(nn.Module):
-    def __init__(self, inp=201, hidden=None, latent=64):
+    def __init__(self, inp=201, hidden=None, latent=64, dropout=0.0):
         super().__init__()
         if hidden is None: hidden = [256, 128]
         enc = []; d = inp
         for h in hidden:
-            enc += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]; d = h
+            enc += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]
+            if dropout > 0:
+                enc.append(nn.Dropout(dropout))
+            d = h
         enc.append(nn.Linear(d, latent))
         self.encoder = nn.Sequential(*enc)
         dec = []; d = latent
         for h in reversed(hidden):
-            dec += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]; d = h
+            dec += [nn.Linear(d, h), nn.BatchNorm1d(h), nn.GELU()]
+            if dropout > 0:
+                dec.append(nn.Dropout(dropout))
+            d = h
         dec.append(nn.Linear(d, inp))
         self.decoder = nn.Sequential(*dec)
 
@@ -80,11 +102,51 @@ class Autoencoder(nn.Module):
     def encode(self, x):  return self.encoder(x)
 
 
+class PLS1Regressor(BaseEstimator, RegressorMixin):
+    def __init__(self, n_components=8):
+        self.n_components = n_components
+
+    def fit(self, X, y):
+        self.pipeline_ = Pipeline(
+            [
+                ("scale", StandardScaler()),
+                ("reg", PLSRegression(n_components=self.n_components)),
+            ]
+        )
+        self.pipeline_.fit(X, np.asarray(y).reshape(-1))
+        return self
+
+    def predict(self, X):
+        return np.asarray(self.pipeline_.predict(X)).reshape(-1)
+
+
+def resolve_device():
+    if torch.cuda.is_available():
+        return torch.device("cuda"), "cuda"
+    if torch_directml is not None:
+        return torch_directml.device(), "directml"
+    return torch.device("cpu"), "cpu"
+
+
 def load_encoder():
     pt = STAGE1_DIR/"encoder.pt"; mn = STAGE1_DIR/"scaler_mean.npy"; ms = STAGE1_DIR/"scaler_std.npy"
     if not all(p.exists() for p in [pt, mn, ms]):
         print("  WARN: Stage 1 encoder not found."); return None, None, None
-    m = Autoencoder(); m.load_state_dict(torch.load(pt, map_location="cpu")); m.eval()
+    cfg_path = STAGE1_DIR / "ae_config.json"
+    cfg = DEFAULT_AE_CONFIG
+    if cfg_path.exists():
+        with open(cfg_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+    device, device_name = resolve_device()
+    m = Autoencoder(
+        hidden=cfg.get("hidden"),
+        latent=cfg.get("latent_dim", 64),
+        dropout=cfg.get("dropout", 0.0),
+    )
+    m.load_state_dict(torch.load(pt, map_location="cpu"))
+    m.to(device)
+    m.eval()
+    print(f"  Loaded encoder on {device_name}")
     return m, np.load(mn), np.load(ms)
 
 
@@ -235,21 +297,35 @@ def preprocess(df):
     mat = (mat - mu) / sd
     out = np.zeros((mat.shape[0], len(TARGET_WL)), dtype=np.float32)
     for i, row in enumerate(mat): out[i] = np.interp(TARGET_WL, wl, row)
+    if "_dataset" in dfok.columns:
+        lopex_ix = np.where(dfok["_dataset"].values == "lopex93")[0]
+        if len(lopex_ix):
+            Xl, dfl = filter_lopex_spectral_outliers(
+                out[lopex_ix], dfok.iloc[lopex_ix].reset_index(drop=True)
+            )
+            keep = np.ones(len(dfok), dtype=bool)
+            keep[lopex_ix] = False
+            out = np.vstack([out[keep], Xl])
+            dfok = pd.concat(
+                [dfok.iloc[keep].reset_index(drop=True), dfl], ignore_index=True
+            )
     return out, dfok
 
 
 def encode(X, model, mu, std):
     if model is None: return X
+    device = next(model.parameters()).device
     Xn = (X - mu) / std
-    with torch.no_grad(): z = model.encode(torch.tensor(Xn, dtype=torch.float32))
-    return z.numpy()
+    with torch.no_grad(): z = model.encode(torch.tensor(Xn, dtype=torch.float32).to(device))
+    return z.cpu().numpy()
 
 
 def reconstruct(X, model, mu, std):
     if model is None: return X
+    device = next(model.parameters()).device
     Xn = (X - mu) / std
-    with torch.no_grad(): r, _ = model(torch.tensor(Xn, dtype=torch.float32))
-    return r.numpy() * std + mu
+    with torch.no_grad(): r, _ = model(torch.tensor(Xn, dtype=torch.float32).to(device))
+    return r.cpu().numpy() * std + mu
 
 
 # ── Option A ──────────────────────────────────────────────────────────────────
@@ -287,6 +363,37 @@ def validate_representations(X_raw, Z, meta, model, mu, std):
 
 
 # ── Option B ──────────────────────────────────────────────────────────────────
+def build_regressor_candidates(n_samples, n_features):
+    n_components = max(2, min(16, n_features, n_samples - 1))
+    min_leaf = max(4, n_samples // 20)
+    return {
+        "ridge_cv": Pipeline(
+            [("scale", StandardScaler()), ("reg", RidgeCV(alphas=RIDGE_ALPHAS))]
+        ),
+        "pls": PLS1Regressor(n_components=n_components),
+        "hist_gbr": HistGradientBoostingRegressor(
+            learning_rate=0.05,
+            max_depth=4,
+            max_iter=400,
+            min_samples_leaf=min_leaf,
+            l2_regularization=1e-3,
+            random_state=SEED,
+        ),
+    }
+
+
+def select_best_regressor_cv(X, y):
+    n_samples, n_features = X.shape
+    cv_splits = min(5, max(3, n_samples // 10))
+    cv = KFold(n_splits=cv_splits, shuffle=True, random_state=SEED)
+    best_name, best_score = None, -np.inf
+    for name, model in build_regressor_candidates(n_samples, n_features).items():
+        score = cross_val_score(clone(model), X, y, cv=cv, scoring="r2").mean()
+        if score > best_score:
+            best_name, best_score = name, score
+    return best_name, best_score
+
+
 def compare_trait_regression(X_raw, Z, meta):
     print("  [B] Trait regression comparison (raw vs embedding) ...")
 
@@ -310,10 +417,21 @@ def compare_trait_regression(X_raw, Z, meta):
         ok = ~np.isnan(y)
         if ok.sum() < 15: continue
         yr, Xr, Xz = y[ok], X_raw[ok], Z[ok]
-        r2_raw = cross_val_score(Ridge(1.0), Xr, yr, cv=5, scoring="r2").mean()
-        r2_emb = cross_val_score(Ridge(1.0), Xz, yr, cv=5, scoring="r2").mean()
-        rows.append({"trait": trait, "R2_raw": r2_raw, "R2_emb": r2_emb})
-        print(f"    {trait:<42}  raw R2={r2_raw:.3f}  emb R2={r2_emb:.3f}  gain={r2_emb-r2_raw:+.3f}")
+        raw_name, r2_raw = select_best_regressor_cv(Xr, yr)
+        emb_name, r2_emb = select_best_regressor_cv(Xz, yr)
+        rows.append(
+            {
+                "trait": trait,
+                "R2_raw": r2_raw,
+                "R2_emb": r2_emb,
+                "model_raw": raw_name,
+                "model_emb": emb_name,
+            }
+        )
+        print(
+            f"    {trait:<42}  raw={raw_name}:{r2_raw:.3f}  "
+            f"emb={emb_name}:{r2_emb:.3f}  gain={r2_emb-r2_raw:+.3f}"
+        )
 
     if not rows: return
     df_r = pd.DataFrame(rows)

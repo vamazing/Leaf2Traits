@@ -83,9 +83,10 @@ python step3_integrated_discovery.py
 
 ### Autoencoder
 - Input: 201-band spectrum (400–2400 nm, 10 nm step)
-- Encoder: Linear(201→256) → BN → GELU → Linear(256→128) → BN → GELU → Linear(128→64)
-- Decoder: symmetric mirror
-- Training: Adam + Cosine LR, MSE loss, 60 epochs, batch 64
+- Encoder: Linear(201→1024) → BN → GELU → Dropout(0.05) → Linear(1024→512) → BN → GELU → Dropout(0.05) → Linear(512→256) → BN → GELU → Dropout(0.05) → Linear(256→128) → BN → GELU → Dropout(0.05) → Linear(128→192)
+- Decoder: symmetric mirror of the encoder back to 201 bands
+- Latent space: 192-dimensional embedding
+- Training: Adam + Cosine LR, MSE loss, 140 epochs, batch 64, lr=7.5e-4, weight decay=1e-5, Gaussian input noise std=0.03
 
 ### Preprocessing
 1. Savitzky-Golay smoothing (window=11, polyorder=3)
@@ -93,6 +94,6 @@ python step3_integrated_discovery.py
 3. Linear interpolation to 400–2400 nm, 10 nm grid
 
 ### Discovery
-- Isolation Forest (200 trees, contamination=10%) on 64-dim embeddings
-- Novelty score = –isolation_score, normalized to [0,1]
+- Isolation Forest (200 trees, contamination=10%) on 192-dim embeddings
+- Novelty score = -isolation_score, normalized to [0,1]
 - Composite = novelty + 0.15 × known_hyperaccumulator_genus_prior

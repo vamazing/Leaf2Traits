@@ -6,7 +6,9 @@ import io
 import urllib.request
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+from sklearn.ensemble import IsolationForest
 
 ECOSIS_API_EXPORT = "https://ecosis.org/api/package/{id}/export?format=csv"
 AQGRAD_PACKAGE_ID = (
@@ -16,6 +18,9 @@ TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
 TALL2018_METADATA_CSV = "tall_2018_ecosis_spectra_metadata_v2.csv"
+LOPEX93_METADATA = "lopex1993metadata.xlsx"
+# Fraction of LOPEX spectra removed as embedding-space outliers (IsolationForest on preprocessed spectra).
+LOPEX_OUTLIER_CONTAMINATION = 0.03
 
 
 def fetch_package_csv(package_id, metadata=False, timeout=120):
@@ -110,3 +115,44 @@ def load_tall2018(timeout=120):
     if "Leaf nitrogen content per leaf area" in df.columns and "N" not in df.columns:
         df = df.rename(columns={"Leaf nitrogen content per leaf area": "N"})
     return attach_species_column(df)
+
+
+def join_lopex93_metadata(df, metadata_file=LOPEX93_METADATA):
+    """Attach LOPEX93 trait metadata (two spectra per sample) to an EcoSIS spectra frame."""
+    p = Path(metadata_file)
+    if not p.exists() or df.empty:
+        return df
+    meta = pd.read_excel(p).replace(-999, np.nan)
+    sample_ids = np.arange(len(df)) // 2 + 1
+    joined = pd.DataFrame({"Sample_#": sample_ids}).merge(meta, on="Sample_#", how="left")
+    for col in joined.columns:
+        if col != "Sample_#":
+            df[col] = joined[col].values
+    if "Latin Name" in df.columns and "Species" not in df.columns:
+        df = df.rename(columns={"Latin Name": "Species"})
+    return df
+
+
+def filter_lopex_spectral_outliers(
+    X,
+    df,
+    contamination=LOPEX_OUTLIER_CONTAMINATION,
+    random_state=42,
+):
+    """
+    Drop LOPEX93 spectra far from the main cluster in preprocessed space.
+
+    IsolationForest on Savitzky–Golay + SNV + grid-aligned spectra; applied before
+    autoencoder training so embedding PCA is not pulled by bad LOPEX scans.
+    """
+    if X.shape[0] < 10:
+        return X, df
+    iso = IsolationForest(contamination=contamination, random_state=random_state)
+    inlier = iso.fit_predict(X) == 1
+    n_out = int((~inlier).sum())
+    if n_out:
+        print(
+            f"    LOPEX93: removed {n_out} spectral outliers "
+            f"(IsolationForest, contamination={contamination})"
+        )
+    return X[inlier], df.loc[inlier].reset_index(drop=True)
