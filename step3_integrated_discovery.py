@@ -192,11 +192,21 @@ def load_sierra_metadata(df_sierra):
         return df_sierra
 
     meta = pd.read_csv(p)
-    meta["genus"] = meta["genus"].str.strip()
+    meta.columns = meta.columns.str.strip()
+    lower_to_name = {c.lower(): c for c in meta.columns}
+    genus_col = lower_to_name.get("genus")
+    species_col = lower_to_name.get("species")
+    if genus_col is None:
+        raise KeyError(
+            f"Sierra metadata missing required 'genus' column. Found: {list(meta.columns)}"
+        )
+    meta[genus_col] = meta[genus_col].astype(str).str.strip()
     meta["Species"] = meta.apply(
-        lambda r: f"{r['genus']} {r['species']}"
-                  if pd.notna(r["species"]) and str(r["species"]).strip() not in ("", "nan")
-                  else r["genus"],
+        lambda r: f"{r[genus_col]} {r[species_col]}"
+                  if species_col is not None
+                  and pd.notna(r[species_col])
+                  and str(r[species_col]).strip() not in ("", "nan")
+                  else r[genus_col],
         axis=1
     )
     meta = meta.rename(columns={
@@ -472,7 +482,9 @@ def compare_trait_regression(X_raw, Z, meta):
         group_col = choose_group_column(meta_t, prefer_species=aggregated)
         groups = None
         if group_col is not None:
-            groups = meta_t[group_col].astype(str).values
+            group_series = meta_t[group_col].copy()
+            group_series = group_series.where(group_series.notna(), "__missing_group__")
+            groups = group_series.astype(str).values
         raw_name, r2_raw = select_best_regressor_cv(Xr, yr, groups)
         emb_name, r2_emb = select_best_regressor_cv(Xz, yr, groups)
         rows.append(
