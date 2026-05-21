@@ -17,6 +17,7 @@ AQGRAD_PACKAGE_ID = (
 TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
+CABO_V2_PACKAGE_ID = "a12286ac-929f-4e3e-9b9c-517e10fe4087"
 TALL2018_METADATA_CSV = "tall_2018_ecosis_spectra_metadata_v2.csv"
 LOPEX93_METADATA = "lopex1993metadata.xlsx"
 # Fraction of LOPEX spectra removed as embedding-space outliers (IsolationForest on preprocessed spectra).
@@ -127,6 +128,27 @@ def load_tall2018(timeout=120):
     if "Leaf nitrogen content per leaf area" in df.columns and "N" not in df.columns:
         df = df.rename(columns={"Leaf nitrogen content per leaf area": "N"})
     return attach_species_column(df)
+
+
+def load_cabo_v2(timeout=120):
+    """
+    Load CABO 2018-2019 leaf-level spectra via EcoSIS export API.
+
+    CABO v2 is a broad multispecies trait-linked leaf spectroscopy dataset that
+    is useful as additional background diversity and for searching candidate
+    hyperaccumulator genera/species in metadata.
+    """
+    df = fetch_package_csv(CABO_V2_PACKAGE_ID, metadata=True, timeout=timeout)
+    if df.empty:
+        df = fetch_package_csv(CABO_V2_PACKAGE_ID, metadata=False, timeout=timeout)
+    if df.empty:
+        return df
+    df = attach_species_column(df)
+    if "Latin Name" in df.columns and "Species" not in df.columns:
+        df["Species"] = df["Latin Name"].astype(str).str.strip()
+    if "Species" not in df.columns and "USDA_Species_Code" in df.columns:
+        df["Species"] = df["USDA_Species_Code"].astype(str).str.strip()
+    return df
 
 
 def join_lopex93_metadata(df, metadata_file=LOPEX93_METADATA):

@@ -35,10 +35,12 @@ except ImportError:
 
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
+    CABO_V2_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     join_lopex93_metadata,
     load_aqgrad,
+    load_cabo_v2,
     load_tall2018,
 )
 
@@ -58,6 +60,14 @@ LOPEX93_TRAIT_COLS = [
     "Leaf mass per area (g/cm²)", "Protein_1 (% DW)",
     "Cellulose_1 (% DW)", "Carotenoid (µg/cm²)",
 ]
+CABO_V2_TRAIT_COLS = [
+    "LMA_g_m2",
+    "C_mass_g_g",
+    "N_mass_g_g",
+    "C_area_g_m2",
+    "N_area_g_m2",
+    "CN_ratio",
+]
 SIERRA_METADATA   = "ca2023_freshspectra_supplementaldata.csv"
 SIERRA_TRAIT_COLS = ["LMA_g_m2", "LWC_percent", "Chlorophyll_mg_m2"]
 
@@ -71,10 +81,17 @@ ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
+    "cabo_v2":          [CABO_V2_PACKAGE_ID],
     "lopex93":          ["leaf-optical-properties-experiment-database--lopex93-", "3849_2"],
     "sierranevada2023": ["fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"],
 }
-LABEL_MAP = {"aqgrad": 0, "talladega2018": 1, "lopex93": 2, "sierranevada2023": 3}
+LABEL_MAP = {
+    "aqgrad": 0,
+    "talladega2018": 1,
+    "cabo_v2": 2,
+    "lopex93": 3,
+    "sierranevada2023": 4,
+}
 
 
 def clear_stage_outputs(out_dir):
@@ -264,6 +281,16 @@ def load_all():
             print(f"    WARN: download failed -> synthetic")
             frames.append(make_synthetic(name))
             continue
+        if name == "cabo_v2":
+            df = load_cabo_v2()
+            if not df.empty:
+                df["_dataset"] = name
+                print(f"    OK: {df.shape}")
+                frames.append(df)
+                continue
+            print(f"    WARN: download failed -> synthetic")
+            frames.append(make_synthetic(name))
+            continue
         for did in ids:
             df = fetch_csv(did)
             if not df.empty:
@@ -392,9 +419,23 @@ def build_regressor_candidates(n_samples, n_features):
 
 def choose_group_column(meta_df, prefer_species=False):
     if prefer_species:
-        candidates = ("Species", "sample_number", "Sample_#", "sample_id")
+        candidates = (
+            "Species",
+            "USDA_Species_Code",
+            "sample_number",
+            "Sample_#",
+            "sample_id",
+            "Sample_ID",
+        )
     else:
-        candidates = ("sample_number", "Sample_#", "sample_id", "Species")
+        candidates = (
+            "sample_number",
+            "Sample_#",
+            "sample_id",
+            "Sample_ID",
+            "Species",
+            "USDA_Species_Code",
+        )
     for col in candidates:
         if col in meta_df.columns and meta_df[col].notna().sum() >= 15:
             return col
@@ -452,8 +493,8 @@ def select_best_regressor_cv(X, y, groups=None):
 def compare_trait_regression(X_raw, Z, meta):
     print("  [B] Trait regression comparison (raw vs embedding) ...")
 
-    # Collect trait columns: LOPEX93 traits + renamed Sierra Nevada traits
-    known = LOPEX93_TRAIT_COLS + SIERRA_TRAIT_COLS
+    # Collect trait columns: LOPEX93 + CABO + renamed Sierra Nevada traits
+    known = LOPEX93_TRAIT_COLS + CABO_V2_TRAIT_COLS + SIERRA_TRAIT_COLS
     all_traits = [c for c in known if c in meta.columns and meta[c].notna().sum() >= 10]
     skip = set(known) | {"_dataset", "sample_id", "sample_number",
                           "latitude_of_plot", "longitude_of_plot"}

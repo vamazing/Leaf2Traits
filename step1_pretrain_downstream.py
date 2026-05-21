@@ -60,11 +60,13 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
+    CABO_V2_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     join_lopex93_metadata,
     lopex93_sample_ids,
     load_aqgrad,
+    load_cabo_v2,
     load_tall2018,
 )
 
@@ -98,6 +100,15 @@ LOPEX93_TRAIT_COLS = [
     "Carotenoid (µg/cm²)",
 ]
 
+CABO_V2_TRAIT_COLS = [
+    "LMA_g_m2",
+    "C_mass_g_g",
+    "N_mass_g_g",
+    "C_area_g_m2",
+    "N_area_g_m2",
+    "CN_ratio",
+]
+
 # Sierra Nevada trait columns (confirmed from EcoSIS package description)
 SIERRA_METADATA = "ca2023_freshspectra_supplementaldata.csv"
 # Exact column names in the supplemental CSV
@@ -111,13 +122,26 @@ ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
     "talladega2018": [TALL2018_PACKAGE_ID],
+    "cabo_v2": [CABO_V2_PACKAGE_ID],
     "lopex93": ["leaf-optical-properties-experiment-database--lopex93-", "3849_2"],
     "sierranevada2023": [
         "fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"
     ],
 }
-LABEL_MAP = {"aqgrad": 0, "talladega2018": 1, "lopex93": 2, "sierranevada2023": 3}
-LABEL_NAMES = {0: "AQGRAD", 1: "Talladega 2018", 2: "LOPEX93", 3: "Sierra Nevada 2023"}
+LABEL_MAP = {
+    "aqgrad": 0,
+    "talladega2018": 1,
+    "cabo_v2": 2,
+    "lopex93": 3,
+    "sierranevada2023": 4,
+}
+LABEL_NAMES = {
+    0: "AQGRAD",
+    1: "Talladega 2018",
+    2: "CABO v2",
+    3: "LOPEX93",
+    4: "Sierra Nevada 2023",
+}
 AE_CONFIG = {"hidden": HIDDEN, "latent_dim": LATENT_DIM, "dropout": DROPOUT}
 
 
@@ -169,6 +193,14 @@ def load_dataset(name, ids):
             df["_dataset"] = name
             return df
         print(f"    WARN: Talladega 2018 download failed -> synthetic fallback")
+        return pd.DataFrame()
+    if name == "cabo_v2":
+        df = load_cabo_v2()
+        if not df.empty:
+            print(f"    OK {CABO_V2_PACKAGE_ID}: {df.shape}")
+            df["_dataset"] = name
+            return df
+        print(f"    WARN: CABO v2 download failed -> synthetic fallback")
         return pd.DataFrame()
     for did in ids:
         df = fetch_csv(did)
@@ -447,9 +479,23 @@ def select_regressor(X, y):
 
 def choose_group_column(meta_df, prefer_species=False):
     if prefer_species:
-        candidates = ("Species", "sample_number", "Sample_#", "sample_id")
+        candidates = (
+            "Species",
+            "USDA_Species_Code",
+            "sample_number",
+            "Sample_#",
+            "sample_id",
+            "Sample_ID",
+        )
     else:
-        candidates = ("sample_number", "Sample_#", "sample_id", "Species")
+        candidates = (
+            "sample_number",
+            "Sample_#",
+            "sample_id",
+            "Sample_ID",
+            "Species",
+            "USDA_Species_Code",
+        )
     for col in candidates:
         if col in meta_df.columns and meta_df[col].notna().sum() >= 15:
             return col
@@ -804,6 +850,18 @@ def main():
             ok = run_trait_regression(
                 X[smask], Z[smask], sm, sierra_traits, tag="SierraNevada"
             )
+            if ok:
+                trait_found = True
+
+    # CABO v2 traits (inline in EcoSIS export)
+    cmask = labels == LABEL_MAP["cabo_v2"]
+    if cmask.sum() > 0:
+        cm = meta[cmask].reset_index(drop=True)
+        cabo_traits = [
+            c for c in CABO_V2_TRAIT_COLS if c in cm.columns and cm[c].notna().sum() >= 10
+        ]
+        if cabo_traits:
+            ok = run_trait_regression(X[cmask], Z[cmask], cm, cabo_traits, tag="CABOv2")
             if ok:
                 trait_found = True
 

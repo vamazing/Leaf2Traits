@@ -34,9 +34,11 @@ except ImportError:
 
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
+    CABO_V2_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
+    load_cabo_v2,
     load_tall2018,
 )
 
@@ -54,11 +56,12 @@ ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
+    "cabo_v2":          [CABO_V2_PACKAGE_ID],
     "lopex93":          ["leaf-optical-properties-experiment-database--lopex93-", "3849_2"],
     "sierranevada2023": ["fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"],
 }
 SHORT = {"aqgrad": "aqgr", "talladega2018": "tall",
-         "lopex93": "lope", "sierranevada2023": "sier"}
+         "cabo_v2": "cabo", "lopex93": "lope", "sierranevada2023": "sier"}
 
 
 def clear_stage_outputs(out_dir):
@@ -155,6 +158,14 @@ def load_dataset(name, ids):
         return make_synthetic(name)
     if name == "talladega2018":
         df = load_tall2018()
+        if not df.empty:
+            df["_dataset"] = name
+            print(f"    OK: {df.shape}")
+            return df
+        print(f"    WARN: failed -> synthetic")
+        return make_synthetic(name)
+    if name == "cabo_v2":
+        df = load_cabo_v2()
         if not df.empty:
             df["_dataset"] = name
             print(f"    OK: {df.shape}")

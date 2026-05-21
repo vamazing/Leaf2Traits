@@ -1,9 +1,9 @@
 # Leaf2Traits: Hyperspectral Leaf Analysis with Deep Learning
 
 A multi-stage machine learning pipeline for analyzing hyperspectral leaf reflectance
-spectra from four public EcoSIS plant databases. The pipeline trains a self-supervised
+spectra from five public EcoSIS plant databases. The pipeline trains a self-supervised
 autoencoder, predicts biochemical leaf traits, evaluates cross-domain transfer across
-all four datasets, and discovers spectrally unusual candidate plants.
+all five datasets, and discovers spectrally unusual candidate plants.
 
 ---
 
@@ -11,7 +11,7 @@ all four datasets, and discovers spectrally unusual candidate plants.
 
 ```
 .
-├── ecosis_loaders.py              # EcoSIS API loader (AQGRAD spectra + species)
+├── ecosis_loaders.py              # EcoSIS API loader (AQGRAD, Talladega, CABO, LOPEX, Sierra)
 ├── explore_lopex93_columns.py     # Stage 0: LOPEX93 column inspector
 ├── step1_pretrain_downstream.py   # Stage 1: Autoencoder pretraining + downstream tasks
 ├── step2_transfer_learning.py     # Stage 2: Cross-domain transfer (4 datasets, 12 directions)
@@ -26,9 +26,10 @@ all four datasets, and discovers spectrally unusual candidate plants.
 outputs/
 ├── stage1/
 │   ├── autoencoder_loss.png
-│   ├── embedding_pca.png                      # PCA coloured by all 4 datasets
-│   ├── trait_scatter_LOPEX93_<trait>.png      # Per-trait scatter plots (LOPEX93)
-│   ├── trait_scatter_SierraNevada_<trait>.png # Per-trait scatter plots (Sierra Nevada)
+│   ├── embedding_pca.png                      # PCA coloured by all 5 datasets
+│   ├── trait_compare_LOPEX93_<trait>.png      # Per-trait predicted-vs-true plots (LOPEX93)
+│   ├── trait_compare_SierraNevada_<trait>.png # Per-trait predicted-vs-true plots (Sierra Nevada)
+│   ├── trait_compare_CABOv2_<trait>.png       # Per-trait predicted-vs-true plots (CABO v2)
 │   ├── encoder.pt / scaler_mean.npy / scaler_std.npy / target_wl.npy
 │   └── embeddings_all.npz
 ├── stage2/
@@ -49,12 +50,13 @@ outputs/
 |---|---|---|---|
 | AQGRAD | 2021 | EcoSIS | Leaf spectra and traits along a water-affinity gradient, Mantua lakes, Italy |
 | Talladega 2018 | 2018 | EcoSIS | Leaf reflectance and foliar traits, Talladega National Forest, Alabama |
+| CABO 2018-2019 v2 | 2023 update | EcoSIS | Broad multispecies leaf-level spectra with associated trait data |
 | LOPEX93 | 1993 | JRC / EcoSIS | Lab spectra + biochemical traits (via metadata xlsx) |
 | Sierra Nevada 2023 | 2023 | EcoSIS | Field spectra + measured traits, California (drought/fire stress) |
 
-All datasets download automatically. Sierra Nevada 2023 includes inline measured traits
-(LMA, Nmass, EWT, etc.) alongside spectra, making it the most directly usable dataset
-for trait regression without a separate metadata file.
+All datasets download automatically. Sierra Nevada 2023 and CABO v2 include inline
+trait fields in the EcoSIS export, while LOPEX93 uses the local metadata workbook for
+trait attachment.
 
 ---
 
@@ -72,8 +74,8 @@ Place `lopex1993metadata.xlsx` in the project root before running.
 
 ```bash
 python explore_lopex93_columns.py   # optional, verify LOPEX93 download
-python step1_pretrain_downstream.py # trains autoencoder on all 4 datasets
-python step2_transfer_learning.py   # 12 cross-domain transfer directions
+python step1_pretrain_downstream.py # trains autoencoder on all 5 datasets
+python step2_transfer_learning.py   # pairwise cross-domain transfer directions
 python step3_integrated_discovery.py
 ```
 
