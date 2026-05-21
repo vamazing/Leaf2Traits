@@ -12,7 +12,7 @@ Run:
     python step3_integrated_discovery.py
 """
 
-import io, json, urllib.request, warnings
+import io, json, shutil, urllib.request, warnings
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -24,11 +24,7 @@ from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
 from sklearn.ensemble import HistGradientBoostingRegressor, IsolationForest
 from sklearn.linear_model import RidgeCV
-<<<<<<< HEAD
 from sklearn.model_selection import GroupKFold, KFold, cross_val_score
-=======
-from sklearn.model_selection import KFold, cross_val_score
->>>>>>> 35cc28cfd104948b5fc610fa7988a2d52230f59f
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 import torch, torch.nn as nn
@@ -41,10 +37,7 @@ from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
-<<<<<<< HEAD
     join_lopex93_metadata,
-=======
->>>>>>> 35cc28cfd104948b5fc610fa7988a2d52230f59f
     load_aqgrad,
     load_tall2018,
 )
@@ -82,6 +75,16 @@ DATASETS = {
     "sierranevada2023": ["fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"],
 }
 LABEL_MAP = {"aqgrad": 0, "talladega2018": 1, "lopex93": 2, "sierranevada2023": 3}
+
+
+def clear_stage_outputs(out_dir):
+    """Remove only this stage's previously generated artifacts."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for path in out_dir.iterdir():
+        if path.is_file() or path.is_symlink():
+            path.unlink()
+        elif path.is_dir():
+            shutil.rmtree(path)
 
 
 # ── Autoencoder ───────────────────────────────────────────────────────────────
@@ -256,18 +259,8 @@ def load_all():
             if not df.empty:
                 # Join metadata BEFORE adding _dataset so non-spectral cols are visible
                 if name == "lopex93":
-<<<<<<< HEAD
                     df = join_lopex93_metadata(df, LOPEX93_METADATA)
                     print(f"    Joined LOPEX93 metadata")
-=======
-                    lm = load_lopex93_metadata(len(df))
-                    if lm is not None:
-                        for col in ["Latin Name"] + LOPEX93_TRAIT_COLS:
-                            if col in lm.columns:
-                                df[col] = lm[col].values
-                        df = df.rename(columns={"Latin Name": "Species"})
-                        print(f"    Joined LOPEX93 metadata")
->>>>>>> 35cc28cfd104948b5fc610fa7988a2d52230f59f
                 if name == "sierranevada2023":
                     df = load_sierra_metadata(df)
                 df["_dataset"] = name
@@ -279,17 +272,6 @@ def load_all():
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
-<<<<<<< HEAD
-=======
-def load_lopex93_metadata(n_spectra):
-    p = Path(LOPEX93_METADATA)
-    if not p.exists(): return None
-    meta = pd.read_excel(p).replace(-999, np.nan)
-    sample_ids = np.arange(n_spectra) // 2 + 1
-    return pd.DataFrame({"Sample_#": sample_ids}).merge(meta, on="Sample_#", how="left")
-
-
->>>>>>> 35cc28cfd104948b5fc610fa7988a2d52230f59f
 def make_synthetic(name, n=120):
     rng = np.random.default_rng(abs(hash(name)) % (2**31))
     wl  = np.arange(400, 2401, 10)
@@ -398,7 +380,6 @@ def build_regressor_candidates(n_samples, n_features):
     }
 
 
-<<<<<<< HEAD
 def choose_group_column(meta_df, prefer_species=False):
     if prefer_species:
         candidates = ("Species", "sample_number", "Sample_#", "sample_id")
@@ -453,15 +434,6 @@ def select_best_regressor_cv(X, y, groups=None):
         score = cross_val_score(
             clone(model), X, y, cv=cv, groups=cv_groups, scoring="r2"
         ).mean()
-=======
-def select_best_regressor_cv(X, y):
-    n_samples, n_features = X.shape
-    cv_splits = min(5, max(3, n_samples // 10))
-    cv = KFold(n_splits=cv_splits, shuffle=True, random_state=SEED)
-    best_name, best_score = None, -np.inf
-    for name, model in build_regressor_candidates(n_samples, n_features).items():
-        score = cross_val_score(clone(model), X, y, cv=cv, scoring="r2").mean()
->>>>>>> 35cc28cfd104948b5fc610fa7988a2d52230f59f
         if score > best_score:
             best_name, best_score = name, score
     return best_name, best_score
@@ -489,7 +461,6 @@ def compare_trait_regression(X_raw, Z, meta):
         y  = meta[trait].values.astype(float)
         ok = ~np.isnan(y)
         if ok.sum() < 15: continue
-<<<<<<< HEAD
         yr = y[ok]
         Xr = X_raw[ok]
         Xz = Z[ok]
@@ -504,11 +475,6 @@ def compare_trait_regression(X_raw, Z, meta):
             groups = meta_t[group_col].astype(str).values
         raw_name, r2_raw = select_best_regressor_cv(Xr, yr, groups)
         emb_name, r2_emb = select_best_regressor_cv(Xz, yr, groups)
-=======
-        yr, Xr, Xz = y[ok], X_raw[ok], Z[ok]
-        raw_name, r2_raw = select_best_regressor_cv(Xr, yr)
-        emb_name, r2_emb = select_best_regressor_cv(Xz, yr)
->>>>>>> 35cc28cfd104948b5fc610fa7988a2d52230f59f
         rows.append(
             {
                 "trait": trait,
@@ -516,11 +482,8 @@ def compare_trait_regression(X_raw, Z, meta):
                 "R2_emb": r2_emb,
                 "model_raw": raw_name,
                 "model_emb": emb_name,
-<<<<<<< HEAD
                 "aggregation": "sample_mean" if aggregated else "none",
                 "group_col": group_col or "",
-=======
->>>>>>> 35cc28cfd104948b5fc610fa7988a2d52230f59f
             }
         )
         print(
@@ -653,6 +616,8 @@ def main():
     print("\n" + "="*65)
     print("  Stage 3 - Integrated Discovery Pipeline")
     print("="*65)
+    clear_stage_outputs(OUT_DIR)
+    print(f"  Cleared previous Stage 3 outputs in: {OUT_DIR.resolve()}")
 
     print("\n[1/5] Loading encoder ...")
     model, mu, std = load_encoder()

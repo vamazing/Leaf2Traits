@@ -16,7 +16,7 @@ Run:
     python step2_transfer_learning.py
 """
 
-import io, json, urllib.request, warnings
+import io, json, shutil, urllib.request, warnings
 from itertools import permutations
 from pathlib import Path
 import numpy as np
@@ -59,6 +59,16 @@ DATASETS = {
 }
 SHORT = {"aqgrad": "aqgr", "talladega2018": "tall",
          "lopex93": "lope", "sierranevada2023": "sier"}
+
+
+def clear_stage_outputs(out_dir):
+    """Remove only this stage's previously generated artifacts."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for path in out_dir.iterdir():
+        if path.is_file() or path.is_symlink():
+            path.unlink()
+        elif path.is_dir():
+            shutil.rmtree(path)
 
 
 class Autoencoder(nn.Module):
@@ -237,6 +247,8 @@ def main():
     print("\n" + "="*65)
     print("  Stage 2 - Cross-Domain Transfer Learning")
     print("="*65)
+    clear_stage_outputs(OUT_DIR)
+    print(f"  Cleared previous Stage 2 outputs in: {OUT_DIR.resolve()}")
 
     print("\n[1/4] Loading encoder ...")
     model, mu, std = load_encoder()

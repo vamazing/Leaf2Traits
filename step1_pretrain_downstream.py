@@ -21,6 +21,7 @@ Run:
 
 import io
 import json
+import shutil
 import urllib.request
 import warnings
 from pathlib import Path
@@ -118,6 +119,16 @@ DATASETS = {
 LABEL_MAP = {"aqgrad": 0, "talladega2018": 1, "lopex93": 2, "sierranevada2023": 3}
 LABEL_NAMES = {0: "AQGRAD", 1: "Talladega 2018", 2: "LOPEX93", 3: "Sierra Nevada 2023"}
 AE_CONFIG = {"hidden": HIDDEN, "latent_dim": LATENT_DIM, "dropout": DROPOUT}
+
+
+def clear_stage_outputs(out_dir):
+    """Remove only this stage's previously generated artifacts."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    for path in out_dir.iterdir():
+        if path.is_file() or path.is_symlink():
+            path.unlink()
+        elif path.is_dir():
+            shutil.rmtree(path)
 
 
 # ── I/O ───────────────────────────────────────────────────────────────────────
@@ -712,6 +723,8 @@ def main():
     print("\n" + "=" * 65)
     print("  Stage 1 - Pretraining + Downstream Prediction")
     print("=" * 65)
+    clear_stage_outputs(OUT_DIR)
+    print(f"  Cleared previous Stage 1 outputs in: {OUT_DIR.resolve()}")
 
     print("\n[1/6] Loading datasets ...")
     raws = {}
