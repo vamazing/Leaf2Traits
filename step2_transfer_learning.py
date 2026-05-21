@@ -2,13 +2,15 @@
 step2_transfer_learning.py
 Stage 2: Cross-Domain Transfer Learning
 
-For every ordered pair of the four datasets, trains a binary classifier to
+For every ordered pair of the datasets, trains a binary classifier to
 distinguish source from target dataset spectra, using both raw spectra and
 autoencoder embeddings. Accuracy > 0.5 means datasets are spectrally separable.
 
 Datasets:
   - AQGRAD              (water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018      (Talladega National Forest, Alabama)
+  - CABO v2             (broad multispecies leaf-level traits)
+  - NEON canopy         (eastern US canopy traits)
   - LOPEX93             (European lab)
   - Sierra Nevada 2023  (field, California)
 
@@ -35,10 +37,16 @@ except ImportError:
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
+    LOPEX93_PACKAGE_IDS,
+    NEON_CANOPY_PACKAGE_ID,
+    SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
+    load_lopex93,
+    load_neon_canopy,
+    load_sierra_nevada_2023,
     load_tall2018,
 )
 
@@ -57,11 +65,12 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
-    "lopex93":          ["leaf-optical-properties-experiment-database--lopex93-", "3849_2"],
-    "sierranevada2023": ["fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"],
+    "neon_canopy":      [NEON_CANOPY_PACKAGE_ID],
+    "lopex93":          LOPEX93_PACKAGE_IDS,
+    "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
 SHORT = {"aqgrad": "aqgr", "talladega2018": "tall",
-         "cabo_v2": "cabo", "lopex93": "lope", "sierranevada2023": "sier"}
+         "cabo_v2": "cabo", "neon_canopy": "neon", "lopex93": "lope", "sierranevada2023": "sier"}
 
 
 def clear_stage_outputs(out_dir):
@@ -166,6 +175,30 @@ def load_dataset(name, ids):
         return make_synthetic(name)
     if name == "cabo_v2":
         df = load_cabo_v2()
+        if not df.empty:
+            df["_dataset"] = name
+            print(f"    OK: {df.shape}")
+            return df
+        print(f"    WARN: failed -> synthetic")
+        return make_synthetic(name)
+    if name == "neon_canopy":
+        df = load_neon_canopy()
+        if not df.empty:
+            df["_dataset"] = name
+            print(f"    OK: {df.shape}")
+            return df
+        print(f"    WARN: failed -> synthetic")
+        return make_synthetic(name)
+    if name == "lopex93":
+        df = load_lopex93()
+        if not df.empty:
+            df["_dataset"] = name
+            print(f"    OK: {df.shape}")
+            return df
+        print(f"    WARN: failed -> synthetic")
+        return make_synthetic(name)
+    if name == "sierranevada2023":
+        df = load_sierra_nevada_2023()
         if not df.empty:
             df["_dataset"] = name
             print(f"    OK: {df.shape}")

@@ -18,6 +18,9 @@ TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
 CABO_V2_PACKAGE_ID = "a12286ac-929f-4e3e-9b9c-517e10fe4087"
+NEON_CANOPY_PACKAGE_ID = (
+    "canopy-spectra-to-map-foliar-functional-traits-over-neon-domains-in-eastern-united-states"
+)
 LOPEX93_PACKAGE_IDS = [
     "leaf-optical-properties-experiment-database--lopex93-",
     "3849_2",
@@ -89,6 +92,11 @@ SIERRA_V2_RENAME_MAP = {
     "Sample Collection Date": "Sample_Collection_Date",
     "Foreoptic Type": "Foreoptic_Type",
     "Vegetation Type": "Vegetation_Type",
+}
+NEON_CANOPY_RENAME_MAP = {
+    "\ufeffAffiliation": "Affiliation",
+    "Plot_ID": "Plot_ID",
+    "Sample_Year": "Sample_Year",
 }
 
 
@@ -216,6 +224,26 @@ def load_cabo_v2(timeout=120):
         n_mass = pd.to_numeric(df["N_mass_g_g"], errors="coerce")
         c_mass = pd.to_numeric(df["C_mass_g_g"], errors="coerce")
         df["CN_ratio"] = np.where(n_mass > 0, c_mass / n_mass, np.nan)
+    return df
+
+
+def load_neon_canopy(timeout=120):
+    """
+    Load the NEON eastern US canopy spectra package from EcoSIS.
+
+    The export includes many trait columns inline but does not expose species
+    taxonomy, so Plot_ID is used directly as the stable grouping/identifier label.
+    """
+    df = fetch_package_csv(NEON_CANOPY_PACKAGE_ID, metadata=True, timeout=timeout)
+    if df.empty:
+        df = fetch_package_csv(NEON_CANOPY_PACKAGE_ID, metadata=False, timeout=timeout)
+    if df.empty:
+        return df
+    df = df.rename(columns={k: v for k, v in NEON_CANOPY_RENAME_MAP.items() if k in df.columns})
+    if "Plot_ID" in df.columns:
+        df["Plot_ID"] = df["Plot_ID"].astype(str).str.strip()
+    if "Genus" not in df.columns:
+        df["Genus"] = "Unknown"
     return df
 
 

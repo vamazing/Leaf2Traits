@@ -2,10 +2,10 @@
 step3_integrated_discovery.py
 Stage 3: Integrated Discovery Pipeline
 
-Full A->C pipeline across all four datasets:
+Full A->C pipeline across all datasets:
   A. Representation validation  - PCA of embeddings + reconstruction error.
   B. Trait regression comparison - raw spectra vs embeddings (5-fold CV).
-     Uses API-provided LOPEX93, CABO, and Sierra Nevada traits.
+     Uses API-provided LOPEX93, CABO, NEON, and Sierra Nevada traits.
   C. Novel candidate discovery  - Isolation Forest novelty scoring + taxonomic prior.
 
 Run:
@@ -37,12 +37,14 @@ from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
+    NEON_CANOPY_PACKAGE_ID,
     SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
     load_lopex93,
+    load_neon_canopy,
     load_sierra_nevada_2023,
     load_tall2018,
 )
@@ -108,6 +110,36 @@ CABO_V2_TRAIT_COLS = [
     "Zn_mass_mg_g",
     "Zn_area_g_m2",
 ]
+NEON_CANOPY_TRAIT_COLS = [
+    "Boron",
+    "Calcium",
+    "Carbon",
+    "Carotenoids_area",
+    "Carotenoids_mass",
+    "Cellulose",
+    "Chlorophylls_area",
+    "Chlorophylls_mass",
+    "Copper",
+    "EWT",
+    "Fiber",
+    "Flavonoids",
+    "LMA",
+    "Lignin",
+    "Magnesium",
+    "Manganese",
+    "NSC",
+    "Nitrogen",
+    "Phenolics",
+    "Phosphorus",
+    "Potassium",
+    "SLA",
+    "Starch",
+    "Sugar",
+    "Sulfur",
+    "Water",
+    "d13C",
+    "d15N",
+]
 SIERRA_TRAIT_COLS = ["LMA_g_m2", "LWC_percent", "Chlorophyll_mg_m2"]
 
 KNOWN_HYPERACCUMULATOR_GENERA = {
@@ -118,6 +150,7 @@ KNOWN_HYPERACCUMULATOR_GENERA = {
 DATASET_TRAIT_MAP = {
     "lopex93": LOPEX93_TRAIT_COLS,
     "cabo_v2": CABO_V2_TRAIT_COLS,
+    "neon_canopy": NEON_CANOPY_TRAIT_COLS,
     "sierranevada2023": SIERRA_TRAIT_COLS,
 }
 
@@ -126,6 +159,7 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
+    "neon_canopy":      [NEON_CANOPY_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
@@ -133,8 +167,9 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "cabo_v2": 2,
-    "lopex93": 3,
-    "sierranevada2023": 4,
+    "neon_canopy": 3,
+    "lopex93": 4,
+    "sierranevada2023": 5,
 }
 
 
@@ -271,6 +306,16 @@ def load_all():
             continue
         if name == "cabo_v2":
             df = load_cabo_v2()
+            if not df.empty:
+                df["_dataset"] = name
+                print(f"    OK: {df.shape}")
+                frames.append(df)
+                continue
+            print(f"    WARN: download failed -> synthetic")
+            frames.append(make_synthetic(name))
+            continue
+        if name == "neon_canopy":
+            df = load_neon_canopy()
             if not df.empty:
                 df["_dataset"] = name
                 print(f"    OK: {df.shape}")
@@ -422,6 +467,7 @@ def build_regressor_candidates(n_samples, n_features):
 def choose_group_column(meta_df, prefer_species=False):
     if prefer_species:
         candidates = (
+            "Plot_ID",
             "Species",
             "USDA_Species_Code",
             "sample_number",
@@ -431,6 +477,7 @@ def choose_group_column(meta_df, prefer_species=False):
         )
     else:
         candidates = (
+            "Plot_ID",
             "sample_number",
             "Sample_#",
             "sample_id",
@@ -440,6 +487,13 @@ def choose_group_column(meta_df, prefer_species=False):
         )
     for col in candidates:
         if col in meta_df.columns and meta_df[col].notna().sum() >= 15:
+            return col
+    return None
+
+
+def choose_entity_label(meta_df):
+    for col in ("Species", "Plot_ID", "USDA_Species_Code", "sample_number", "Sample_ID", "sample_id"):
+        if col in meta_df.columns and meta_df[col].notna().sum() > 0:
             return col
     return None
 
@@ -800,8 +854,14 @@ def run_discovery_v2(X_raw, Z, meta):
     plt.close(fig)
     print("  Saved: novelty_distribution.png")
 
-    sp_col = meta["Species"] if "Species" in meta.columns else pd.Series(["Unknown"] * len(meta))
-    genera = sp_col.apply(genus_from_species)
+    entity_col = choose_entity_label(meta)
+    if entity_col is None:
+        sp_col = pd.Series(["Unknown"] * len(meta))
+        entity_label = "Entity"
+    else:
+        sp_col = meta[entity_col].astype(str).fillna("Unknown")
+        entity_label = entity_col
+    genera = sp_col.apply(genus_from_species if entity_label == "Species" else (lambda _: "Unknown"))
     known_hyper = genera.apply(lambda g: g in KNOWN_HYPERACCUMULATOR_GENERA).values
 
     all_spectra = pd.DataFrame(
@@ -874,8 +934,8 @@ def run_discovery_v2(X_raw, Z, meta):
     )
     ax.set_xticks(range(len(species_ranked)))
     ax.set_xticklabels(species_ranked["species"], rotation=60, ha="right", fontsize=7)
-    ax.set_ylabel("Composite Novelty Score (95th percentile per species)")
-    ax.set_title("Species-Level Novelty Ranking (within-dataset normalized)")
+    ax.set_ylabel("Composite Novelty Score (95th percentile per label)")
+    ax.set_title("Novelty Ranking (within-dataset normalized)")
     from matplotlib.patches import Patch
     ax.legend(
         handles=[
@@ -890,8 +950,8 @@ def run_discovery_v2(X_raw, Z, meta):
     plt.close(fig)
     print("  Saved: novelty_species_ranking.png")
 
-    print(f"\n  Top-10 candidate species (one entry per species, 95th percentile novelty):")
-    print(f"  {'Rank':>4}  {'Species':<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'HyperAcc?':>9}")
+    print(f"\n  Top-10 candidate labels (95th percentile novelty):")
+    print(f"  {'Rank':>4}  {entity_label:<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'HyperAcc?':>9}")
     print("  " + "-" * 95)
     for _, row in species_ranked.head(10).iterrows():
         ha = "YES" if row["known_hyperacc"] else "-"

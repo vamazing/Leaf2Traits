@@ -5,6 +5,8 @@ Stage 1: Pretraining + Downstream Prediction
 Datasets:
   - AQGRAD               (EcoSIS, water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018       (EcoSIS, leaf spectra + foliar traits, Alabama)
+  - CABO v2              (EcoSIS, broad multispecies leaf-level traits)
+  - NEON canopy          (EcoSIS, eastern US canopy traits)
   - LOPEX93              (EcoSIS spectra + biochemical traits via metadata=true)
   - Sierra Nevada 2023   (EcoSIS, field, California - includes measured traits)
 
@@ -62,12 +64,14 @@ from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
+    NEON_CANOPY_PACKAGE_ID,
     SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
     load_lopex93,
+    load_neon_canopy,
     load_sierra_nevada_2023,
     load_tall2018,
 )
@@ -148,6 +152,37 @@ CABO_V2_TRAIT_COLS = [
     "Zn_area_g_m2",
 ]
 
+NEON_CANOPY_TRAIT_COLS = [
+    "Boron",
+    "Calcium",
+    "Carbon",
+    "Carotenoids_area",
+    "Carotenoids_mass",
+    "Cellulose",
+    "Chlorophylls_area",
+    "Chlorophylls_mass",
+    "Copper",
+    "EWT",
+    "Fiber",
+    "Flavonoids",
+    "LMA",
+    "Lignin",
+    "Magnesium",
+    "Manganese",
+    "NSC",
+    "Nitrogen",
+    "Phenolics",
+    "Phosphorus",
+    "Potassium",
+    "SLA",
+    "Starch",
+    "Sugar",
+    "Sulfur",
+    "Water",
+    "d13C",
+    "d15N",
+]
+
 SIERRA_TRAIT_COLS = [
     "LMA_g_m2",
     "LWC_percent",
@@ -159,6 +194,7 @@ DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
     "talladega2018": [TALL2018_PACKAGE_ID],
     "cabo_v2": [CABO_V2_PACKAGE_ID],
+    "neon_canopy": [NEON_CANOPY_PACKAGE_ID],
     "lopex93": LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
@@ -166,15 +202,17 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "cabo_v2": 2,
-    "lopex93": 3,
-    "sierranevada2023": 4,
+    "neon_canopy": 3,
+    "lopex93": 4,
+    "sierranevada2023": 5,
 }
 LABEL_NAMES = {
     0: "AQGRAD",
     1: "Talladega 2018",
     2: "CABO v2",
-    3: "LOPEX93",
-    4: "Sierra Nevada 2023",
+    3: "NEON Canopy",
+    4: "LOPEX93",
+    5: "Sierra Nevada 2023",
 }
 AE_CONFIG = {"hidden": HIDDEN, "latent_dim": LATENT_DIM, "dropout": DROPOUT}
 
@@ -236,6 +274,14 @@ def load_dataset(name, ids):
             return df
         print(f"    WARN: CABO v2 download failed -> synthetic fallback")
         return pd.DataFrame()
+    if name == "neon_canopy":
+        df = load_neon_canopy()
+        if not df.empty:
+            print(f"    OK {NEON_CANOPY_PACKAGE_ID}: {df.shape}")
+            df["_dataset"] = name
+            return df
+        print(f"    WARN: NEON canopy download failed -> synthetic fallback")
+        return pd.DataFrame()
     if name == "lopex93":
         df = load_lopex93()
         if not df.empty:
@@ -260,23 +306,6 @@ def load_dataset(name, ids):
             return df
     print(f"    WARN: download failed -> synthetic fallback")
     return pd.DataFrame()
-
-
-def load_lopex93_metadata(n_spectra):
-    p = Path(LOPEX93_METADATA)
-    if not p.exists():
-        print(f"  INFO: {LOPEX93_METADATA} not found.")
-        return None
-    meta = pd.read_excel(p).replace(-999, np.nan)
-    sample_ids = lopex93_sample_ids(n_spectra)
-    joined = pd.DataFrame({"Sample_#": sample_ids}).merge(
-        meta, on="Sample_#", how="left"
-    )
-    print(
-        f"  Loaded LOPEX93 metadata: {len(meta)} samples -> {joined['Chlorophyll_a+b (µg/cm²)'].notna().sum()} spectra with traits"
-    )
-    return joined
-
 
 def make_synthetic(name, n=120):
     rng = np.random.default_rng(abs(hash(name)) % (2**31))
@@ -525,6 +554,7 @@ def select_regressor(X, y):
 def choose_group_column(meta_df, prefer_species=False):
     if prefer_species:
         candidates = (
+            "Plot_ID",
             "Species",
             "USDA_Species_Code",
             "sample_number",
@@ -534,6 +564,7 @@ def choose_group_column(meta_df, prefer_species=False):
         )
     else:
         candidates = (
+            "Plot_ID",
             "sample_number",
             "Sample_#",
             "sample_id",
@@ -737,90 +768,6 @@ def run_classification_fallback(Z, labels):
     names = [LABEL_NAMES[i] for i in sorted(LABEL_NAMES)]
     print(classification_report(yte, clf.predict(Xte), target_names=names))
 
-
-# ── Sierra Nevada 2023 metadata loader ────────────────────────────────────────
-def load_sierra_metadata(df_sierra):
-    """
-    Join ca2023_freshspectra_supplementaldata.csv to the EcoSIS Sierra Nevada
-    spectra by positional tiling.
-
-    The EcoSIS export is pure spectra with no metadata columns.
-    363 rows = 33 samples x 11 scans each. The supplemental CSV has 35 samples;
-    samples 75 and 76 (the two highest sample_numbers) are absent from EcoSIS.
-    We sort by sample_number, take the first 33, and tile each 11 times.
-    """
-    p = Path(SIERRA_METADATA)
-    if not p.exists():
-        print(f"    INFO: {SIERRA_METADATA} not found.")
-        return df_sierra
-
-    meta = pd.read_csv(p)
-    meta.columns = meta.columns.str.strip()
-    lower_to_name = {c.lower(): c for c in meta.columns}
-    genus_col = lower_to_name.get("genus")
-    species_col = lower_to_name.get("species")
-    if genus_col is None:
-        raise KeyError(
-            f"Sierra metadata missing required 'genus' column. Found: {list(meta.columns)}"
-        )
-    meta[genus_col] = meta[genus_col].astype(str).str.strip()
-    meta["Species"] = meta.apply(
-        lambda r: (
-            f"{r[genus_col]} {r[species_col]}"
-            if species_col is not None
-            and pd.notna(r[species_col])
-            and str(r[species_col]).strip() not in ("", "nan")
-            else r[genus_col]
-        ),
-        axis=1,
-    )
-    meta = meta.rename(
-        columns={
-            "LMA_value_g/m2": "LMA_g_m2",
-            "leaf_water_content_percent": "LWC_percent",
-            "chlorophyll _mg/m2": "Chlorophyll_mg_m2",
-        }
-    )
-    meta = meta.sort_values("sample_number").reset_index(drop=True)
-
-    n_ecosis = len(df_sierra)  # 363
-    # Find scans_per_sample: largest divisor of n_ecosis <= n_samples
-    n_samples = len(meta)  # 35
-    scans_per = 1
-    for c in range(2, 30):
-        if n_ecosis % c == 0 and n_ecosis // c <= n_samples:
-            scans_per = c
-    n_used = n_ecosis // scans_per  # 33
-    meta_used = meta.head(n_used).reset_index(drop=True)
-
-    tiled = meta_used.loc[meta_used.index.repeat(scans_per)].reset_index(drop=True)
-    keep = [
-        c
-        for c in [
-            "Species",
-            "genus",
-            "LMA_g_m2",
-            "LWC_percent",
-            "Chlorophyll_mg_m2",
-            "common_name",
-            "plant_functional_type",
-            "family",
-        ]
-        if c in tiled.columns
-    ]
-
-    df_out = df_sierra.reset_index(drop=True)
-    for col in keep:
-        df_out[col] = tiled[col].values
-
-    n_matched = df_out["Species"].notna().sum()
-    print(
-        f"    Positional join: {n_used} samples x {scans_per} scans = "
-        f"{n_used * scans_per} rows, {n_matched} species matched"
-    )
-    return df_out
-
-
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     print("\n" + "=" * 65)
@@ -907,6 +854,24 @@ def main():
         ]
         if cabo_traits:
             ok = run_trait_regression(X[cmask], Z[cmask], cm, cabo_traits, tag="CABOv2")
+            if ok:
+                trait_found = True
+
+    # NEON canopy traits (inline in EcoSIS export)
+    nmask = labels == LABEL_MAP["neon_canopy"]
+    if nmask.sum() > 0:
+        nm = meta[nmask].reset_index(drop=True)
+        neon_traits = [
+            c
+            for c in NEON_CANOPY_TRAIT_COLS
+            if c in nm.columns
+            and nm[c].notna().sum() >= 10
+            and pd.api.types.is_numeric_dtype(nm[c])
+        ]
+        if neon_traits:
+            ok = run_trait_regression(
+                X[nmask], Z[nmask], nm, neon_traits, tag="NEONCanopy"
+            )
             if ok:
                 trait_found = True
 
