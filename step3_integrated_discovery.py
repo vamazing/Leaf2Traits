@@ -114,6 +114,11 @@ KNOWN_HYPERACCUMULATOR_GENERA = {
     "Pteris","Sedum","Mesembryanthemum","Haumaniastrum",
     "Viola","Minuartia","Silene","Astragalus",
 }
+DATASET_TRAIT_MAP = {
+    "lopex93": LOPEX93_TRAIT_COLS,
+    "cabo_v2": CABO_V2_TRAIT_COLS,
+    "sierranevada2023": SIERRA_TRAIT_COLS,
+}
 
 ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
@@ -703,6 +708,241 @@ def load_custom_candidates(path="candidates_local_wildplants.csv"):
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
+def compare_trait_regression_v2(X_raw, Z, meta):
+    print("  [B] Trait regression comparison (raw vs embedding) ...")
+    if "_dataset" not in meta.columns:
+        print("    No dataset labels found. Skipping.")
+        return
+
+    rows = []
+    for dataset, trait_cols in DATASET_TRAIT_MAP.items():
+        ds_mask = meta["_dataset"].eq(dataset).to_numpy()
+        if ds_mask.sum() == 0:
+            continue
+        meta_ds = meta.loc[ds_mask].reset_index(drop=True).copy()
+        Xr_ds = X_raw[ds_mask]
+        Xz_ds = Z[ds_mask]
+        traits = [c for c in trait_cols if c in meta_ds.columns and meta_ds[c].notna().sum() >= 10]
+        if not traits:
+            continue
+        print(f"    Dataset={dataset}  traits={len(traits)}")
+        for trait in traits:
+            y = meta_ds[trait].values.astype(float)
+            ok = ~np.isnan(y)
+            if ok.sum() < 15:
+                continue
+            yr = y[ok]
+            Xr = Xr_ds[ok]
+            Xz = Xz_ds[ok]
+            meta_t = meta_ds.loc[ok].reset_index(drop=True).copy()
+            aggregated = False
+            if dataset == "lopex93":
+                Xr, Xz, meta_t, aggregated = aggregate_sample_level(Xr, Xz, meta_t)
+                yr = meta_t[trait].values.astype(float)
+            group_col = choose_group_column(meta_t, prefer_species=aggregated)
+            groups = None
+            if group_col is not None:
+                group_series = meta_t[group_col].copy()
+                group_series = group_series.where(group_series.notna(), "__missing_group__")
+                groups = group_series.astype(str).values
+            raw_name, r2_raw = select_best_regressor_cv(Xr, yr, groups)
+            emb_name, r2_emb = select_best_regressor_cv(Xz, yr, groups)
+            rows.append(
+                {
+                    "dataset": dataset,
+                    "trait": trait,
+                    "R2_raw": r2_raw,
+                    "R2_emb": r2_emb,
+                    "model_raw": raw_name,
+                    "model_emb": emb_name,
+                    "aggregation": "sample_mean" if aggregated else "none",
+                    "group_col": group_col or "",
+                }
+            )
+            print(
+                f"      {trait:<38}  raw={raw_name}:{r2_raw:.3f}  "
+                f"emb={emb_name}:{r2_emb:.3f}  gain={r2_emb-r2_raw:+.3f}"
+            )
+
+    if not rows:
+        print("    No trait rows available after dataset-specific filtering.")
+        return
+
+    df_r = pd.DataFrame(rows)
+    df_r["label"] = df_r["dataset"] + ":" + df_r["trait"]
+    df_r.to_csv(OUT_DIR / "trait_comparison_summary.csv", index=False)
+
+    x = np.arange(len(df_r))
+    w = 0.35
+    fig, ax = plt.subplots(figsize=(max(10, 0.45 * len(df_r)), 6))
+    ax.bar(x - w / 2, df_r["R2_raw"], w, label="Raw Spectra", color="#94a3b8")
+    ax.bar(x + w / 2, df_r["R2_emb"], w, label="Embeddings", color="#2563eb")
+    ax.set_xticks(x)
+    ax.set_xticklabels(df_r["label"], rotation=55, ha="right", fontsize=8)
+    ax.set_ylabel("R2 (dataset-specific CV)")
+    ax.set_title("Trait Prediction by Dataset: Raw vs Embedding")
+    ax.axhline(0, color="black", lw=0.8)
+    ax.legend()
+    ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "trait_comparison.png", dpi=150)
+    plt.close(fig)
+    print("  Saved: trait_comparison.png")
+    print("  Saved: trait_comparison_summary.csv")
+
+
+def normalize_zero_one(values):
+    values = np.asarray(values, dtype=float)
+    if values.size == 0:
+        return values
+    vmin = np.nanmin(values)
+    vmax = np.nanmax(values)
+    if not np.isfinite(vmin) or not np.isfinite(vmax) or abs(vmax - vmin) < 1e-12:
+        return np.zeros_like(values, dtype=float)
+    return (values - vmin) / (vmax - vmin)
+
+
+def run_discovery_v2(X_raw, Z, meta):
+    print("  [C] Novel candidate discovery ...")
+    ds_col = meta.get("_dataset", pd.Series(["unknown"] * len(meta))).fillna("unknown")
+    novelty_raw = np.zeros(len(meta), dtype=float)
+    novelty_norm = np.zeros(len(meta), dtype=float)
+
+    global_iso = IsolationForest(
+        n_estimators=200, contamination=0.1, random_state=SEED, n_jobs=-1
+    ).fit(Z)
+    global_scores = -global_iso.score_samples(Z)
+
+    for dataset, idx in ds_col.groupby(ds_col).groups.items():
+        idx = np.asarray(list(idx), dtype=int)
+        if len(idx) < 10:
+            novelty_raw[idx] = global_scores[idx]
+            novelty_norm[idx] = normalize_zero_one(global_scores[idx])
+            continue
+        iso = IsolationForest(
+            n_estimators=200, contamination=0.1, random_state=SEED, n_jobs=-1
+        )
+        scores = -iso.fit(Z[idx]).score_samples(Z[idx])
+        novelty_raw[idx] = scores
+        novelty_norm[idx] = normalize_zero_one(scores)
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.hist(novelty_norm, bins=50, color="#e74c3c", alpha=0.75, edgecolor="white")
+    ax.axvline(
+        np.percentile(novelty_norm, 90), color="black", ls="--", lw=1.5, label="90th pct"
+    )
+    ax.set_xlabel("Within-dataset normalized novelty score")
+    ax.set_ylabel("Count")
+    ax.set_title("Novelty Score Distribution (combined normalized by dataset)")
+    ax.legend()
+    ax.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "novelty_distribution.png", dpi=150)
+    plt.close(fig)
+    print("  Saved: novelty_distribution.png")
+
+    sp_col = meta["Species"] if "Species" in meta.columns else pd.Series(["Unknown"] * len(meta))
+    genera = sp_col.apply(genus_from_species)
+    known_hyper = genera.apply(lambda g: g in KNOWN_HYPERACCUMULATOR_GENERA).values
+
+    all_spectra = pd.DataFrame(
+        {
+            "species": sp_col.values,
+            "genus": genera.values,
+            "dataset": ds_col.values,
+            "novelty_raw": novelty_raw,
+            "novelty_score": novelty_norm,
+            "known_hyperacc": known_hyper,
+        }
+    )
+    all_spectra["prior_boost"] = all_spectra["known_hyperacc"].astype(float) * 0.15
+    all_spectra["dataset_novelty_percentile"] = (
+        all_spectra.groupby("dataset")["novelty_score"].rank(pct=True)
+    )
+    species_q95 = all_spectra.groupby("species")["novelty_score"].quantile(0.95)
+    all_spectra["species_q95_novelty"] = all_spectra["species"].map(species_q95).astype(float)
+    all_spectra["composite_score"] = all_spectra["novelty_score"] + all_spectra["prior_boost"]
+    all_spectra["species_q95_composite"] = (
+        all_spectra["species_q95_novelty"] + all_spectra["prior_boost"]
+    )
+    all_spectra.to_csv(OUT_DIR / "all_spectra_novelty.csv", index=False)
+
+    representative = (
+        all_spectra.sort_values("novelty_score", ascending=False)
+        .groupby("species", sort=False)
+        .first()[["genus", "dataset", "known_hyperacc", "prior_boost"]]
+    )
+    species_ranked = pd.DataFrame(
+        {
+            "species": species_q95.index,
+            "genus": representative["genus"].reindex(species_q95.index).values,
+            "dataset": representative["dataset"].reindex(species_q95.index).values,
+            "known_hyperacc": representative["known_hyperacc"].reindex(species_q95.index).values,
+            "prior_boost": representative["prior_boost"].reindex(species_q95.index).values,
+            "novelty_score": species_q95.values,
+        }
+    )
+    species_ranked["composite_score"] = species_ranked["novelty_score"] + species_ranked["prior_boost"]
+    species_ranked["n_spectra"] = (
+        all_spectra.groupby("species")["novelty_score"]
+        .count()
+        .reindex(species_ranked["species"])
+        .values
+    )
+    species_ranked = species_ranked.sort_values(
+        ["composite_score", "novelty_score"], ascending=False
+    ).reset_index(drop=True)
+    species_ranked["rank"] = species_ranked.index + 1
+    species_ranked.to_csv(OUT_DIR / "ranked_candidates.csv", index=False)
+    print(f"  Saved: ranked_candidates.csv  ({len(species_ranked)} unique species)")
+    print(f"  Saved: all_spectra_novelty.csv  ({len(all_spectra)} individual spectra)")
+
+    fig, ax = plt.subplots(figsize=(max(10, len(species_ranked) * 0.4), 5))
+    colours = species_ranked["known_hyperacc"].map({True: "#e74c3c", False: "#3498db"})
+    ax.bar(
+        range(len(species_ranked)),
+        species_ranked["composite_score"],
+        color=colours,
+        edgecolor="white",
+        linewidth=0.4,
+    )
+    ax.axhline(
+        np.percentile(species_ranked["composite_score"], 75),
+        color="black",
+        ls="--",
+        lw=1.2,
+        label="75th percentile",
+    )
+    ax.set_xticks(range(len(species_ranked)))
+    ax.set_xticklabels(species_ranked["species"], rotation=60, ha="right", fontsize=7)
+    ax.set_ylabel("Composite Novelty Score (95th percentile per species)")
+    ax.set_title("Species-Level Novelty Ranking (within-dataset normalized)")
+    from matplotlib.patches import Patch
+    ax.legend(
+        handles=[
+            Patch(color="#e74c3c", label="Known hyperaccumulator genus"),
+            Patch(color="#3498db", label="Other species"),
+            plt.Line2D([0], [0], color="black", ls="--", label="75th percentile"),
+        ]
+    )
+    ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "novelty_species_ranking.png", dpi=150)
+    plt.close(fig)
+    print("  Saved: novelty_species_ranking.png")
+
+    print(f"\n  Top-10 candidate species (one entry per species, 95th percentile novelty):")
+    print(f"  {'Rank':>4}  {'Species':<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'HyperAcc?':>9}")
+    print("  " + "-" * 95)
+    for _, row in species_ranked.head(10).iterrows():
+        ha = "YES" if row["known_hyperacc"] else "-"
+        print(
+            f"  {int(row['rank']):>4}  {str(row['species']):<30} "
+            f"{str(row['genus']):<15} {str(row['dataset']):<16} "
+            f"{row['novelty_score']:>8.4f}  {int(row['n_spectra']):>7}  {ha:>9}"
+        )
+
+
 def main():
     print("\n" + "="*65)
     print("  Stage 3 - Integrated Discovery Pipeline")
@@ -732,8 +972,8 @@ def main():
 
     print("\n[4/5] Running pipeline A->C ...")
     validate_representations(X_raw, Z, meta, model, mu, std)
-    compare_trait_regression(X_raw, Z, meta)
-    run_discovery(X_raw, Z, meta)
+    compare_trait_regression_v2(X_raw, Z, meta)
+    run_discovery_v2(X_raw, Z, meta)
 
     print(f"\n{'='*65}")
     print(f"  Stage 3 complete. Outputs in: {OUT_DIR.resolve()}")

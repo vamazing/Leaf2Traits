@@ -45,8 +45,10 @@ outputs/
 |   `-- transfer_summary.csv
 `-- stage3/
     |-- novelty_distribution.png
+    |-- novelty_species_ranking.png
     |-- ranked_candidates.csv
     |-- trait_comparison.png
+    |-- trait_comparison_summary.csv
     `-- embedding_validation.png
 ```
 
@@ -118,6 +120,13 @@ datasets rather than easy transfer.
 dataset, compares trait performance again, and ranks unusual candidate species by
 embedding-space novelty with a small hyperaccumulator-genus prior.
 
+Stage 3 now evaluates trait regression separately within each dataset instead of
+pooling canonical trait names across datasets. For novelty ranking, it fits
+Isolation Forest within each dataset, normalizes novelty scores to `[0, 1]` per
+dataset, combines those normalized scores across datasets, and ranks species by
+their 95th percentile novelty rather than a single maximum scan. This reduces both
+cross-dataset domain bias and scan-count bias in the candidate list.
+
 ---
 
 ## Autoencoder
@@ -138,5 +147,6 @@ embedding-space novelty with a small hyperaccumulator-genus prior.
 ## Discovery
 
 - Isolation Forest with 200 trees on the learned embeddings
-- Novelty score from the negated isolation score
-- Composite score = novelty + hyperaccumulator-genus prior
+- Novelty is scored within each dataset and normalized to `[0, 1]` before combining
+- Species ranking uses 95th percentile novelty per species instead of max novelty
+- Composite score = normalized novelty + hyperaccumulator-genus prior
