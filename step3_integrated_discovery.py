@@ -5,7 +5,7 @@ Stage 3: Integrated Discovery Pipeline
 Full A->C pipeline across all four datasets:
   A. Representation validation  - PCA of embeddings + reconstruction error.
   B. Trait regression comparison - raw spectra vs embeddings (5-fold CV).
-     Uses LOPEX93 traits (from metadata xlsx) and Sierra Nevada traits (inline).
+     Uses API-provided LOPEX93, CABO, and Sierra Nevada traits.
   C. Novel candidate discovery  - Isolation Forest novelty scoring + taxonomic prior.
 
 Run:
@@ -36,11 +36,14 @@ except ImportError:
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
+    LOPEX93_PACKAGE_IDS,
+    SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
-    join_lopex93_metadata,
     load_aqgrad,
     load_cabo_v2,
+    load_lopex93,
+    load_sierra_nevada_2023,
     load_tall2018,
 )
 
@@ -54,7 +57,6 @@ TARGET_WL = np.arange(400, 2401, 10)
 DEFAULT_AE_CONFIG = {"hidden": [1024, 512, 256, 128], "latent_dim": 192, "dropout": 0.05}
 RIDGE_ALPHAS = np.logspace(-3, 3, 13)
 
-LOPEX93_METADATA   = "lopex1993metadata.xlsx"
 LOPEX93_TRAIT_COLS = [
     "Chlorophyll_a+b (µg/cm²)", "Equivalent Water Thickness (g/cm²)",
     "Leaf mass per area (g/cm²)", "Protein_1 (% DW)",
@@ -106,7 +108,6 @@ CABO_V2_TRAIT_COLS = [
     "Zn_mass_mg_g",
     "Zn_area_g_m2",
 ]
-SIERRA_METADATA   = "ca2023_freshspectra_supplementaldata.csv"
 SIERRA_TRAIT_COLS = ["LMA_g_m2", "LWC_percent", "Chlorophyll_mg_m2"]
 
 KNOWN_HYPERACCUMULATOR_GENERA = {
@@ -125,8 +126,8 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
-    "lopex93":          ["leaf-optical-properties-experiment-database--lopex93-", "3849_2"],
-    "sierranevada2023": ["fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"],
+    "lopex93":          LOPEX93_PACKAGE_IDS,
+    "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
 LABEL_MAP = {
     "aqgrad": 0,
@@ -244,62 +245,6 @@ def is_wl(c):
     try: v = float(c); return 300.0 <= v <= 2600.0
     except: return False
 
-def load_sierra_metadata(df_sierra):
-    """Positional tile join: 363 EcoSIS rows = 33 samples x 11 scans."""
-    p = Path(SIERRA_METADATA)
-    if not p.exists():
-        print(f"    INFO: {SIERRA_METADATA} not found.")
-        return df_sierra
-
-    meta = pd.read_csv(p)
-    meta.columns = meta.columns.str.strip()
-    lower_to_name = {c.lower(): c for c in meta.columns}
-    genus_col = lower_to_name.get("genus")
-    species_col = lower_to_name.get("species")
-    if genus_col is None:
-        raise KeyError(
-            f"Sierra metadata missing required 'genus' column. Found: {list(meta.columns)}"
-        )
-    meta[genus_col] = meta[genus_col].astype(str).str.strip()
-    meta["Species"] = meta.apply(
-        lambda r: f"{r[genus_col]} {r[species_col]}"
-                  if species_col is not None
-                  and pd.notna(r[species_col])
-                  and str(r[species_col]).strip() not in ("", "nan")
-                  else r[genus_col],
-        axis=1
-    )
-    meta = meta.rename(columns={
-        "LMA_value_g/m2":           "LMA_g_m2",
-        "leaf_water_content_percent":"LWC_percent",
-        "chlorophyll _mg/m2":       "Chlorophyll_mg_m2",
-    })
-    meta = meta.sort_values("sample_number").reset_index(drop=True)
-
-    n_ecosis  = len(df_sierra)
-    n_samples = len(meta)
-    scans_per = 1
-    for c in range(2, 30):
-        if n_ecosis % c == 0 and n_ecosis // c <= n_samples:
-            scans_per = c
-    n_used    = n_ecosis // scans_per
-    meta_used = meta.head(n_used).reset_index(drop=True)
-
-    tiled = meta_used.loc[meta_used.index.repeat(scans_per)].reset_index(drop=True)
-    keep  = [c for c in ["Species","genus","LMA_g_m2","LWC_percent",
-                          "Chlorophyll_mg_m2","common_name","plant_functional_type","family"]
-             if c in tiled.columns]
-
-    df_out = df_sierra.reset_index(drop=True)
-    for col in keep:
-        df_out[col] = tiled[col].values
-
-    n_matched = df_out["Species"].notna().sum()
-    print(f"    Positional join: {n_used} samples x {scans_per} scans = "
-          f"{n_used*scans_per} rows, {n_matched} species matched")
-    return df_out
-
-
 def load_all():
     frames = []
     for name, ids in DATASETS.items():
@@ -334,15 +279,29 @@ def load_all():
             print(f"    WARN: download failed -> synthetic")
             frames.append(make_synthetic(name))
             continue
+        if name == "lopex93":
+            df = load_lopex93()
+            if not df.empty:
+                df["_dataset"] = name
+                print(f"    OK: {df.shape}")
+                frames.append(df)
+                continue
+            print(f"    WARN: download failed -> synthetic")
+            frames.append(make_synthetic(name))
+            continue
+        if name == "sierranevada2023":
+            df = load_sierra_nevada_2023()
+            if not df.empty:
+                df["_dataset"] = name
+                print(f"    OK: {df.shape}")
+                frames.append(df)
+                continue
+            print(f"    WARN: download failed -> synthetic")
+            frames.append(make_synthetic(name))
+            continue
         for did in ids:
             df = fetch_csv(did)
             if not df.empty:
-                # Join metadata BEFORE adding _dataset so non-spectral cols are visible
-                if name == "lopex93":
-                    df = join_lopex93_metadata(df, LOPEX93_METADATA)
-                    print(f"    Joined LOPEX93 metadata")
-                if name == "sierranevada2023":
-                    df = load_sierra_metadata(df)
                 df["_dataset"] = name
                 print(f"    OK: {df.shape}")
                 frames.append(df); break

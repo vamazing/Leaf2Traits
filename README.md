@@ -15,8 +15,6 @@ all five datasets, and discovers spectrally unusual candidate plants.
 |-- step1_pretrain_downstream.py   # Stage 1: Autoencoder pretraining + downstream tasks
 |-- step2_transfer_learning.py     # Stage 2: Cross-domain transfer
 |-- step3_integrated_discovery.py  # Stage 3: Integrated discovery pipeline
-|-- lopex1993metadata.xlsx         # LOPEX93 biochemical trait metadata (required)
-|-- ca2023_freshspectra_supplementaldata.csv
 |-- requirements.txt
 |-- package.json
 `-- README.md
@@ -64,11 +62,12 @@ plots from prior runs do not mix with current results.
 | AQGRAD | 2021 | EcoSIS | Leaf spectra and traits along a water-affinity gradient in Mantua lakes, Italy |
 | Talladega 2018 | 2018 | EcoSIS | Leaf reflectance and foliar traits from Talladega National Forest, Alabama |
 | CABO 2018-2019 v2 | 2023 update | EcoSIS | Broad multispecies leaf-level spectra with inline trait metadata |
-| LOPEX93 | 1993 | JRC / EcoSIS | Lab spectra with biochemical traits attached from `lopex1993metadata.xlsx` |
+| LOPEX93 | 1993 | JRC / EcoSIS | Lab spectra with biochemical traits provided by the EcoSIS `metadata=true` export |
 | Sierra Nevada 2023 | 2023 | EcoSIS | Field spectra with measured traits from California |
 
-CABO and Sierra Nevada use inline trait fields from the EcoSIS export. LOPEX93 uses
-the local metadata workbook for trait attachment.
+AQGRAD, CABO, LOPEX93, and Sierra Nevada use EcoSIS `metadata=true` exports so their
+trait and taxonomy fields come directly from the API. Talladega still falls back to
+the local metadata CSV only if the richer EcoSIS export is unavailable.
 
 ---
 
@@ -83,10 +82,6 @@ Optional on Windows with DirectML:
 ```bash
 python -m pip install torch-directml
 ```
-
-Place `lopex1993metadata.xlsx` in the project root before running.
-
----
 
 ## Running the Pipeline
 
@@ -104,9 +99,10 @@ python step3_integrated_discovery.py
 a shared 400-2400 nm grid, trains the autoencoder, extracts 192-dimensional
 embeddings, and compares raw spectra vs embeddings for trait regression.
 
-LOPEX93 is evaluated with sample aggregation and species-held-out splits. CABO trait
-regression uses the full normalized EcoSIS trait set, including structural, pigment,
-biochemical, and elemental traits when present.
+LOPEX93 is evaluated with sample aggregation and species-held-out splits using the
+trait and `Sample_#` fields returned by EcoSIS. CABO trait regression uses the full
+normalized EcoSIS trait set, including structural, pigment, biochemical, and
+elemental traits when present.
 
 ## Stage 2
 

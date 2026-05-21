@@ -5,15 +5,15 @@ Stage 1: Pretraining + Downstream Prediction
 Datasets:
   - AQGRAD               (EcoSIS, water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018       (EcoSIS, leaf spectra + foliar traits, Alabama)
-  - LOPEX93              (EcoSIS spectra + lopex1993metadata.xlsx traits)
+  - LOPEX93              (EcoSIS spectra + biochemical traits via metadata=true)
   - Sierra Nevada 2023   (EcoSIS, field, California - includes measured traits)
 
 Pipeline:
-  1. Download all four datasets.
+  1. Download all five datasets.
   2. Preprocess: Savitzky-Golay smooth -> SNV normalise -> align to 400-2400nm grid.
-  3. Train deep autoencoder (self-supervised, 60 epochs).
-  4. Extract 64-dim embeddings; visualise with PCA.
-  5. Trait regression on LOPEX93 (via metadata xlsx) and Sierra Nevada traits.
+  3. Train deep autoencoder.
+  4. Extract 192-dim embeddings; visualise with PCA.
+  5. Trait regression on LOPEX93, CABO, and Sierra Nevada traits.
 
 Run:
     python step1_pretrain_downstream.py
@@ -61,12 +61,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
+    LOPEX93_PACKAGE_IDS,
+    SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
-    join_lopex93_metadata,
-    lopex93_sample_ids,
     load_aqgrad,
     load_cabo_v2,
+    load_lopex93,
+    load_sierra_nevada_2023,
     load_tall2018,
 )
 
@@ -90,7 +92,6 @@ WEIGHT_DECAY = 1e-5
 NOISE_STD = 0.03
 RIDGE_ALPHAS = np.logspace(-3, 3, 13)
 
-LOPEX93_METADATA = "lopex1993metadata.xlsx"
 LOPEX93_TRAIT_COLS = [
     "Chlorophyll_a+b (µg/cm²)",
     "Equivalent Water Thickness (g/cm²)",
@@ -147,13 +148,10 @@ CABO_V2_TRAIT_COLS = [
     "Zn_area_g_m2",
 ]
 
-# Sierra Nevada trait columns (confirmed from EcoSIS package description)
-SIERRA_METADATA = "ca2023_freshspectra_supplementaldata.csv"
-# Exact column names in the supplemental CSV
 SIERRA_TRAIT_COLS = [
-    "LMA_value_g/m2",
-    "leaf_water_content_percent",
-    "chlorophyll _mg/m2",
+    "LMA_g_m2",
+    "LWC_percent",
+    "Chlorophyll_mg_m2",
 ]
 
 ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
@@ -161,10 +159,8 @@ DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
     "talladega2018": [TALL2018_PACKAGE_ID],
     "cabo_v2": [CABO_V2_PACKAGE_ID],
-    "lopex93": ["leaf-optical-properties-experiment-database--lopex93-", "3849_2"],
-    "sierranevada2023": [
-        "fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"
-    ],
+    "lopex93": LOPEX93_PACKAGE_IDS,
+    "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
 LABEL_MAP = {
     "aqgrad": 0,
@@ -240,15 +236,26 @@ def load_dataset(name, ids):
             return df
         print(f"    WARN: CABO v2 download failed -> synthetic fallback")
         return pd.DataFrame()
+    if name == "lopex93":
+        df = load_lopex93()
+        if not df.empty:
+            print(f"    OK {LOPEX93_PACKAGE_IDS[0]}: {df.shape}")
+            df["_dataset"] = name
+            return df
+        print(f"    WARN: LOPEX93 download failed -> synthetic fallback")
+        return pd.DataFrame()
+    if name == "sierranevada2023":
+        df = load_sierra_nevada_2023()
+        if not df.empty:
+            print(f"    OK {SIERRA_NEVADA_2023_PACKAGE_ID}: {df.shape}")
+            df["_dataset"] = name
+            return df
+        print(f"    WARN: Sierra Nevada 2023 download failed -> synthetic fallback")
+        return pd.DataFrame()
     for did in ids:
         df = fetch_csv(did)
         if not df.empty:
             print(f"    OK {did}: {df.shape}")
-            if name == "lopex93":
-                df = join_lopex93_metadata(df)
-            if name == "sierranevada2023":
-                # Join metadata BEFORE adding _dataset so non-spectral cols are visible
-                df = load_sierra_metadata(df)
             df["_dataset"] = name
             return df
     print(f"    WARN: download failed -> synthetic fallback")

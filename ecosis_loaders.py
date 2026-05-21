@@ -18,8 +18,15 @@ TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
 CABO_V2_PACKAGE_ID = "a12286ac-929f-4e3e-9b9c-517e10fe4087"
+LOPEX93_PACKAGE_IDS = [
+    "leaf-optical-properties-experiment-database--lopex93-",
+    "3849_2",
+    "3849",
+]
+SIERRA_NEVADA_2023_PACKAGE_ID = (
+    "fresh-leaf-spectra-and-measured-traits-from-the-sierra-nevada--ca--in-july-2023"
+)
 TALL2018_METADATA_CSV = "tall_2018_ecosis_spectra_metadata_v2.csv"
-LOPEX93_METADATA = "lopex1993metadata.xlsx"
 # Fraction of LOPEX spectra removed as embedding-space outliers (IsolationForest on preprocessed spectra).
 LOPEX_OUTLIER_CONTAMINATION = 0.03
 
@@ -75,11 +82,14 @@ CABO_V2_RENAME_MAP = {
     "Zn_mass": "Zn_mass_mg_g",
     "Zn_area": "Zn_area_g_m2",
 }
-
-
-def lopex93_sample_ids(n_spectra):
-    """Map paired LOPEX93 spectra to the metadata sample numbering."""
-    return np.arange(n_spectra, dtype=int) // 2 + 1
+SIERRA_V2_RENAME_MAP = {
+    "LMA_value_g/m2": "LMA_g_m2",
+    "leaf_water_content_percent": "LWC_percent",
+    "chlorophyll _mg/m2": "Chlorophyll_mg_m2",
+    "Sample Collection Date": "Sample_Collection_Date",
+    "Foreoptic Type": "Foreoptic_Type",
+    "Vegetation Type": "Vegetation_Type",
+}
 
 
 def fetch_package_csv(package_id, metadata=False, timeout=120):
@@ -209,28 +219,45 @@ def load_cabo_v2(timeout=120):
     return df
 
 
-def join_lopex93_metadata(df, metadata_file=LOPEX93_METADATA):
-    """Attach LOPEX93 trait metadata (two spectra per sample) to an EcoSIS spectra frame."""
-    p = Path(metadata_file)
-    if not p.exists() or df.empty:
-        return df
-    df = df.copy()
-    meta = pd.read_excel(p).replace(-999, np.nan)
-    if "Sample_#" not in df.columns:
-        df["Sample_#"] = lopex93_sample_ids(len(df))
-    joined = pd.DataFrame({"Sample_#": df["Sample_#"].astype(int)}).merge(
-        meta, on="Sample_#", how="left"
-    )
-    for col in joined.columns:
-        if col == "Sample_#":
-            continue
-        df[col] = joined[col].values
+def load_lopex93(timeout=120):
+    """
+    Load LOPEX93 directly from EcoSIS with metadata=true.
+
+    Current EcoSIS exports include the biochemical trait columns and Sample_#
+    directly, so no local Excel join is needed during normal runs.
+    """
+    for package_id in LOPEX93_PACKAGE_IDS:
+        df = fetch_package_csv(package_id, metadata=True, timeout=timeout)
+        if not df.empty:
+            break
+    else:
+        return pd.DataFrame()
+
     if "Latin Name" in df.columns:
         latin = df["Latin Name"].astype(str).str.strip()
         if "Species" in df.columns:
             df["Species"] = df["Species"].where(df["Species"].notna(), latin)
         else:
             df["Species"] = latin
+    return df
+
+
+def load_sierra_nevada_2023(timeout=120):
+    """
+    Load Sierra Nevada 2023 directly from EcoSIS with metadata=true.
+
+    Current EcoSIS exports include the measured trait columns and taxonomy, so
+    the local supplemental CSV is no longer required for normal runs.
+    """
+    df = fetch_package_csv(SIERRA_NEVADA_2023_PACKAGE_ID, metadata=True, timeout=timeout)
+    if df.empty:
+        return df
+    df = df.rename(columns={k: v for k, v in SIERRA_V2_RENAME_MAP.items() if k in df.columns})
+    df = attach_species_column(df)
+    if "genus" not in df.columns and "Latin Genus" in df.columns:
+        df["genus"] = df["Latin Genus"].astype(str).str.strip()
+    if "family" in df.columns:
+        df["family"] = df["family"].astype(str).str.strip()
     return df
 
 
