@@ -6,7 +6,7 @@ Datasets:
   - AQGRAD               (EcoSIS, water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018       (EcoSIS, leaf spectra + foliar traits, Alabama)
   - CABO v2              (EcoSIS, broad multispecies leaf-level traits)
-  - NEON canopy          (EcoSIS, eastern US canopy traits)
+  - Droughted crops      (EcoSIS, crop leaf physiology + biochemistry under watering treatments)
   - LOPEX93              (EcoSIS spectra + biochemical traits via metadata=true)
   - Sierra Nevada 2023   (EcoSIS, field, California - includes measured traits)
 
@@ -63,15 +63,15 @@ from torch.utils.data import DataLoader, TensorDataset
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
+    DROUGHTED_CROPS_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
-    NEON_CANOPY_PACKAGE_ID,
     SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
+    load_droughted_crops,
     load_lopex93,
-    load_neon_canopy,
     load_sierra_nevada_2023,
     load_tall2018,
 )
@@ -152,35 +152,32 @@ CABO_V2_TRAIT_COLS = [
     "Zn_area_g_m2",
 ]
 
-NEON_CANOPY_TRAIT_COLS = [
-    "Boron",
-    "Calcium",
-    "Carbon",
-    "Carotenoids_area",
-    "Carotenoids_mass",
-    "Cellulose",
-    "Chlorophylls_area",
-    "Chlorophylls_mass",
-    "Copper",
-    "EWT",
-    "Fiber",
-    "Flavonoids",
-    "LMA",
-    "Lignin",
-    "Magnesium",
-    "Manganese",
-    "NSC",
-    "Nitrogen",
-    "Phenolics",
-    "Phosphorus",
-    "Potassium",
-    "SLA",
+DROUGHTED_CROPS_TRAIT_COLS = [
+    "ABA",
+    "Amino_Acids",
+    "Asat",
+    "CO2s",
+    "Ci",
+    "Elemental_C",
+    "Elemental_N",
+    "Fructose",
+    "Glucose",
+    "H2Os",
+    "HDP_Fructan",
+    "LDP_Fructan",
+    "Leaf mass per area",
+    "Proline",
+    "Protein",
+    "Qin",
+    "RHs",
+    "RWC",
     "Starch",
-    "Sugar",
-    "Sulfur",
-    "Water",
-    "d13C",
-    "d15N",
+    "Sucrose",
+    "Tleaf",
+    "Tr",
+    "VPDleaf",
+    "flow",
+    "gs",
 ]
 
 SIERRA_TRAIT_COLS = [
@@ -194,7 +191,7 @@ DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
     "talladega2018": [TALL2018_PACKAGE_ID],
     "cabo_v2": [CABO_V2_PACKAGE_ID],
-    "neon_canopy": [NEON_CANOPY_PACKAGE_ID],
+    "droughted_crops": [DROUGHTED_CROPS_PACKAGE_ID],
     "lopex93": LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
@@ -202,7 +199,7 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "cabo_v2": 2,
-    "neon_canopy": 3,
+    "droughted_crops": 3,
     "lopex93": 4,
     "sierranevada2023": 5,
 }
@@ -210,7 +207,7 @@ LABEL_NAMES = {
     0: "AQGRAD",
     1: "Talladega 2018",
     2: "CABO v2",
-    3: "NEON Canopy",
+    3: "Droughted Crops",
     4: "LOPEX93",
     5: "Sierra Nevada 2023",
 }
@@ -274,13 +271,13 @@ def load_dataset(name, ids):
             return df
         print(f"    WARN: CABO v2 download failed -> synthetic fallback")
         return pd.DataFrame()
-    if name == "neon_canopy":
-        df = load_neon_canopy()
+    if name == "droughted_crops":
+        df = load_droughted_crops()
         if not df.empty:
-            print(f"    OK {NEON_CANOPY_PACKAGE_ID}: {df.shape}")
+            print(f"    OK {DROUGHTED_CROPS_PACKAGE_ID}: {df.shape}")
             df["_dataset"] = name
             return df
-        print(f"    WARN: NEON canopy download failed -> synthetic fallback")
+        print(f"    WARN: Droughted crops download failed -> synthetic fallback")
         return pd.DataFrame()
     if name == "lopex93":
         df = load_lopex93()
@@ -857,20 +854,20 @@ def main():
             if ok:
                 trait_found = True
 
-    # NEON canopy traits (inline in EcoSIS export)
-    nmask = labels == LABEL_MAP["neon_canopy"]
+    # Droughted crops traits (inline in EcoSIS export)
+    nmask = labels == LABEL_MAP["droughted_crops"]
     if nmask.sum() > 0:
         nm = meta[nmask].reset_index(drop=True)
-        neon_traits = [
+        crop_traits = [
             c
-            for c in NEON_CANOPY_TRAIT_COLS
+            for c in DROUGHTED_CROPS_TRAIT_COLS
             if c in nm.columns
             and nm[c].notna().sum() >= 10
             and pd.api.types.is_numeric_dtype(nm[c])
         ]
-        if neon_traits:
+        if crop_traits:
             ok = run_trait_regression(
-                X[nmask], Z[nmask], nm, neon_traits, tag="NEONCanopy"
+                X[nmask], Z[nmask], nm, crop_traits, tag="DroughtedCrops"
             )
             if ok:
                 trait_found = True

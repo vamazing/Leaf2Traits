@@ -5,7 +5,7 @@ Stage 3: Integrated Discovery Pipeline
 Full A->C pipeline across all datasets:
   A. Representation validation  - PCA of embeddings + reconstruction error.
   B. Trait regression comparison - raw spectra vs embeddings (5-fold CV).
-     Uses API-provided LOPEX93, CABO, NEON, and Sierra Nevada traits.
+     Uses API-provided LOPEX93, CABO, droughted-crops, and Sierra Nevada traits.
   C. Novel candidate discovery  - Isolation Forest novelty scoring + taxonomic prior.
 
 Run:
@@ -36,15 +36,15 @@ except ImportError:
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
+    DROUGHTED_CROPS_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
-    NEON_CANOPY_PACKAGE_ID,
     SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
+    load_droughted_crops,
     load_lopex93,
-    load_neon_canopy,
     load_sierra_nevada_2023,
     load_tall2018,
 )
@@ -110,35 +110,32 @@ CABO_V2_TRAIT_COLS = [
     "Zn_mass_mg_g",
     "Zn_area_g_m2",
 ]
-NEON_CANOPY_TRAIT_COLS = [
-    "Boron",
-    "Calcium",
-    "Carbon",
-    "Carotenoids_area",
-    "Carotenoids_mass",
-    "Cellulose",
-    "Chlorophylls_area",
-    "Chlorophylls_mass",
-    "Copper",
-    "EWT",
-    "Fiber",
-    "Flavonoids",
-    "LMA",
-    "Lignin",
-    "Magnesium",
-    "Manganese",
-    "NSC",
-    "Nitrogen",
-    "Phenolics",
-    "Phosphorus",
-    "Potassium",
-    "SLA",
+DROUGHTED_CROPS_TRAIT_COLS = [
+    "ABA",
+    "Amino_Acids",
+    "Asat",
+    "CO2s",
+    "Ci",
+    "Elemental_C",
+    "Elemental_N",
+    "Fructose",
+    "Glucose",
+    "H2Os",
+    "HDP_Fructan",
+    "LDP_Fructan",
+    "Leaf mass per area",
+    "Proline",
+    "Protein",
+    "Qin",
+    "RHs",
+    "RWC",
     "Starch",
-    "Sugar",
-    "Sulfur",
-    "Water",
-    "d13C",
-    "d15N",
+    "Sucrose",
+    "Tleaf",
+    "Tr",
+    "VPDleaf",
+    "flow",
+    "gs",
 ]
 SIERRA_TRAIT_COLS = ["LMA_g_m2", "LWC_percent", "Chlorophyll_mg_m2"]
 
@@ -150,7 +147,7 @@ KNOWN_HYPERACCUMULATOR_GENERA = {
 DATASET_TRAIT_MAP = {
     "lopex93": LOPEX93_TRAIT_COLS,
     "cabo_v2": CABO_V2_TRAIT_COLS,
-    "neon_canopy": NEON_CANOPY_TRAIT_COLS,
+    "droughted_crops": DROUGHTED_CROPS_TRAIT_COLS,
     "sierranevada2023": SIERRA_TRAIT_COLS,
 }
 
@@ -159,7 +156,7 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
-    "neon_canopy":      [NEON_CANOPY_PACKAGE_ID],
+    "droughted_crops":  [DROUGHTED_CROPS_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
@@ -167,7 +164,7 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "cabo_v2": 2,
-    "neon_canopy": 3,
+    "droughted_crops": 3,
     "lopex93": 4,
     "sierranevada2023": 5,
 }
@@ -314,8 +311,8 @@ def load_all():
             print(f"    WARN: download failed -> synthetic")
             frames.append(make_synthetic(name))
             continue
-        if name == "neon_canopy":
-            df = load_neon_canopy()
+        if name == "droughted_crops":
+            df = load_droughted_crops()
             if not df.empty:
                 df["_dataset"] = name
                 print(f"    OK: {df.shape}")
@@ -367,14 +364,38 @@ def make_synthetic(name, n=120):
     return pd.DataFrame({**meta, **{str(w): spec[:,i] for i,w in enumerate(wl)}})
 
 
-def preprocess(df):
-    wl_cols = sorted([c for c in df.columns if is_wl(c)], key=float)
+def preprocess_dataset(df):
+    wl_cols = []
+    for c in sorted([c for c in df.columns if is_wl(c)], key=float):
+        col = pd.to_numeric(df[c], errors="coerce")
+        if col.notna().mean() >= 0.5:
+            wl_cols.append(c)
+    if not wl_cols:
+        return np.zeros((0, len(TARGET_WL)), dtype=np.float32), df.iloc[0:0].copy()
     wl = np.array([float(c) for c in wl_cols])
-    mat = df[wl_cols].values.astype(np.float32)
+    mat = df[wl_cols].values.astype(np.float64)
     bad = np.isnan(mat).mean(1) > 0.5
     mat = mat[~bad]; dfok = df.loc[df.index[~bad]].reset_index(drop=True)
+    if mat.shape[0] == 0:
+        return np.zeros((0, len(TARGET_WL)), dtype=np.float32), dfok
     mat = np.nan_to_num(mat, nan=0.0)
-    mat = savgol_filter(mat, window_length=11, polyorder=3, axis=1)
+    n_bands = mat.shape[1]
+    if n_bands >= 5:
+        window = min(11, n_bands if n_bands % 2 == 1 else n_bands - 1)
+        polyorder = min(3, window - 1)
+        if window >= 3 and polyorder >= 1:
+            try:
+                mat = savgol_filter(mat, window_length=window, polyorder=polyorder, axis=1)
+            except ValueError as exc:
+                dataset = (
+                    str(dfok["_dataset"].iloc[0])
+                    if "_dataset" in dfok.columns and len(dfok)
+                    else "unknown"
+                )
+                print(
+                    f"    WARN: Savitzky-Golay smoothing skipped for {dataset} "
+                    f"(bands={n_bands}): {exc}"
+                )
     mu  = mat.mean(1, keepdims=True); sd = mat.std(1, keepdims=True) + 1e-8
     mat = (mat - mu) / sd
     out = np.zeros((mat.shape[0], len(TARGET_WL)), dtype=np.float32)
@@ -392,6 +413,26 @@ def preprocess(df):
                 [dfok.iloc[keep].reset_index(drop=True), dfl], ignore_index=True
             )
     return out, dfok
+
+
+def preprocess_all(df):
+    if "_dataset" not in df.columns:
+        return preprocess_dataset(df)
+
+    all_X = []
+    all_meta = []
+    for dataset in df["_dataset"].dropna().unique():
+        df_part = df.loc[df["_dataset"].eq(dataset)].reset_index(drop=True)
+        Xp, meta_p = preprocess_dataset(df_part)
+        if Xp.shape[0] == 0:
+            continue
+        all_X.append(Xp)
+        meta_cols = [c for c in meta_p.columns if not is_wl(c)]
+        all_meta.append(meta_p[meta_cols])
+
+    if not all_X:
+        return np.zeros((0, len(TARGET_WL)), dtype=np.float32), pd.DataFrame()
+    return np.vstack(all_X).astype(np.float32), pd.concat(all_meta, ignore_index=True)
 
 
 def encode(X, model, mu, std):
@@ -496,6 +537,17 @@ def choose_entity_label(meta_df):
         if col in meta_df.columns and meta_df[col].notna().sum() > 0:
             return col
     return None
+
+
+def build_entity_series(meta_df):
+    entity = pd.Series(["Unknown"] * len(meta_df), index=meta_df.index, dtype=object)
+    for col in ("Species", "Plot_ID", "USDA_Species_Code", "sample_number", "Sample_ID", "sample_id"):
+        if col not in meta_df.columns:
+            continue
+        vals = meta_df[col]
+        mask = entity.eq("Unknown") & vals.notna() & vals.astype(str).str.strip().ne("")
+        entity.loc[mask] = vals.loc[mask].astype(str).str.strip()
+    return entity
 
 
 def build_cv(y, groups=None):
@@ -855,13 +907,11 @@ def run_discovery_v2(X_raw, Z, meta):
     print("  Saved: novelty_distribution.png")
 
     entity_col = choose_entity_label(meta)
-    if entity_col is None:
-        sp_col = pd.Series(["Unknown"] * len(meta))
-        entity_label = "Entity"
-    else:
-        sp_col = meta[entity_col].astype(str).fillna("Unknown")
-        entity_label = entity_col
-    genera = sp_col.apply(genus_from_species if entity_label == "Species" else (lambda _: "Unknown"))
+    entity_label = entity_col or "Label"
+    sp_col = build_entity_series(meta)
+    genera = sp_col.apply(genus_from_species)
+    if entity_col != "Species":
+        genera = pd.Series(["Unknown"] * len(sp_col), index=sp_col.index)
     known_hyper = genera.apply(lambda g: g in KNOWN_HYPERACCUMULATOR_GENERA).values
 
     all_spectra = pd.DataFrame(
@@ -976,7 +1026,7 @@ def main():
     df = load_all()
 
     print("\n[3/5] Preprocessing ...")
-    X_raw, meta = preprocess(df)
+    X_raw, meta = preprocess_all(df)
     print(f"  Spectra: {X_raw.shape}")
     Z = encode(X_raw, model, mu, std)
     print(f"  Embeddings: {Z.shape}")

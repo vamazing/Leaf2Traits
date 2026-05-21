@@ -18,8 +18,8 @@ TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
 CABO_V2_PACKAGE_ID = "a12286ac-929f-4e3e-9b9c-517e10fe4087"
-NEON_CANOPY_PACKAGE_ID = (
-    "canopy-spectra-to-map-foliar-functional-traits-over-neon-domains-in-eastern-united-states"
+DROUGHTED_CROPS_PACKAGE_ID = (
+    "hyperspectral-leaf-reflectance--biochemistry--and-physiology-of-droughted-and-watered-crops"
 )
 LOPEX93_PACKAGE_IDS = [
     "leaf-optical-properties-experiment-database--lopex93-",
@@ -93,13 +93,6 @@ SIERRA_V2_RENAME_MAP = {
     "Foreoptic Type": "Foreoptic_Type",
     "Vegetation Type": "Vegetation_Type",
 }
-NEON_CANOPY_RENAME_MAP = {
-    "\ufeffAffiliation": "Affiliation",
-    "Plot_ID": "Plot_ID",
-    "Sample_Year": "Sample_Year",
-}
-
-
 def fetch_package_csv(package_id, metadata=False, timeout=120):
     """Download a package CSV from the EcoSIS export API."""
     url = ECOSIS_API_EXPORT.format(id=package_id)
@@ -227,23 +220,38 @@ def load_cabo_v2(timeout=120):
     return df
 
 
-def load_neon_canopy(timeout=120):
+def load_droughted_crops(timeout=120):
     """
-    Load the NEON eastern US canopy spectra package from EcoSIS.
+    Load the droughted-and-watered crops spectra package from EcoSIS.
 
-    The export includes many trait columns inline but does not expose species
-    taxonomy, so Plot_ID is used directly as the stable grouping/identifier label.
+    This package includes inline physiology/biochemistry traits plus taxonomy
+    fields such as Latin Genus and Latin Species, so it is suitable for
+    species-level grouping in discovery tasks.
     """
-    df = fetch_package_csv(NEON_CANOPY_PACKAGE_ID, metadata=True, timeout=timeout)
+    df = fetch_package_csv(DROUGHTED_CROPS_PACKAGE_ID, metadata=True, timeout=timeout)
     if df.empty:
-        df = fetch_package_csv(NEON_CANOPY_PACKAGE_ID, metadata=False, timeout=timeout)
+        df = fetch_package_csv(DROUGHTED_CROPS_PACKAGE_ID, metadata=False, timeout=timeout)
     if df.empty:
         return df
-    df = df.rename(columns={k: v for k, v in NEON_CANOPY_RENAME_MAP.items() if k in df.columns})
-    if "Plot_ID" in df.columns:
-        df["Plot_ID"] = df["Plot_ID"].astype(str).str.strip()
-    if "Genus" not in df.columns:
-        df["Genus"] = "Unknown"
+    df = attach_species_column(df)
+    if "Species" in df.columns:
+        species = (
+            df["Species"]
+            .astype(str)
+            .str.replace("_", " ", regex=False)
+            .str.replace(r"\bnan\b", "", regex=True)
+            .str.replace(r"\s+", " ", regex=True)
+            .str.strip()
+        )
+        species = species.replace({"": np.nan, "nan": np.nan})
+        df["Species"] = species
+    if "Species" not in df.columns or df["Species"].isna().all():
+        if "USDA Symbol" in df.columns:
+            df["Species"] = df["USDA Symbol"].astype(str).str.strip()
+        elif "Common Name" in df.columns:
+            df["Species"] = df["Common Name"].astype(str).str.strip()
+    if "Genus" not in df.columns and "Latin Genus" in df.columns:
+        df["Genus"] = df["Latin Genus"].astype(str).str.strip()
     return df
 
 
