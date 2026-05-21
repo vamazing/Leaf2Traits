@@ -23,6 +23,59 @@ LOPEX93_METADATA = "lopex1993metadata.xlsx"
 # Fraction of LOPEX spectra removed as embedding-space outliers (IsolationForest on preprocessed spectra).
 LOPEX_OUTLIER_CONTAMINATION = 0.03
 
+CABO_V2_RENAME_MAP = {
+    "sample_id": "Sample_ID",
+    "species": "Species",
+    "genus": "Genus",
+    "family": "Family",
+    "functionalgroup": "Functional_Group",
+    "growthform": "Growth_Form",
+    "Measurement Date": "Date",
+    "LMA": "LMA_g_m2",
+    "EWT": "EWT_g_cm2",
+    "LDMC": "LDMC_mg_g",
+    "Cmass": "C_mass_g_g",
+    "Nmass": "N_mass_g_g",
+    "Carea": "C_area_g_m2",
+    "Narea": "N_area_g_m2",
+    "car_mass": "Carotenoid_mass_g_g",
+    "car_area": "Carotenoid_area_g_m2",
+    "chlA_mass": "Chlorophyll_A_mass_g_g",
+    "chlA_area": "Chlorophyll_A_area_g_m2",
+    "chlB_mass": "Chlorophyll_B_mass_g_g",
+    "chlB_area": "Chlorophyll_B_area_g_m2",
+    "cellulose_mass": "Cellulose_mass_g_g",
+    "cellulose_area": "Cellulose_area_g_m2",
+    "hemicellulose_mass": "Hemicellulose_mass_g_g",
+    "hemicellulose_area": "Hemicellulose_area_g_m2",
+    "lignin_mass": "Lignin_mass_g_g",
+    "lignin_area": "Lignin_area_g_m2",
+    "solubles_mass": "Solubles_mass_g_g",
+    "solubles_area": "Solubles_area_g_m2",
+    "Al_mass": "Al_mass_mg_g",
+    "Al_area": "Al_area_g_m2",
+    "B2089_mass": "B2089_mass_mg_g",
+    "B2498_mass": "B2498_mass_mg_g",
+    "Ca_mass": "Ca_mass_mg_g",
+    "Ca_area": "Ca_area_g_m2",
+    "Cu_mass": "Cu_mass_mg_g",
+    "Cu_area": "Cu_area_g_m2",
+    "Fe_mass": "Fe_mass_mg_g",
+    "Fe_area": "Fe_area_g_m2",
+    "K_mass": "K_mass_mg_g",
+    "K_area": "K_area_g_m2",
+    "Mg_mass": "Mg_mass_mg_g",
+    "Mg_area": "Mg_area_g_m2",
+    "Mn_mass": "Mn_mass_mg_g",
+    "Mn_area": "Mn_area_g_m2",
+    "Na_mass": "Na_mass_mg_g",
+    "Na_area": "Na_area_g_m2",
+    "P_mass": "P_mass_mg_g",
+    "P_area": "P_area_g_m2",
+    "Zn_mass": "Zn_mass_mg_g",
+    "Zn_area": "Zn_area_g_m2",
+}
+
 
 def lopex93_sample_ids(n_spectra):
     """Map paired LOPEX93 spectra to the metadata sample numbering."""
@@ -143,11 +196,16 @@ def load_cabo_v2(timeout=120):
         df = fetch_package_csv(CABO_V2_PACKAGE_ID, metadata=False, timeout=timeout)
     if df.empty:
         return df
+    df = df.rename(columns={k: v for k, v in CABO_V2_RENAME_MAP.items() if k in df.columns})
     df = attach_species_column(df)
     if "Latin Name" in df.columns and "Species" not in df.columns:
         df["Species"] = df["Latin Name"].astype(str).str.strip()
     if "Species" not in df.columns and "USDA_Species_Code" in df.columns:
         df["Species"] = df["USDA_Species_Code"].astype(str).str.strip()
+    if "C_mass_g_g" in df.columns and "N_mass_g_g" in df.columns and "CN_ratio" not in df.columns:
+        n_mass = pd.to_numeric(df["N_mass_g_g"], errors="coerce")
+        c_mass = pd.to_numeric(df["C_mass_g_g"], errors="coerce")
+        df["CN_ratio"] = np.where(n_mass > 0, c_mass / n_mass, np.nan)
     return df
 
 

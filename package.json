@@ -10,7 +10,6 @@
   "scripts": {
     "setup:python": "python -m pip install numpy pandas matplotlib scikit-learn torch torchvision scipy openpyxl",
     "setup:directml": "python -m pip install torch-directml",
-    "stage0": "python explore_lopex93_columns.py",
     "stage1": "python step1_pretrain_downstream.py",
     "stage2": "python step2_transfer_learning.py",
     "stage3": "python step3_integrated_discovery.py"
