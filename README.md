@@ -5,6 +5,14 @@ spectra from seven public EcoSIS plant databases. The pipeline trains a self-sup
 autoencoder, predicts biochemical leaf traits, evaluates cross-domain transfer across
 all seven datasets, and discovers spectrally unusual candidate plants.
 
+```mermaid
+flowchart LR
+    A["EcoSIS Datasets"] --> B["Stage 1<br/>Pretrain + Trait Prediction"]
+    B --> C["192-D Embeddings"]
+    C --> D["Stage 2<br/>Cross-Domain Transfer"]
+    C --> E["Stage 3<br/>Discovery + Novelty Ranking"]
+```
+
 ---
 
 ## Project Structure
@@ -74,6 +82,21 @@ plots from prior runs do not mix with current results.
 AQGRAD, Angers, CABO, the NGEE Panama dataset, LOPEX93, and Sierra Nevada use EcoSIS `metadata=true` exports so
 their trait and taxonomy fields come directly from the API. Talladega still falls
 back to the local metadata CSV only if the richer EcoSIS export is unavailable.
+
+```mermaid
+flowchart TD
+    subgraph Core["Core Benchmark Datasets"]
+        A["Angers 2003"]
+        B["CABO v2"]
+        C["NGEE Panama 2016"]
+        D["LOPEX93"]
+    end
+    subgraph Auxiliary["Auxiliary / Stress-Test / Discovery Support"]
+        E["Sierra Nevada 2023"]
+        F["AQGRAD"]
+        G["Talladega 2018"]
+    end
+```
 
 ---
 
