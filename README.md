@@ -107,7 +107,7 @@ trait and `Sample_#` fields returned by EcoSIS. CABO trait regression uses the f
 normalized EcoSIS trait set, including structural, pigment, biochemical, and
 elemental traits when present. The NGEE Panama dataset adds tropical leaf-level
 reflectance with species labels and leaf structural/chemical traits such as
-`LMA_gDW_m2`, `CNratio`, `Carea_g_m2`, `Narea_g_m2`, and `H20_pc`.
+`LMA_gDW_m2`, `CNratio`, `Cmass_pc`, `Nmass_pc`, and `H20_pc`.
 
 ## Stage 2
 

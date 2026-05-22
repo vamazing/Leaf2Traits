@@ -112,12 +112,10 @@ CABO_V2_TRAIT_COLS = [
 ]
 NGEE_PANAMA_TRAIT_COLS = [
     "CNratio",
-    "Carea_g_m2",
     "Cmass_pc",
     "H20_pc",
     "LMA_gDW_m2",
     "LWP_bar",
-    "Narea_g_m2",
     "Nmass_pc",
     "SLA_cm2_gDW",
 ]
