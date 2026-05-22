@@ -10,7 +10,7 @@ Datasets:
   - AQGRAD              (water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018      (Talladega National Forest, Alabama)
   - CABO v2             (broad multispecies leaf-level traits)
-  - Droughted crops     (crop leaf physiology and biochemistry under watering treatments)
+  - NGEE Panama 2016    (tropical leaf reflectance with structural/chemical traits)
   - LOPEX93             (European lab)
   - Sierra Nevada 2023  (field, California)
 
@@ -37,14 +37,14 @@ except ImportError:
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
-    DROUGHTED_CROPS_PACKAGE_ID,
+    NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
     SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
-    load_droughted_crops,
+    load_ngee_panama,
     load_lopex93,
     load_sierra_nevada_2023,
     load_tall2018,
@@ -65,12 +65,12 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
-    "droughted_crops":  [DROUGHTED_CROPS_PACKAGE_ID],
+    "ngee_panama":      [NGEE_PANAMA_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
 SHORT = {"aqgrad": "aqgr", "talladega2018": "tall",
-         "cabo_v2": "cabo", "droughted_crops": "crop", "lopex93": "lope", "sierranevada2023": "sier"}
+         "cabo_v2": "cabo", "ngee_panama": "ngee", "lopex93": "lope", "sierranevada2023": "sier"}
 
 
 def clear_stage_outputs(out_dir):
@@ -181,8 +181,8 @@ def load_dataset(name, ids):
             return df
         print(f"    WARN: failed -> synthetic")
         return make_synthetic(name)
-    if name == "droughted_crops":
-        df = load_droughted_crops()
+    if name == "ngee_panama":
+        df = load_ngee_panama()
         if not df.empty:
             df["_dataset"] = name
             print(f"    OK: {df.shape}")

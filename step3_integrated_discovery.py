@@ -5,14 +5,14 @@ Stage 3: Integrated Discovery Pipeline
 Full A->C pipeline across all datasets:
   A. Representation validation  - PCA of embeddings + reconstruction error.
   B. Trait regression comparison - raw spectra vs embeddings (5-fold CV).
-     Uses API-provided LOPEX93, CABO, droughted-crops, and Sierra Nevada traits.
+     Uses API-provided LOPEX93, CABO, NGEE Panama, and Sierra Nevada traits.
   C. Novel candidate discovery  - Isolation Forest novelty scoring + taxonomic prior.
 
 Run:
     python step3_integrated_discovery.py
 """
 
-import io, json, shutil, urllib.request, warnings
+import io, json, os, shutil, urllib.request, warnings
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -36,14 +36,14 @@ except ImportError:
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
-    DROUGHTED_CROPS_PACKAGE_ID,
+    NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
     SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
-    load_droughted_crops,
+    load_ngee_panama,
     load_lopex93,
     load_sierra_nevada_2023,
     load_tall2018,
@@ -110,32 +110,16 @@ CABO_V2_TRAIT_COLS = [
     "Zn_mass_mg_g",
     "Zn_area_g_m2",
 ]
-DROUGHTED_CROPS_TRAIT_COLS = [
-    "ABA",
-    "Amino_Acids",
-    "Asat",
-    "CO2s",
-    "Ci",
-    "Elemental_C",
-    "Elemental_N",
-    "Fructose",
-    "Glucose",
-    "H2Os",
-    "HDP_Fructan",
-    "LDP_Fructan",
-    "Leaf mass per area",
-    "Proline",
-    "Protein",
-    "Qin",
-    "RHs",
-    "RWC",
-    "Starch",
-    "Sucrose",
-    "Tleaf",
-    "Tr",
-    "VPDleaf",
-    "flow",
-    "gs",
+NGEE_PANAMA_TRAIT_COLS = [
+    "CNratio",
+    "Carea_g_m2",
+    "Cmass_pc",
+    "H20_pc",
+    "LMA_gDW_m2",
+    "LWP_bar",
+    "Narea_g_m2",
+    "Nmass_pc",
+    "SLA_cm2_gDW",
 ]
 SIERRA_TRAIT_COLS = ["LMA_g_m2", "LWC_percent", "Chlorophyll_mg_m2"]
 
@@ -147,7 +131,7 @@ KNOWN_HYPERACCUMULATOR_GENERA = {
 DATASET_TRAIT_MAP = {
     "lopex93": LOPEX93_TRAIT_COLS,
     "cabo_v2": CABO_V2_TRAIT_COLS,
-    "droughted_crops": DROUGHTED_CROPS_TRAIT_COLS,
+    "ngee_panama": NGEE_PANAMA_TRAIT_COLS,
     "sierranevada2023": SIERRA_TRAIT_COLS,
 }
 
@@ -156,7 +140,7 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
-    "droughted_crops":  [DROUGHTED_CROPS_PACKAGE_ID],
+    "ngee_panama":      [NGEE_PANAMA_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
@@ -164,7 +148,7 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "cabo_v2": 2,
-    "droughted_crops": 3,
+    "ngee_panama": 3,
     "lopex93": 4,
     "sierranevada2023": 5,
 }
@@ -225,6 +209,17 @@ class PLS1Regressor(BaseEstimator, RegressorMixin):
 
 
 def resolve_device():
+    requested = os.getenv("LEAF2TRAITS_DEVICE", "").strip().lower()
+    if requested in {"cuda", "gpu"}:
+        if torch.cuda.is_available():
+            return torch.device("cuda"), "cuda"
+        print("  WARN: LEAF2TRAITS_DEVICE=cuda requested but CUDA is unavailable.")
+    elif requested == "directml":
+        if torch_directml is not None:
+            return torch_directml.device(), "directml"
+        print("  WARN: LEAF2TRAITS_DEVICE=directml requested but torch-directml is unavailable.")
+    elif requested == "cpu":
+        return torch.device("cpu"), "cpu"
     if torch.cuda.is_available():
         return torch.device("cuda"), "cuda"
     if torch_directml is not None:
@@ -311,8 +306,8 @@ def load_all():
             print(f"    WARN: download failed -> synthetic")
             frames.append(make_synthetic(name))
             continue
-        if name == "droughted_crops":
-            df = load_droughted_crops()
+        if name == "ngee_panama":
+            df = load_ngee_panama()
             if not df.empty:
                 df["_dataset"] = name
                 print(f"    OK: {df.shape}")
@@ -809,7 +804,9 @@ def compare_trait_regression_v2(X_raw, Z, meta):
             if group_col is not None:
                 group_series = meta_t[group_col].copy()
                 group_series = group_series.where(group_series.notna(), "__missing_group__")
-                groups = group_series.astype(str).values
+                candidate_groups = group_series.astype(str).values
+                if pd.Series(candidate_groups).nunique() >= 2:
+                    groups = candidate_groups
             raw_name, r2_raw = select_best_regressor_cv(Xr, yr, groups)
             emb_name, r2_emb = select_best_regressor_cv(Xz, yr, groups)
             rows.append(

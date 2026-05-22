@@ -6,12 +6,12 @@ Datasets:
   - AQGRAD               (EcoSIS, water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018       (EcoSIS, leaf spectra + foliar traits, Alabama)
   - CABO v2              (EcoSIS, broad multispecies leaf-level traits)
-  - Droughted crops      (EcoSIS, crop leaf physiology + biochemistry under watering treatments)
+  - NGEE Panama 2016     (EcoSIS, tropical leaf reflectance + structural/chemical traits)
   - LOPEX93              (EcoSIS spectra + biochemical traits via metadata=true)
   - Sierra Nevada 2023   (EcoSIS, field, California - includes measured traits)
 
 Pipeline:
-  1. Download all five datasets.
+  1. Download all six datasets.
   2. Preprocess: Savitzky-Golay smooth -> SNV normalise -> align to 400-2400nm grid.
   3. Train deep autoencoder.
   4. Extract 192-dim embeddings; visualise with PCA.
@@ -23,6 +23,7 @@ Run:
 
 import io
 import json
+import os
 import shutil
 import urllib.request
 import warnings
@@ -63,14 +64,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
-    DROUGHTED_CROPS_PACKAGE_ID,
+    NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
     SIERRA_NEVADA_2023_PACKAGE_ID,
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_cabo_v2,
-    load_droughted_crops,
+    load_ngee_panama,
     load_lopex93,
     load_sierra_nevada_2023,
     load_tall2018,
@@ -152,32 +153,16 @@ CABO_V2_TRAIT_COLS = [
     "Zn_area_g_m2",
 ]
 
-DROUGHTED_CROPS_TRAIT_COLS = [
-    "ABA",
-    "Amino_Acids",
-    "Asat",
-    "CO2s",
-    "Ci",
-    "Elemental_C",
-    "Elemental_N",
-    "Fructose",
-    "Glucose",
-    "H2Os",
-    "HDP_Fructan",
-    "LDP_Fructan",
-    "Leaf mass per area",
-    "Proline",
-    "Protein",
-    "Qin",
-    "RHs",
-    "RWC",
-    "Starch",
-    "Sucrose",
-    "Tleaf",
-    "Tr",
-    "VPDleaf",
-    "flow",
-    "gs",
+NGEE_PANAMA_TRAIT_COLS = [
+    "CNratio",
+    "Carea_g_m2",
+    "Cmass_pc",
+    "H20_pc",
+    "LMA_gDW_m2",
+    "LWP_bar",
+    "Narea_g_m2",
+    "Nmass_pc",
+    "SLA_cm2_gDW",
 ]
 
 SIERRA_TRAIT_COLS = [
@@ -191,7 +176,7 @@ DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
     "talladega2018": [TALL2018_PACKAGE_ID],
     "cabo_v2": [CABO_V2_PACKAGE_ID],
-    "droughted_crops": [DROUGHTED_CROPS_PACKAGE_ID],
+    "ngee_panama": [NGEE_PANAMA_PACKAGE_ID],
     "lopex93": LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
@@ -199,7 +184,7 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "cabo_v2": 2,
-    "droughted_crops": 3,
+    "ngee_panama": 3,
     "lopex93": 4,
     "sierranevada2023": 5,
 }
@@ -207,7 +192,7 @@ LABEL_NAMES = {
     0: "AQGRAD",
     1: "Talladega 2018",
     2: "CABO v2",
-    3: "Droughted Crops",
+    3: "NGEE Panama 2016",
     4: "LOPEX93",
     5: "Sierra Nevada 2023",
 }
@@ -271,13 +256,13 @@ def load_dataset(name, ids):
             return df
         print(f"    WARN: CABO v2 download failed -> synthetic fallback")
         return pd.DataFrame()
-    if name == "droughted_crops":
-        df = load_droughted_crops()
+    if name == "ngee_panama":
+        df = load_ngee_panama()
         if not df.empty:
-            print(f"    OK {DROUGHTED_CROPS_PACKAGE_ID}: {df.shape}")
+            print(f"    OK {NGEE_PANAMA_PACKAGE_ID}: {df.shape}")
             df["_dataset"] = name
             return df
-        print(f"    WARN: Droughted crops download failed -> synthetic fallback")
+        print(f"    WARN: NGEE Panama download failed -> synthetic fallback")
         return pd.DataFrame()
     if name == "lopex93":
         df = load_lopex93()
@@ -421,6 +406,17 @@ class PLS1Regressor(BaseEstimator, RegressorMixin):
 
 
 def resolve_device():
+    requested = os.getenv("LEAF2TRAITS_DEVICE", "").strip().lower()
+    if requested in {"cuda", "gpu"}:
+        if torch.cuda.is_available():
+            return torch.device("cuda"), "cuda"
+        print("  WARN: LEAF2TRAITS_DEVICE=cuda requested but CUDA is unavailable.")
+    elif requested == "directml":
+        if torch_directml is not None:
+            return torch_directml.device(), "directml"
+        print("  WARN: LEAF2TRAITS_DEVICE=directml requested but torch-directml is unavailable.")
+    elif requested == "cpu":
+        return torch.device("cpu"), "cpu"
     if torch.cuda.is_available():
         return torch.device("cuda"), "cuda"
     if torch_directml is not None:
@@ -692,7 +688,14 @@ def run_trait_regression(X_raw, Z, meta_df, trait_cols, tag=""):
         if group_col is not None:
             group_series = meta_eval.loc[ok, group_col].copy()
             group_series = group_series.where(group_series.notna(), "__missing_group__")
-            groups = group_series.astype(str).values
+            candidate_groups = group_series.astype(str).values
+            if pd.Series(candidate_groups).nunique() >= 2:
+                groups = candidate_groups
+            else:
+                print(
+                    f"    {trait:<40}  only one '{group_col}' group after filtering; "
+                    f"falling back to ungrouped split/CV"
+                )
 
         if groups is not None:
             splitter = GroupShuffleSplit(n_splits=1, test_size=0.25, random_state=SEED)
@@ -854,20 +857,20 @@ def main():
             if ok:
                 trait_found = True
 
-    # Droughted crops traits (inline in EcoSIS export)
-    nmask = labels == LABEL_MAP["droughted_crops"]
+    # NGEE Panama traits (inline in EcoSIS export)
+    nmask = labels == LABEL_MAP["ngee_panama"]
     if nmask.sum() > 0:
         nm = meta[nmask].reset_index(drop=True)
-        crop_traits = [
+        ngee_traits = [
             c
-            for c in DROUGHTED_CROPS_TRAIT_COLS
+            for c in NGEE_PANAMA_TRAIT_COLS
             if c in nm.columns
             and nm[c].notna().sum() >= 10
             and pd.api.types.is_numeric_dtype(nm[c])
         ]
-        if crop_traits:
+        if ngee_traits:
             ok = run_trait_regression(
-                X[nmask], Z[nmask], nm, crop_traits, tag="DroughtedCrops"
+                X[nmask], Z[nmask], nm, ngee_traits, tag="NGEEPanama"
             )
             if ok:
                 trait_found = True

@@ -18,8 +18,8 @@ TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
 CABO_V2_PACKAGE_ID = "a12286ac-929f-4e3e-9b9c-517e10fe4087"
-DROUGHTED_CROPS_PACKAGE_ID = (
-    "hyperspectral-leaf-reflectance--biochemistry--and-physiology-of-droughted-and-watered-crops"
+NGEE_PANAMA_PACKAGE_ID = (
+    "ngee-tropics-leaf-spectral-reflectance-measured-in-panama-collected-february-to-april-2016"
 )
 LOPEX93_PACKAGE_IDS = [
     "leaf-optical-properties-experiment-database--lopex93-",
@@ -220,20 +220,22 @@ def load_cabo_v2(timeout=120):
     return df
 
 
-def load_droughted_crops(timeout=120):
+def load_ngee_panama(timeout=120):
     """
-    Load the droughted-and-watered crops spectra package from EcoSIS.
+    Load the NGEE Tropics Panama leaf spectra package from EcoSIS.
 
-    This package includes inline physiology/biochemistry traits plus taxonomy
-    fields such as Latin Genus and Latin Species, so it is suitable for
-    species-level grouping in discovery tasks.
+    This package includes leaf-level reflectance plus species labels and
+    structural/chemical traits, making it a better fit for species-level
+    discovery than canopy-labeled packages.
     """
-    df = fetch_package_csv(DROUGHTED_CROPS_PACKAGE_ID, metadata=True, timeout=timeout)
+    df = fetch_package_csv(NGEE_PANAMA_PACKAGE_ID, metadata=True, timeout=timeout)
     if df.empty:
-        df = fetch_package_csv(DROUGHTED_CROPS_PACKAGE_ID, metadata=False, timeout=timeout)
+        df = fetch_package_csv(NGEE_PANAMA_PACKAGE_ID, metadata=False, timeout=timeout)
     if df.empty:
         return df
     df = attach_species_column(df)
+    if "Species" not in df.columns and "Genus_species" in df.columns:
+        df["Species"] = df["Genus_species"].astype(str).str.replace("_", " ", regex=False).str.strip()
     if "Species" in df.columns:
         species = (
             df["Species"]
@@ -246,10 +248,10 @@ def load_droughted_crops(timeout=120):
         species = species.replace({"": np.nan, "nan": np.nan})
         df["Species"] = species
     if "Species" not in df.columns or df["Species"].isna().all():
-        if "USDA Symbol" in df.columns:
-            df["Species"] = df["USDA Symbol"].astype(str).str.strip()
-        elif "Common Name" in df.columns:
-            df["Species"] = df["Common Name"].astype(str).str.strip()
+        if "Species_Code" in df.columns:
+            df["Species"] = df["Species_Code"].astype(str).str.strip()
+        elif "Spectra_Name" in df.columns:
+            df["Species"] = df["Spectra_Name"].astype(str).str.strip()
     if "Genus" not in df.columns and "Latin Genus" in df.columns:
         df["Genus"] = df["Latin Genus"].astype(str).str.strip()
     return df
