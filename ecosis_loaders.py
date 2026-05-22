@@ -234,6 +234,7 @@ def load_angers_2003(timeout=120):
         df = fetch_package_csv(ANGERS_2003_PACKAGE_ID, metadata=False, timeout=timeout)
     if df.empty:
         return df
+    df = df.replace(-999, np.nan)
     if "Measurement_type" in df.columns:
         mt = df["Measurement_type"].astype(str).str.lower()
         refl = mt.str.contains("refl", na=False)
@@ -298,6 +299,8 @@ def load_lopex93(timeout=120):
             break
     else:
         return pd.DataFrame()
+
+    df = df.replace(-999, np.nan)
 
     if "Latin Name" in df.columns:
         latin = df["Latin Name"].astype(str).str.strip()

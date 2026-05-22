@@ -157,7 +157,6 @@ CABO_V2_TRAIT_COLS = [
 ]
 
 ANGERS_2003_TRAIT_COLS = [
-    "Anthocyanin",
     "Carotenoid ( g/cm )",
     "Chlorophyll_a ( g/cm )",
     "Chlorophyll_a+b ( g/cm )",

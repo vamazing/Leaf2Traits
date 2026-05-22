@@ -113,7 +113,6 @@ CABO_V2_TRAIT_COLS = [
     "Zn_area_g_m2",
 ]
 ANGERS_2003_TRAIT_COLS = [
-    "Anthocyanin",
     "Carotenoid ( g/cm )",
     "Chlorophyll_a ( g/cm )",
     "Chlorophyll_a+b ( g/cm )",
