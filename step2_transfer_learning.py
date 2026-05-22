@@ -10,6 +10,7 @@ Datasets:
   - AQGRAD              (water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018      (Talladega National Forest, Alabama)
   - Angers 2003         (leaf optical properties with pigments and structure)
+  - Blackhawk Island WI (seasonal fresh leaf spectra with chlorophyll and LMA)
   - CABO v2             (broad multispecies leaf-level traits)
   - NGEE Panama 2016    (tropical leaf reflectance with structural/chemical traits)
   - LOPEX93             (European lab)
@@ -38,6 +39,7 @@ except ImportError:
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     ANGERS_2003_PACKAGE_ID,
+    BLACKHAWK_ISLAND_WI_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
@@ -46,6 +48,7 @@ from ecosis_loaders import (
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_angers_2003,
+    load_blackhawk_island_wi,
     load_cabo_v2,
     load_ngee_panama,
     load_lopex93,
@@ -68,13 +71,14 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "angers2003":       [ANGERS_2003_PACKAGE_ID],
+    "blackhawk_wi":     [BLACKHAWK_ISLAND_WI_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
     "ngee_panama":      [NGEE_PANAMA_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
 SHORT = {"aqgrad": "aqgr", "talladega2018": "tall",
-         "angers2003": "angr", "cabo_v2": "cabo", "ngee_panama": "ngee", "lopex93": "lope", "sierranevada2023": "sier"}
+         "angers2003": "angr", "blackhawk_wi": "bhwk", "cabo_v2": "cabo", "ngee_panama": "ngee", "lopex93": "lope", "sierranevada2023": "sier"}
 
 
 def clear_stage_outputs(out_dir):
@@ -185,6 +189,14 @@ def load_dataset(name, ids):
             return df
         print(f"    WARN: failed -> synthetic")
         return make_synthetic(name)
+    if name == "blackhawk_wi":
+        df = load_blackhawk_island_wi()
+        if not df.empty:
+            df["_dataset"] = name
+            print(f"    OK: {df.shape}")
+            return df
+        print(f"    WARN: failed -> synthetic")
+        return make_synthetic(name)
     if name == "cabo_v2":
         df = load_cabo_v2()
         if not df.empty:
@@ -287,7 +299,7 @@ def plot_comparison(results):
     bars2 = ax.bar(x + w/2, emb_vals, w, label="Embeddings",   color="#2563eb")
     ax.axhline(0.5, color="red", ls="--", lw=1.2, label="Chance")
     ax.set_ylabel("Dataset Discriminability Accuracy (chance = 0.5)")
-    ax.set_title("Cross-Domain Transfer: Raw vs Embedding (4 datasets)")
+    ax.set_title("Cross-Domain Transfer: Raw vs Embedding")
     ax.set_xticks(x); ax.set_xticklabels(dirs, rotation=35, ha="right")
     ax.set_ylim(0, 1.05); ax.legend(); ax.grid(axis="y", alpha=0.3)
     for bar in list(bars1) + list(bars2):

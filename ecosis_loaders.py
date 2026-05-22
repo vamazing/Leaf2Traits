@@ -18,6 +18,7 @@ TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
 ANGERS_2003_PACKAGE_ID = "angers-leaf-optical-properties-database--2003-"
+BLACKHAWK_ISLAND_WI_PACKAGE_ID = "seasonal-fresh-leaf-spectra-and-traits--blackhawk-island--wi"
 CABO_V2_PACKAGE_ID = "a12286ac-929f-4e3e-9b9c-517e10fe4087"
 NGEE_PANAMA_PACKAGE_ID = (
     "ngee-tropics-leaf-spectral-reflectance-measured-in-panama-collected-february-to-april-2016"
@@ -246,6 +247,27 @@ def load_angers_2003(timeout=120):
         df["Genus"] = genus.replace({"nan": ""}).str.strip()
     elif "English Name" in df.columns:
         df["Species"] = df["English Name"].astype(str).str.strip()
+    return df
+
+
+def load_blackhawk_island_wi(timeout=120):
+    """
+    Load the Blackhawk Island fresh leaf spectra package from EcoSIS.
+
+    This is a leaf-level contact dataset with species labels and a small but
+    useful trait set centered on chlorophyll-a and LMA.
+    """
+    df = fetch_package_csv(BLACKHAWK_ISLAND_WI_PACKAGE_ID, metadata=True, timeout=timeout)
+    if df.empty:
+        df = fetch_package_csv(BLACKHAWK_ISLAND_WI_PACKAGE_ID, metadata=False, timeout=timeout)
+    if df.empty:
+        return df
+    df = df.replace(-999, np.nan)
+    df = attach_species_column(df)
+    if "Species" not in df.columns and "Common Name" in df.columns:
+        df["Species"] = df["Common Name"].astype(str).str.strip()
+    if "Genus" not in df.columns and "Latin Genus" in df.columns:
+        df["Genus"] = df["Latin Genus"].astype(str).str.strip()
     return df
 
 

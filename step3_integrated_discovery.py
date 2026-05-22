@@ -5,7 +5,7 @@ Stage 3: Integrated Discovery Pipeline
 Full A->C pipeline across all datasets:
   A. Representation validation  - PCA of embeddings + reconstruction error.
   B. Trait regression comparison - raw spectra vs embeddings (5-fold CV).
-     Uses API-provided LOPEX93, Angers, CABO, NGEE Panama, and Sierra Nevada traits.
+     Uses API-provided LOPEX93, Angers, Blackhawk, CABO, NGEE Panama, and Sierra Nevada traits.
   C. Novel candidate discovery  - Isolation Forest novelty scoring + taxonomic prior.
 
 Run:
@@ -36,6 +36,7 @@ except ImportError:
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     ANGERS_2003_PACKAGE_ID,
+    BLACKHAWK_ISLAND_WI_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
@@ -44,6 +45,7 @@ from ecosis_loaders import (
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_angers_2003,
+    load_blackhawk_island_wi,
     load_cabo_v2,
     load_ngee_panama,
     load_lopex93,
@@ -122,6 +124,10 @@ ANGERS_2003_TRAIT_COLS = [
     "SPAD",
     "Structure parameter",
 ]
+BLACKHAWK_ISLAND_WI_TRAIT_COLS = [
+    "chl_a_mmol_m2",
+    "lma_g_m2",
+]
 NGEE_PANAMA_TRAIT_COLS = [
     "CNratio",
     "Cmass_pc",
@@ -141,6 +147,7 @@ KNOWN_HYPERACCUMULATOR_GENERA = {
 DATASET_TRAIT_MAP = {
     "lopex93": LOPEX93_TRAIT_COLS,
     "angers2003": ANGERS_2003_TRAIT_COLS,
+    "blackhawk_wi": BLACKHAWK_ISLAND_WI_TRAIT_COLS,
     "cabo_v2": CABO_V2_TRAIT_COLS,
     "ngee_panama": NGEE_PANAMA_TRAIT_COLS,
     "sierranevada2023": SIERRA_TRAIT_COLS,
@@ -151,6 +158,7 @@ DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
     "angers2003":       [ANGERS_2003_PACKAGE_ID],
+    "blackhawk_wi":     [BLACKHAWK_ISLAND_WI_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
     "ngee_panama":      [NGEE_PANAMA_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
@@ -160,10 +168,11 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "angers2003": 2,
-    "cabo_v2": 3,
-    "ngee_panama": 4,
-    "lopex93": 5,
-    "sierranevada2023": 6,
+    "blackhawk_wi": 3,
+    "cabo_v2": 4,
+    "ngee_panama": 5,
+    "lopex93": 6,
+    "sierranevada2023": 7,
 }
 
 
@@ -311,6 +320,16 @@ def load_all():
             continue
         if name == "angers2003":
             df = load_angers_2003()
+            if not df.empty:
+                df["_dataset"] = name
+                print(f"    OK: {df.shape}")
+                frames.append(df)
+                continue
+            print(f"    WARN: download failed -> synthetic")
+            frames.append(make_synthetic(name))
+            continue
+        if name == "blackhawk_wi":
+            df = load_blackhawk_island_wi()
             if not df.empty:
                 df["_dataset"] = name
                 print(f"    OK: {df.shape}")
@@ -484,7 +503,7 @@ def validate_representations(X_raw, Z, meta, model, mu, std):
         ax.scatter(Z2[m,0], Z2[m,1], label=ds, alpha=0.55, s=20, color=colours[i%4])
     ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.1f}%)")
     ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.1f}%)")
-    ax.set_title("Embedding PCA (4 datasets)"); ax.legend(fontsize=8); ax.grid(alpha=0.3)
+    ax.set_title("Embedding PCA (by dataset)"); ax.legend(fontsize=8); ax.grid(alpha=0.3)
 
     ax = axes[1]
     npz = STAGE1_DIR/"embeddings_all.npz"
@@ -703,7 +722,7 @@ def run_discovery(X_raw, Z, meta):
     ax.hist(novelty, bins=50, color="#e74c3c", alpha=0.75, edgecolor="white")
     ax.axvline(np.percentile(novelty, 90), color="black", ls="--", lw=1.5, label="90th pct")
     ax.set_xlabel("Novelty Score (higher = more spectrally unusual)")
-    ax.set_ylabel("Count"); ax.set_title("Novelty Score Distribution (4 datasets)")
+    ax.set_ylabel("Count"); ax.set_title("Novelty Score Distribution")
     ax.legend(); ax.grid(alpha=0.3)
     fig.tight_layout(); fig.savefig(OUT_DIR/"novelty_distribution.png", dpi=150); plt.close(fig)
     print("  Saved: novelty_distribution.png")

@@ -6,17 +6,18 @@ Datasets:
   - AQGRAD               (EcoSIS, water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018       (EcoSIS, leaf spectra + foliar traits, Alabama)
   - Angers 2003          (EcoSIS, leaf optical properties + pigments and structure)
+  - Blackhawk Island WI  (EcoSIS, seasonal fresh leaf spectra with chlorophyll and LMA)
   - CABO v2              (EcoSIS, broad multispecies leaf-level traits)
   - NGEE Panama 2016     (EcoSIS, tropical leaf reflectance + structural/chemical traits)
   - LOPEX93              (EcoSIS spectra + biochemical traits via metadata=true)
   - Sierra Nevada 2023   (EcoSIS, field, California - auxiliary stress-test dataset)
 
 Pipeline:
-  1. Download all seven datasets.
+  1. Download all eight datasets.
   2. Preprocess: Savitzky-Golay smooth -> SNV normalise -> align to 400-2400nm grid.
   3. Train deep autoencoder.
   4. Extract 192-dim embeddings; visualise with PCA.
-  5. Trait regression on LOPEX93, CABO, and Sierra Nevada traits.
+  5. Trait regression on LOPEX93, Angers, Blackhawk, CABO, NGEE Panama, and Sierra traits.
 
 Run:
     python step1_pretrain_downstream.py
@@ -65,6 +66,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
     ANGERS_2003_PACKAGE_ID,
+    BLACKHAWK_ISLAND_WI_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
@@ -73,6 +75,7 @@ from ecosis_loaders import (
     filter_lopex_spectral_outliers,
     load_aqgrad,
     load_angers_2003,
+    load_blackhawk_island_wi,
     load_cabo_v2,
     load_ngee_panama,
     load_lopex93,
@@ -167,6 +170,11 @@ ANGERS_2003_TRAIT_COLS = [
     "Structure parameter",
 ]
 
+BLACKHAWK_ISLAND_WI_TRAIT_COLS = [
+    "chl_a_mmol_m2",
+    "lma_g_m2",
+]
+
 NGEE_PANAMA_TRAIT_COLS = [
     "CNratio",
     "Cmass_pc",
@@ -188,6 +196,7 @@ DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
     "talladega2018": [TALL2018_PACKAGE_ID],
     "angers2003": [ANGERS_2003_PACKAGE_ID],
+    "blackhawk_wi": [BLACKHAWK_ISLAND_WI_PACKAGE_ID],
     "cabo_v2": [CABO_V2_PACKAGE_ID],
     "ngee_panama": [NGEE_PANAMA_PACKAGE_ID],
     "lopex93": LOPEX93_PACKAGE_IDS,
@@ -197,19 +206,21 @@ LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
     "angers2003": 2,
-    "cabo_v2": 3,
-    "ngee_panama": 4,
-    "lopex93": 5,
-    "sierranevada2023": 6,
+    "blackhawk_wi": 3,
+    "cabo_v2": 4,
+    "ngee_panama": 5,
+    "lopex93": 6,
+    "sierranevada2023": 7,
 }
 LABEL_NAMES = {
     0: "AQGRAD",
     1: "Talladega 2018",
     2: "Angers 2003",
-    3: "CABO v2",
-    4: "NGEE Panama 2016",
-    5: "LOPEX93",
-    6: "Sierra Nevada 2023",
+    3: "Blackhawk Island WI",
+    4: "CABO v2",
+    5: "NGEE Panama 2016",
+    6: "LOPEX93",
+    7: "Sierra Nevada 2023",
 }
 AE_CONFIG = {"hidden": HIDDEN, "latent_dim": LATENT_DIM, "dropout": DROPOUT}
 
@@ -270,6 +281,14 @@ def load_dataset(name, ids):
             df["_dataset"] = name
             return df
         print(f"    WARN: Angers 2003 download failed -> synthetic fallback")
+        return pd.DataFrame()
+    if name == "blackhawk_wi":
+        df = load_blackhawk_island_wi()
+        if not df.empty:
+            print(f"    OK {BLACKHAWK_ISLAND_WI_PACKAGE_ID}: {df.shape}")
+            df["_dataset"] = name
+            return df
+        print(f"    WARN: Blackhawk Island WI download failed -> synthetic fallback")
         return pd.DataFrame()
     if name == "cabo_v2":
         df = load_cabo_v2()
@@ -894,6 +913,24 @@ def main():
         if ngee_traits:
             ok = run_trait_regression(
                 X[nmask], Z[nmask], nm, ngee_traits, tag="NGEEPanama"
+            )
+            if ok:
+                trait_found = True
+
+    # Blackhawk Island WI traits (inline in EcoSIS export)
+    bhmask = labels == LABEL_MAP["blackhawk_wi"]
+    if bhmask.sum() > 0:
+        bhm = meta[bhmask].reset_index(drop=True)
+        blackhawk_traits = [
+            c
+            for c in BLACKHAWK_ISLAND_WI_TRAIT_COLS
+            if c in bhm.columns
+            and bhm[c].notna().sum() >= 10
+            and pd.api.types.is_numeric_dtype(bhm[c])
+        ]
+        if blackhawk_traits:
+            ok = run_trait_regression(
+                X[bhmask], Z[bhmask], bhm, blackhawk_traits, tag="BlackhawkIslandWI"
             )
             if ok:
                 trait_found = True
