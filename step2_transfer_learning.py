@@ -9,10 +9,11 @@ autoencoder embeddings. Accuracy > 0.5 means datasets are spectrally separable.
 Datasets:
   - AQGRAD              (water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018      (Talladega National Forest, Alabama)
+  - Angers 2003         (leaf optical properties with pigments and structure)
   - CABO v2             (broad multispecies leaf-level traits)
   - NGEE Panama 2016    (tropical leaf reflectance with structural/chemical traits)
   - LOPEX93             (European lab)
-  - Sierra Nevada 2023  (field, California)
+  - Sierra Nevada 2023  (field, California; auxiliary stress-test)
 
 Run:
     python step2_transfer_learning.py
@@ -36,6 +37,7 @@ except ImportError:
 
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
+    ANGERS_2003_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
@@ -43,6 +45,7 @@ from ecosis_loaders import (
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
+    load_angers_2003,
     load_cabo_v2,
     load_ngee_panama,
     load_lopex93,
@@ -64,13 +67,14 @@ ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
+    "angers2003":       [ANGERS_2003_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
     "ngee_panama":      [NGEE_PANAMA_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
     "sierranevada2023": [SIERRA_NEVADA_2023_PACKAGE_ID],
 }
 SHORT = {"aqgrad": "aqgr", "talladega2018": "tall",
-         "cabo_v2": "cabo", "ngee_panama": "ngee", "lopex93": "lope", "sierranevada2023": "sier"}
+         "angers2003": "angr", "cabo_v2": "cabo", "ngee_panama": "ngee", "lopex93": "lope", "sierranevada2023": "sier"}
 
 
 def clear_stage_outputs(out_dir):
@@ -167,6 +171,14 @@ def load_dataset(name, ids):
         return make_synthetic(name)
     if name == "talladega2018":
         df = load_tall2018()
+        if not df.empty:
+            df["_dataset"] = name
+            print(f"    OK: {df.shape}")
+            return df
+        print(f"    WARN: failed -> synthetic")
+        return make_synthetic(name)
+    if name == "angers2003":
+        df = load_angers_2003()
         if not df.empty:
             df["_dataset"] = name
             print(f"    OK: {df.shape}")

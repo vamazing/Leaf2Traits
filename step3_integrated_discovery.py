@@ -5,7 +5,7 @@ Stage 3: Integrated Discovery Pipeline
 Full A->C pipeline across all datasets:
   A. Representation validation  - PCA of embeddings + reconstruction error.
   B. Trait regression comparison - raw spectra vs embeddings (5-fold CV).
-     Uses API-provided LOPEX93, CABO, NGEE Panama, and Sierra Nevada traits.
+     Uses API-provided LOPEX93, Angers, CABO, NGEE Panama, and Sierra Nevada traits.
   C. Novel candidate discovery  - Isolation Forest novelty scoring + taxonomic prior.
 
 Run:
@@ -35,6 +35,7 @@ except ImportError:
 
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
+    ANGERS_2003_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
@@ -42,6 +43,7 @@ from ecosis_loaders import (
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
+    load_angers_2003,
     load_cabo_v2,
     load_ngee_panama,
     load_lopex93,
@@ -110,6 +112,17 @@ CABO_V2_TRAIT_COLS = [
     "Zn_mass_mg_g",
     "Zn_area_g_m2",
 ]
+ANGERS_2003_TRAIT_COLS = [
+    "Anthocyanin",
+    "Carotenoid ( g/cm )",
+    "Chlorophyll_a ( g/cm )",
+    "Chlorophyll_a+b ( g/cm )",
+    "Chlorophyll_b ( g/cm )",
+    "Equivalent Water Thickness (g/cm )",
+    "Leaf mass per area (g/cm )",
+    "SPAD",
+    "Structure parameter",
+]
 NGEE_PANAMA_TRAIT_COLS = [
     "CNratio",
     "Cmass_pc",
@@ -128,6 +141,7 @@ KNOWN_HYPERACCUMULATOR_GENERA = {
 }
 DATASET_TRAIT_MAP = {
     "lopex93": LOPEX93_TRAIT_COLS,
+    "angers2003": ANGERS_2003_TRAIT_COLS,
     "cabo_v2": CABO_V2_TRAIT_COLS,
     "ngee_panama": NGEE_PANAMA_TRAIT_COLS,
     "sierranevada2023": SIERRA_TRAIT_COLS,
@@ -137,6 +151,7 @@ ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
     "aqgrad":           [AQGRAD_PACKAGE_ID],
     "talladega2018":    [TALL2018_PACKAGE_ID],
+    "angers2003":       [ANGERS_2003_PACKAGE_ID],
     "cabo_v2":          [CABO_V2_PACKAGE_ID],
     "ngee_panama":      [NGEE_PANAMA_PACKAGE_ID],
     "lopex93":          LOPEX93_PACKAGE_IDS,
@@ -145,10 +160,11 @@ DATASETS = {
 LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
-    "cabo_v2": 2,
-    "ngee_panama": 3,
-    "lopex93": 4,
-    "sierranevada2023": 5,
+    "angers2003": 2,
+    "cabo_v2": 3,
+    "ngee_panama": 4,
+    "lopex93": 5,
+    "sierranevada2023": 6,
 }
 
 
@@ -286,6 +302,16 @@ def load_all():
             continue
         if name == "talladega2018":
             df = load_tall2018()
+            if not df.empty:
+                df["_dataset"] = name
+                print(f"    OK: {df.shape}")
+                frames.append(df)
+                continue
+            print(f"    WARN: download failed -> synthetic")
+            frames.append(make_synthetic(name))
+            continue
+        if name == "angers2003":
+            df = load_angers_2003()
             if not df.empty:
                 df["_dataset"] = name
                 print(f"    OK: {df.shape}")

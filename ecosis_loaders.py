@@ -17,6 +17,7 @@ AQGRAD_PACKAGE_ID = (
 TALL2018_PACKAGE_ID = (
     "2018-talladega-national-forest--leaf-level-reflectance-spectra-and-foliar-traits"
 )
+ANGERS_2003_PACKAGE_ID = "angers-leaf-optical-properties-database--2003-"
 CABO_V2_PACKAGE_ID = "a12286ac-929f-4e3e-9b9c-517e10fe4087"
 NGEE_PANAMA_PACKAGE_ID = (
     "ngee-tropics-leaf-spectral-reflectance-measured-in-panama-collected-february-to-april-2016"
@@ -217,6 +218,33 @@ def load_cabo_v2(timeout=120):
         n_mass = pd.to_numeric(df["N_mass_g_g"], errors="coerce")
         c_mass = pd.to_numeric(df["C_mass_g_g"], errors="coerce")
         df["CN_ratio"] = np.where(n_mass > 0, c_mass / n_mass, np.nan)
+    return df
+
+
+def load_angers_2003(timeout=120):
+    """
+    Load the ANGERS 2003 leaf optical properties package from EcoSIS.
+
+    This package includes leaf-level optical and biochemical measurements.
+    When both reflectance and transmittance records are present, keep the
+    reflectance rows for consistency with the rest of the pipeline.
+    """
+    df = fetch_package_csv(ANGERS_2003_PACKAGE_ID, metadata=True, timeout=timeout)
+    if df.empty:
+        df = fetch_package_csv(ANGERS_2003_PACKAGE_ID, metadata=False, timeout=timeout)
+    if df.empty:
+        return df
+    if "Measurement_type" in df.columns:
+        mt = df["Measurement_type"].astype(str).str.lower()
+        refl = mt.str.contains("refl", na=False)
+        if refl.any():
+            df = df.loc[refl].reset_index(drop=True)
+    if "Latin Name" in df.columns:
+        df["Species"] = df["Latin Name"].astype(str).str.replace("_", " ", regex=False).str.strip()
+        genus = df["Species"].str.split().str[0].fillna("")
+        df["Genus"] = genus.replace({"nan": ""}).str.strip()
+    elif "English Name" in df.columns:
+        df["Species"] = df["English Name"].astype(str).str.strip()
     return df
 
 

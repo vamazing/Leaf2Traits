@@ -5,13 +5,14 @@ Stage 1: Pretraining + Downstream Prediction
 Datasets:
   - AQGRAD               (EcoSIS, water-affinity gradient, Mantua lakes, Italy)
   - Talladega 2018       (EcoSIS, leaf spectra + foliar traits, Alabama)
+  - Angers 2003          (EcoSIS, leaf optical properties + pigments and structure)
   - CABO v2              (EcoSIS, broad multispecies leaf-level traits)
   - NGEE Panama 2016     (EcoSIS, tropical leaf reflectance + structural/chemical traits)
   - LOPEX93              (EcoSIS spectra + biochemical traits via metadata=true)
-  - Sierra Nevada 2023   (EcoSIS, field, California - includes measured traits)
+  - Sierra Nevada 2023   (EcoSIS, field, California - auxiliary stress-test dataset)
 
 Pipeline:
-  1. Download all six datasets.
+  1. Download all seven datasets.
   2. Preprocess: Savitzky-Golay smooth -> SNV normalise -> align to 400-2400nm grid.
   3. Train deep autoencoder.
   4. Extract 192-dim embeddings; visualise with PCA.
@@ -63,6 +64,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from ecosis_loaders import (
     AQGRAD_PACKAGE_ID,
+    ANGERS_2003_PACKAGE_ID,
     CABO_V2_PACKAGE_ID,
     NGEE_PANAMA_PACKAGE_ID,
     LOPEX93_PACKAGE_IDS,
@@ -70,6 +72,7 @@ from ecosis_loaders import (
     TALL2018_PACKAGE_ID,
     filter_lopex_spectral_outliers,
     load_aqgrad,
+    load_angers_2003,
     load_cabo_v2,
     load_ngee_panama,
     load_lopex93,
@@ -153,6 +156,18 @@ CABO_V2_TRAIT_COLS = [
     "Zn_area_g_m2",
 ]
 
+ANGERS_2003_TRAIT_COLS = [
+    "Anthocyanin",
+    "Carotenoid ( g/cm )",
+    "Chlorophyll_a ( g/cm )",
+    "Chlorophyll_a+b ( g/cm )",
+    "Chlorophyll_b ( g/cm )",
+    "Equivalent Water Thickness (g/cm )",
+    "Leaf mass per area (g/cm )",
+    "SPAD",
+    "Structure parameter",
+]
+
 NGEE_PANAMA_TRAIT_COLS = [
     "CNratio",
     "Cmass_pc",
@@ -173,6 +188,7 @@ ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
     "talladega2018": [TALL2018_PACKAGE_ID],
+    "angers2003": [ANGERS_2003_PACKAGE_ID],
     "cabo_v2": [CABO_V2_PACKAGE_ID],
     "ngee_panama": [NGEE_PANAMA_PACKAGE_ID],
     "lopex93": LOPEX93_PACKAGE_IDS,
@@ -181,18 +197,20 @@ DATASETS = {
 LABEL_MAP = {
     "aqgrad": 0,
     "talladega2018": 1,
-    "cabo_v2": 2,
-    "ngee_panama": 3,
-    "lopex93": 4,
-    "sierranevada2023": 5,
+    "angers2003": 2,
+    "cabo_v2": 3,
+    "ngee_panama": 4,
+    "lopex93": 5,
+    "sierranevada2023": 6,
 }
 LABEL_NAMES = {
     0: "AQGRAD",
     1: "Talladega 2018",
-    2: "CABO v2",
-    3: "NGEE Panama 2016",
-    4: "LOPEX93",
-    5: "Sierra Nevada 2023",
+    2: "Angers 2003",
+    3: "CABO v2",
+    4: "NGEE Panama 2016",
+    5: "LOPEX93",
+    6: "Sierra Nevada 2023",
 }
 AE_CONFIG = {"hidden": HIDDEN, "latent_dim": LATENT_DIM, "dropout": DROPOUT}
 
@@ -245,6 +263,14 @@ def load_dataset(name, ids):
             df["_dataset"] = name
             return df
         print(f"    WARN: Talladega 2018 download failed -> synthetic fallback")
+        return pd.DataFrame()
+    if name == "angers2003":
+        df = load_angers_2003()
+        if not df.empty:
+            print(f"    OK {ANGERS_2003_PACKAGE_ID}: {df.shape}")
+            df["_dataset"] = name
+            return df
+        print(f"    WARN: Angers 2003 download failed -> synthetic fallback")
         return pd.DataFrame()
     if name == "cabo_v2":
         df = load_cabo_v2()
@@ -869,6 +895,24 @@ def main():
         if ngee_traits:
             ok = run_trait_regression(
                 X[nmask], Z[nmask], nm, ngee_traits, tag="NGEEPanama"
+            )
+            if ok:
+                trait_found = True
+
+    # Angers 2003 traits
+    amask = labels == LABEL_MAP["angers2003"]
+    if amask.sum() > 0:
+        am = meta[amask].reset_index(drop=True)
+        angers_traits = [
+            c
+            for c in ANGERS_2003_TRAIT_COLS
+            if c in am.columns
+            and am[c].notna().sum() >= 10
+            and pd.api.types.is_numeric_dtype(am[c])
+        ]
+        if angers_traits:
+            ok = run_trait_regression(
+                X[amask], Z[amask], am, angers_traits, tag="Angers2003"
             )
             if ok:
                 trait_found = True
