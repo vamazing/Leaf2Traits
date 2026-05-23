@@ -169,8 +169,10 @@ Stage 3 now evaluates trait regression separately within each dataset instead of
 pooling canonical trait names across datasets. For novelty ranking, it fits
 Isolation Forest within each dataset, normalizes novelty scores to `[0, 1]` per
 dataset, combines those normalized scores across datasets, and ranks species by
-their 95th percentile novelty rather than a single maximum scan. This reduces both
-cross-dataset domain bias and scan-count bias in the candidate list.
+their 95th percentile novelty rather than a single maximum scan. Species-level
+ranking is then confidence-adjusted using scan count so one-off spectra do not
+dominate the headline list. This reduces both cross-dataset domain bias and
+small-sample volatility in the candidate list.
 
 ---
 
@@ -194,7 +196,8 @@ cross-dataset domain bias and scan-count bias in the candidate list.
 - Isolation Forest with 200 trees on the learned embeddings
 - Novelty is scored within each dataset and normalized to `[0, 1]` before combining
 - Ranking uses 95th percentile novelty per species instead of max novelty
-- Composite score = normalized novelty + hyperaccumulator-genus prior
+- Species scores are confidence-adjusted by scan count using `1 - exp(-n_spectra / 5)`
+- Final ranking score = confidence-adjusted novelty + hyperaccumulator-genus prior
 
 ---
 

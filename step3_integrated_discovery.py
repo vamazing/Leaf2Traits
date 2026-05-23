@@ -62,6 +62,7 @@ SEED = 42; np.random.seed(SEED)
 TARGET_WL = np.arange(400, 2401, 10)
 DEFAULT_AE_CONFIG = {"hidden": [1024, 512, 256, 128], "latent_dim": 192, "dropout": 0.05}
 RIDGE_ALPHAS = np.logspace(-3, 3, 13)
+NOVELTY_CONFIDENCE_K = 5.0
 
 LOPEX93_TRAIT_COLS = [
     "Chlorophyll_a+b (µg/cm²)", "Equivalent Water Thickness (g/cm²)",
@@ -906,6 +907,11 @@ def normalize_zero_one(values):
     return (values - vmin) / (vmax - vmin)
 
 
+def confidence_from_count(counts, k=NOVELTY_CONFIDENCE_K):
+    counts = np.asarray(counts, dtype=float)
+    return 1.0 - np.exp(-counts / max(k, 1e-8))
+
+
 def run_discovery_v2(X_raw, Z, meta):
     print("  [C] Novel candidate discovery ...")
     ds_col = meta.get("_dataset", pd.Series(["unknown"] * len(meta))).fillna("unknown")
@@ -997,8 +1003,17 @@ def run_discovery_v2(X_raw, Z, meta):
         .reindex(species_ranked["species"])
         .values
     )
+    species_ranked["confidence_weight"] = confidence_from_count(
+        species_ranked["n_spectra"].values
+    )
+    species_ranked["penalized_novelty_score"] = (
+        species_ranked["novelty_score"] * species_ranked["confidence_weight"]
+    )
+    species_ranked["penalized_composite_score"] = (
+        species_ranked["penalized_novelty_score"] + species_ranked["prior_boost"]
+    )
     species_ranked = species_ranked.sort_values(
-        ["composite_score", "novelty_score"], ascending=False
+        ["penalized_composite_score", "novelty_score"], ascending=False
     ).reset_index(drop=True)
     species_ranked["rank"] = species_ranked.index + 1
     species_ranked.to_csv(OUT_DIR / "ranked_candidates.csv", index=False)
@@ -1009,13 +1024,13 @@ def run_discovery_v2(X_raw, Z, meta):
     colours = species_ranked["known_hyperacc"].map({True: "#e74c3c", False: "#3498db"})
     ax.bar(
         range(len(species_ranked)),
-        species_ranked["composite_score"],
+        species_ranked["penalized_composite_score"],
         color=colours,
         edgecolor="white",
         linewidth=0.4,
     )
     ax.axhline(
-        np.percentile(species_ranked["composite_score"], 75),
+        np.percentile(species_ranked["penalized_composite_score"], 75),
         color="black",
         ls="--",
         lw=1.2,
@@ -1023,8 +1038,8 @@ def run_discovery_v2(X_raw, Z, meta):
     )
     ax.set_xticks(range(len(species_ranked)))
     ax.set_xticklabels(species_ranked["species"], rotation=60, ha="right", fontsize=7)
-    ax.set_ylabel("Composite Novelty Score (95th percentile per label)")
-    ax.set_title("Novelty Ranking (within-dataset normalized)")
+    ax.set_ylabel("Confidence-adjusted novelty score")
+    ax.set_title("Novelty Ranking (within-dataset normalized, scan-count adjusted)")
     from matplotlib.patches import Patch
     ax.legend(
         handles=[
@@ -1039,15 +1054,16 @@ def run_discovery_v2(X_raw, Z, meta):
     plt.close(fig)
     print("  Saved: novelty_species_ranking.png")
 
-    print(f"\n  Top-10 candidate labels (95th percentile novelty):")
-    print(f"  {'Rank':>4}  {entity_label:<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'HyperAcc?':>9}")
+    print(f"\n  Top-10 candidate labels (95th percentile novelty, confidence-adjusted):")
+    print(f"  {'Rank':>4}  {entity_label:<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'Conf':>6}  {'HyperAcc?':>9}")
     print("  " + "-" * 95)
     for _, row in species_ranked.head(10).iterrows():
         ha = "YES" if row["known_hyperacc"] else "-"
         print(
             f"  {int(row['rank']):>4}  {str(row['species']):<30} "
             f"{str(row['genus']):<15} {str(row['dataset']):<16} "
-            f"{row['novelty_score']:>8.4f}  {int(row['n_spectra']):>7}  {ha:>9}"
+            f"{row['novelty_score']:>8.4f}  {int(row['n_spectra']):>7}  "
+            f"{row['confidence_weight']:>6.3f}  {ha:>9}"
         )
 
 
