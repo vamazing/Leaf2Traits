@@ -130,7 +130,9 @@ python step3_integrated_discovery.py
 
 `step1_pretrain_downstream.py` downloads all eight datasets, preprocesses spectra onto
 a shared 400-2400 nm grid, trains the autoencoder, extracts 192-dimensional
-embeddings, and compares raw spectra vs embeddings for trait regression.
+embeddings, and compares three supervised views for trait regression:
+raw spectra, frozen unsupervised embeddings, and a multitask supervised probe
+trained on the embedding space within each dataset split.
 
 LOPEX93 is evaluated with sample aggregation and species-held-out splits using the
 trait and `Sample_#` fields returned by EcoSIS. CABO trait regression uses the full
@@ -145,6 +147,11 @@ reflectance with species labels and leaf structural/chemical traits such as
 Sierra Nevada remains in the pipeline as an auxiliary stress-test dataset. It is
 useful for checking robustness on a small field dataset, but it should not be treated
 as a primary benchmark when comparing representation quality across the project.
+
+The encoder artifact saved to `outputs/stage1/encoder.pt` remains the unsupervised
+autoencoder. The multitask probe is used only inside Stage 1 evaluation so Stage 2
+transfer and Stage 3 novelty analysis do not leak trait labels into the shared
+representation.
 
 ## Stage 2
 

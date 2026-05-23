@@ -17,7 +17,7 @@ Pipeline:
   2. Preprocess: Savitzky-Golay smooth -> SNV normalise -> align to 400-2400nm grid.
   3. Train deep autoencoder.
   4. Extract 192-dim embeddings; visualise with PCA.
-  5. Trait regression on LOPEX93, Angers, Blackhawk, CABO, NGEE Panama, and Sierra traits.
+  5. Compare raw spectra, frozen embeddings, and multitask embedding probes on trait prediction.
 
 Run:
     python step1_pretrain_downstream.py
@@ -97,11 +97,22 @@ LATENT_DIM = 192
 HIDDEN = [1024, 512, 256, 128]
 DROPOUT = 0.05
 BATCH_SIZE = 64
-N_EPOCHS = 140
+N_EPOCHS = 100
 LR = 7.5e-4
 WEIGHT_DECAY = 1e-5
 NOISE_STD = 0.03
 RIDGE_ALPHAS = np.logspace(-3, 3, 13)
+AE_MIN_EPOCHS = 35
+AE_EARLY_STOP_PATIENCE = 8
+AE_EARLY_STOP_MIN_DELTA = 3e-4
+MULTITASK_EPOCHS = 50
+MULTITASK_LR = 1e-3
+MULTITASK_WEIGHT_DECAY = 1e-4
+MULTITASK_HIDDEN = 128
+MULTITASK_DROPOUT = 0.10
+MULTITASK_MIN_EPOCHS = 12
+MULTITASK_EARLY_STOP_PATIENCE = 5
+MULTITASK_EARLY_STOP_MIN_DELTA = 2e-4
 
 LOPEX93_TRAIT_COLS = [
     "Chlorophyll_a+b (µg/cm²)",
@@ -447,6 +458,24 @@ class PLS1Regressor(BaseEstimator, RegressorMixin):
         return np.asarray(self.pipeline_.predict(X)).reshape(-1)
 
 
+class MultiTaskProbe(nn.Module):
+    def __init__(self, inp, out_dim, hidden=128, dropout=0.1):
+        super().__init__()
+        mid = max(32, hidden // 2)
+        self.net = nn.Sequential(
+            nn.Linear(inp, hidden),
+            nn.LayerNorm(hidden),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(hidden, mid),
+            nn.GELU(),
+            nn.Linear(mid, out_dim),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
+
 def resolve_device():
     requested = os.getenv("LEAF2TRAITS_DEVICE", "").strip().lower()
     if requested in {"cuda", "gpu"}:
@@ -472,9 +501,10 @@ def train_ae(X):
     mu = X.mean(0)
     std = X.std(0) + 1e-8
     Xn = (X - mu) / std
+    batch_size = 256 if device_name in {"cuda", "directml"} else BATCH_SIZE
     dl = DataLoader(
         TensorDataset(torch.tensor(Xn, dtype=torch.float32)),
-        batch_size=BATCH_SIZE,
+        batch_size=batch_size,
         shuffle=True,
     )
     model = Autoencoder(
@@ -484,6 +514,10 @@ def train_ae(X):
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=N_EPOCHS)
     fn = nn.MSELoss()
     hist = []
+    best_loss = np.inf
+    best_state = None
+    patience_left = AE_EARLY_STOP_PATIENCE
+    stopped_early = False
     for ep in range(1, N_EPOCHS + 1):
         model.train()
         el = 0.0
@@ -500,8 +534,24 @@ def train_ae(X):
         el /= len(Xn)
         hist.append(el)
         sched.step()
+        if el < best_loss - AE_EARLY_STOP_MIN_DELTA:
+            best_loss = el
+            best_state = {
+                k: v.detach().cpu().clone() for k, v in model.state_dict().items()
+            }
+            patience_left = AE_EARLY_STOP_PATIENCE
+        elif ep >= AE_MIN_EPOCHS:
+            patience_left -= 1
         if ep % 10 == 0 or ep == 1:
             print(f"    Epoch {ep:3d}/{N_EPOCHS}  loss={el:.5f}")
+        if ep >= AE_MIN_EPOCHS and patience_left <= 0:
+            print(f"    Early stopping at epoch {ep:3d}  best_loss={best_loss:.5f}")
+            stopped_early = True
+            break
+    if not stopped_early:
+        print(f"    Completed schedule at epoch {len(hist):3d}  best_loss={best_loss:.5f}")
+    if best_state is not None:
+        model.load_state_dict(best_state)
     return model, hist, mu, std
 
 
@@ -512,6 +562,89 @@ def get_embeddings(model, X, mu, std):
     with torch.no_grad():
         z = model.encode(torch.tensor(Xn, dtype=torch.float32).to(device))
     return z.cpu().numpy()
+
+
+def prepare_multitask_targets(meta_df, trait_cols):
+    Y = (
+        meta_df[trait_cols]
+        .apply(pd.to_numeric, errors="coerce")
+        .to_numpy(dtype=np.float32)
+    )
+    mask = np.isfinite(Y)
+    means = np.nanmean(Y, axis=0)
+    stds = np.nanstd(Y, axis=0)
+    means = np.where(np.isfinite(means), means, 0.0).astype(np.float32)
+    stds = np.where(np.isfinite(stds) & (stds > 1e-8), stds, 1.0).astype(np.float32)
+    Yz = (np.nan_to_num(Y, nan=0.0) - means) / stds
+    return Y, Yz.astype(np.float32), mask.astype(np.float32), means, stds
+
+
+def fit_multitask_probe(X_train, X_test, Y_train_z, mask_train, means, stds):
+    if Y_train_z.shape[1] < 2:
+        return None
+    if mask_train.sum() < 20:
+        return None
+    device, _ = resolve_device()
+    device_name = "directml" if str(device).startswith("privateuseone") else device.type
+    model = MultiTaskProbe(
+        inp=X_train.shape[1],
+        out_dim=Y_train_z.shape[1],
+        hidden=MULTITASK_HIDDEN,
+        dropout=MULTITASK_DROPOUT,
+    ).to(device)
+    dl = DataLoader(
+        TensorDataset(
+            torch.tensor(X_train, dtype=torch.float32),
+            torch.tensor(Y_train_z, dtype=torch.float32),
+            torch.tensor(mask_train, dtype=torch.float32),
+        ),
+        batch_size=min(256 if device_name in {"cuda", "directml"} else BATCH_SIZE, max(16, len(X_train))),
+        shuffle=True,
+    )
+    opt = optim.AdamW(
+        model.parameters(), lr=MULTITASK_LR, weight_decay=MULTITASK_WEIGHT_DECAY
+    )
+
+    best_loss = np.inf
+    best_state = None
+    patience_left = MULTITASK_EARLY_STOP_PATIENCE
+    model.train()
+    for ep in range(1, MULTITASK_EPOCHS + 1):
+        epoch_loss = 0.0
+        epoch_rows = 0
+        for xb, yb, mb in dl:
+            xb = xb.to(device)
+            yb = yb.to(device)
+            mb = mb.to(device)
+            pred = model(xb)
+            sq = (pred - yb) ** 2
+            denom = mb.sum().clamp_min(1.0)
+            loss = (sq * mb).sum() / denom
+            opt.zero_grad()
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            opt.step()
+            epoch_loss += loss.item() * len(xb)
+            epoch_rows += len(xb)
+        if epoch_rows:
+            epoch_loss /= epoch_rows
+        if epoch_loss < best_loss - MULTITASK_EARLY_STOP_MIN_DELTA:
+            best_loss = epoch_loss
+            best_state = {
+                k: v.detach().cpu().clone() for k, v in model.state_dict().items()
+            }
+            patience_left = MULTITASK_EARLY_STOP_PATIENCE
+        elif ep >= MULTITASK_MIN_EPOCHS:
+            patience_left -= 1
+        if ep >= MULTITASK_MIN_EPOCHS and patience_left <= 0:
+            break
+
+    if best_state is not None:
+        model.load_state_dict(best_state)
+    model.eval()
+    with torch.no_grad():
+        pred_z = model(torch.tensor(X_test, dtype=torch.float32).to(device)).cpu().numpy()
+    return pred_z * stds[None, :] + means[None, :]
 
 
 # ── Plots ─────────────────────────────────────────────────────────────────────
@@ -672,14 +805,38 @@ def aggregate_sample_level(X_raw, Z, meta_df, sample_col="Sample_#"):
 
 
 def plot_trait_comparison(
-    trait, tag, yte, raw_pred, emb_pred, raw_name, emb_name, raw_r2, emb_r2
+    trait,
+    tag,
+    yte,
+    raw_pred,
+    emb_pred,
+    mt_pred,
+    raw_name,
+    emb_name,
+    mt_name,
+    raw_r2,
+    emb_r2,
+    mt_r2,
 ):
-    fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharex=True, sharey=True)
-    mn = min(yte.min(), raw_pred.min(), emb_pred.min())
-    mx = max(yte.max(), raw_pred.max(), emb_pred.max())
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharex=True, sharey=True)
+    pred_values = [raw_pred, emb_pred]
+    if mt_pred is not None:
+        pred_values.append(mt_pred)
+    mn = min([yte.min(), *[p.min() for p in pred_values]])
+    mx = max([yte.max(), *[p.max() for p in pred_values]])
     specs = [
         (axes[0], raw_pred, f"Raw ({raw_name})  R2={raw_r2:.3f}", "#64748b"),
         (axes[1], emb_pred, f"Embedding ({emb_name})  R2={emb_r2:.3f}", "#2563eb"),
+        (
+            axes[2],
+            mt_pred if mt_pred is not None else emb_pred,
+            (
+                f"Multitask ({mt_name})  R2={mt_r2:.3f}"
+                if mt_pred is not None
+                else "Multitask unavailable"
+            ),
+            "#10b981",
+        ),
     ]
     for ax, pred, title, color in specs:
         ax.scatter(yte, pred, alpha=0.7, s=30, color=color)
@@ -716,6 +873,48 @@ def run_trait_regression(X_raw, Z, meta_df, trait_cols, tag=""):
     if group_col is not None:
         print(f"    Group-aware split/CV via '{group_col}'")
     summary_rows = []
+    Y_multi, Y_multi_z, Y_multi_mask, mt_means, mt_stds = prepare_multitask_targets(
+        meta_eval, trait_cols
+    )
+    trait_to_idx = {trait: i for i, trait in enumerate(trait_cols)}
+    base_ok = Y_multi_mask.sum(axis=1) > 0
+    common_train_mask = np.zeros(len(meta_eval), dtype=bool)
+    common_test_mask = np.zeros(len(meta_eval), dtype=bool)
+    mt_test_preds = None
+    mt_test_pos = {}
+    if base_ok.sum() >= 20:
+        groups_base = None
+        if group_col is not None:
+            group_series = meta_eval.loc[base_ok, group_col].copy()
+            group_series = group_series.where(group_series.notna(), "__missing_group__")
+            candidate_groups = group_series.astype(str).values
+            if pd.Series(candidate_groups).nunique() >= 2:
+                groups_base = candidate_groups
+        base_idx = np.flatnonzero(base_ok)
+        if groups_base is not None:
+            splitter = GroupShuffleSplit(n_splits=1, test_size=0.25, random_state=SEED)
+            base_train_rel, base_test_rel = next(
+                splitter.split(X_eval[base_ok], Y_multi[base_ok, 0], groups=groups_base)
+            )
+        else:
+            splitter = ShuffleSplit(n_splits=1, test_size=0.25, random_state=SEED)
+            base_train_rel, base_test_rel = next(
+                splitter.split(X_eval[base_ok], Y_multi[base_ok, 0])
+            )
+        train_global = base_idx[base_train_rel]
+        test_global = base_idx[base_test_rel]
+        common_train_mask[train_global] = True
+        common_test_mask[test_global] = True
+        mt_test_preds = fit_multitask_probe(
+            Z_eval[common_train_mask],
+            Z_eval[common_test_mask],
+            Y_multi_z[common_train_mask],
+            Y_multi_mask[common_train_mask],
+            mt_means,
+            mt_stds,
+        )
+        if mt_test_preds is not None:
+            mt_test_pos = {idx: pos for pos, idx in enumerate(np.flatnonzero(common_test_mask))}
     for trait in trait_cols:
         if trait not in meta_eval.columns:
             continue
@@ -723,34 +922,48 @@ def run_trait_regression(X_raw, Z, meta_df, trait_cols, tag=""):
         ok = ~np.isnan(y)
         if ok.sum() < 15:
             continue
-        yr = y[ok]
-        Xr = X_eval[ok]
-        Xz = Z_eval[ok]
-        groups = None
-        if group_col is not None:
-            group_series = meta_eval.loc[ok, group_col].copy()
-            group_series = group_series.where(group_series.notna(), "__missing_group__")
-            candidate_groups = group_series.astype(str).values
-            if pd.Series(candidate_groups).nunique() >= 2:
-                groups = candidate_groups
+        train_idx = np.flatnonzero(ok & common_train_mask)
+        test_idx = np.flatnonzero(ok & common_test_mask)
+        if len(train_idx) < 12 or len(test_idx) < 5:
+            groups_all = None
+            if group_col is not None:
+                group_series = meta_eval.loc[ok, group_col].copy()
+                group_series = group_series.where(group_series.notna(), "__missing_group__")
+                candidate_groups = group_series.astype(str).values
+                if pd.Series(candidate_groups).nunique() >= 2:
+                    groups_all = candidate_groups
+                else:
+                    print(
+                        f"    {trait:<40}  only one '{group_col}' group after filtering; "
+                        f"falling back to ungrouped split/CV"
+                    )
+            yr = y[ok]
+            Xr = X_eval[ok]
+            Xz = Z_eval[ok]
+            if groups_all is not None:
+                splitter = GroupShuffleSplit(n_splits=1, test_size=0.25, random_state=SEED)
+                train_rel, test_rel = next(splitter.split(Xr, yr, groups=groups_all))
+                train_idx = np.flatnonzero(ok)[train_rel]
+                test_idx = np.flatnonzero(ok)[test_rel]
+                train_groups = groups_all[train_rel]
             else:
-                print(
-                    f"    {trait:<40}  only one '{group_col}' group after filtering; "
-                    f"falling back to ungrouped split/CV"
-                )
-
-        if groups is not None:
-            splitter = GroupShuffleSplit(n_splits=1, test_size=0.25, random_state=SEED)
-            train_idx, test_idx = next(splitter.split(Xr, yr, groups=groups))
-            train_groups = groups[train_idx]
+                splitter = ShuffleSplit(n_splits=1, test_size=0.25, random_state=SEED)
+                train_rel, test_rel = next(splitter.split(Xr, yr))
+                train_idx = np.flatnonzero(ok)[train_rel]
+                test_idx = np.flatnonzero(ok)[test_rel]
+                train_groups = None
         else:
-            splitter = ShuffleSplit(n_splits=1, test_size=0.25, random_state=SEED)
-            train_idx, test_idx = next(splitter.split(Xr, yr))
             train_groups = None
+            if group_col is not None:
+                group_series = meta_eval.loc[train_idx, group_col].copy()
+                group_series = group_series.where(group_series.notna(), "__missing_group__")
+                candidate_groups = group_series.astype(str).values
+                if pd.Series(candidate_groups).nunique() >= 2:
+                    train_groups = candidate_groups
 
-        Xr_tr, Xr_te = Xr[train_idx], Xr[test_idx]
-        Xz_tr, Xz_te = Xz[train_idx], Xz[test_idx]
-        ytr, yte = yr[train_idx], yr[test_idx]
+        Xr_tr, Xr_te = X_eval[train_idx], X_eval[test_idx]
+        Xz_tr, Xz_te = Z_eval[train_idx], Z_eval[test_idx]
+        ytr, yte = y[train_idx], y[test_idx]
 
         raw_name, raw_reg, raw_cv_r2 = select_regressor_with_groups(Xr_tr, ytr, train_groups)
         emb_name, emb_reg, emb_cv_r2 = select_regressor_with_groups(Xz_tr, ytr, train_groups)
@@ -762,14 +975,41 @@ def run_trait_regression(X_raw, Z, meta_df, trait_cols, tag=""):
         emb_r2 = r2_score(yte, emb_pred)
         raw_rmse = mean_squared_error(yte, raw_pred) ** 0.5
         emb_rmse = mean_squared_error(yte, emb_pred) ** 0.5
-        preferred = "embedding" if emb_r2 > raw_r2 else "raw"
+        mt_name = ""
+        mt_pred = None
+        mt_r2 = np.nan
+        mt_rmse = np.nan
+        trait_idx = trait_to_idx[trait]
+        if mt_test_preds is not None and len(trait_cols) >= 2:
+            test_positions = [mt_test_pos[idx] for idx in test_idx if idx in mt_test_pos]
+            if len(test_positions) == len(test_idx):
+                mt_pred = mt_test_preds[np.asarray(test_positions, dtype=int), trait_idx]
+                mt_name = "multitask_probe"
+                mt_r2 = r2_score(yte, mt_pred)
+                mt_rmse = mean_squared_error(yte, mt_pred) ** 0.5
+        scores = {"raw": raw_r2, "embedding": emb_r2}
+        if mt_pred is not None:
+            scores["multitask"] = mt_r2
+        preferred = max(scores.items(), key=lambda kv: kv[1])[0]
         print(
             f"    {trait:<40}  raw={raw_name}:{raw_r2:.3f} (CV {raw_cv_r2:.3f})  "
             f"emb={emb_name}:{emb_r2:.3f} (CV {emb_cv_r2:.3f})  "
+            f"{'mt=' + mt_name + ':' + format(mt_r2, '.3f') + '  ' if mt_pred is not None else ''}"
             f"gain={emb_r2-raw_r2:+.3f}  winner={preferred}"
         )
         plot_trait_comparison(
-            trait, tag, yte, raw_pred, emb_pred, raw_name, emb_name, raw_r2, emb_r2
+            trait,
+            tag,
+            yte,
+            raw_pred,
+            emb_pred,
+            mt_pred,
+            raw_name,
+            emb_name,
+            mt_name,
+            raw_r2,
+            emb_r2,
+            mt_r2,
         )
         summary_rows.append(
             {
@@ -777,8 +1017,8 @@ def run_trait_regression(X_raw, Z, meta_df, trait_cols, tag=""):
                 "trait": trait,
                 "aggregation": "sample_mean" if aggregated else "none",
                 "group_col": group_col or "",
-                "n_rows": int(len(yr)),
-                "n_groups": int(pd.Series(groups).nunique()) if groups is not None else 0,
+                "n_rows": int(ok.sum()),
+                "n_groups": int(pd.Series(train_groups).nunique()) if train_groups is not None else 0,
                 "raw_model": raw_name,
                 "raw_cv_r2": raw_cv_r2,
                 "raw_test_r2": raw_r2,
@@ -787,6 +1027,9 @@ def run_trait_regression(X_raw, Z, meta_df, trait_cols, tag=""):
                 "emb_cv_r2": emb_cv_r2,
                 "emb_test_r2": emb_r2,
                 "emb_rmse": emb_rmse,
+                "mt_model": mt_name,
+                "mt_test_r2": mt_r2,
+                "mt_rmse": mt_rmse,
                 "gain_emb_minus_raw": emb_r2 - raw_r2,
                 "winner": preferred,
             }
