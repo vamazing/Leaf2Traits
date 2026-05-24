@@ -134,25 +134,6 @@ embeddings, and compares three supervised views for trait regression:
 raw spectra, frozen unsupervised embeddings, and a multitask supervised probe
 trained on the embedding space within each dataset split.
 
-LOPEX93 is evaluated with sample aggregation and species-held-out splits using the
-trait and `Sample_#` fields returned by EcoSIS. CABO trait regression uses the full
-normalized EcoSIS trait set, including structural, pigment, biochemical, and
-elemental traits when present. The Angers dataset adds a compact leaf optical
-benchmark with pigments, water thickness, SPAD, and structure parameter targets.
-The Blackhawk dataset adds a seasonal benchmark with inline chlorophyll-a and
-LMA traits. The NGEE Panama dataset adds tropical leaf-level
-reflectance with species labels and leaf structural/chemical traits such as
-`LMA_gDW_m2`, `CNratio`, `Cmass_pc`, `Nmass_pc`, and `H20_pc`.
-
-Sierra Nevada remains in the pipeline as an auxiliary stress-test dataset. It is
-useful for checking robustness on a small field dataset, but it should not be treated
-as a primary benchmark when comparing representation quality across the project.
-
-The encoder artifact saved to `outputs/stage1/encoder.pt` remains the unsupervised
-autoencoder. The multitask probe is used only inside Stage 1 evaluation so Stage 2
-transfer and Stage 3 novelty analysis do not leak trait labels into the shared
-representation.
-
 ## Stage 2
 
 `step2_transfer_learning.py` measures pairwise dataset separability using raw spectra
@@ -164,15 +145,6 @@ datasets rather than easy transfer.
 `step3_integrated_discovery.py` reloads the trained encoder, rebuilds the pooled
 dataset, compares trait performance again, and ranks unusual candidate species by
 embedding-space novelty with a small hyperaccumulator-genus prior.
-
-Stage 3 now evaluates trait regression separately within each dataset instead of
-pooling canonical trait names across datasets. For novelty ranking, it fits
-Isolation Forest within each dataset, normalizes novelty scores to `[0, 1]` per
-dataset, combines those normalized scores across datasets, and ranks species by
-their 95th percentile novelty rather than a single maximum scan. Species-level
-ranking is then confidence-adjusted using scan count so one-off spectra do not
-dominate the headline list. This reduces both cross-dataset domain bias and
-small-sample volatility in the candidate list.
 
 ---
 
