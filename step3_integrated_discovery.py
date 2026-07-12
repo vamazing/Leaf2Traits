@@ -785,6 +785,7 @@ def run_discovery(X_raw, Z, meta):
         Patch(color="#3498db", label="Other species"),
         plt.Line2D([0],[0], color="black", ls="--", label="75th percentile"),
     ])
+
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(OUT_DIR/"novelty_distribution.png", dpi=150); plt.close(fig)
