@@ -144,7 +144,7 @@ datasets rather than easy transfer.
 
 `step3_integrated_discovery.py` reloads the trained encoder, rebuilds the pooled
 dataset, compares trait performance again, and ranks unusual candidate species by
-embedding-space novelty with a small hyperaccumulator-genus prior.
+embedding-space novelty with a scan-count adjustment to reduce small-sample bias.
 
 ---
 
@@ -168,8 +168,8 @@ embedding-space novelty with a small hyperaccumulator-genus prior.
 - Isolation Forest with 200 trees on the learned embeddings
 - Novelty is scored within each dataset and normalized to `[0, 1]` before combining
 - Ranking uses 95th percentile novelty per species instead of max novelty
-- Species scores are confidence-adjusted by scan count using `1 - exp(-n_spectra / 5)`
-- Final ranking score = confidence-adjusted novelty + hyperaccumulator-genus prior
+- Species scores are adjusted by scan count using `1 - exp(-n_spectra / 5)`
+- Final ranking score = scan-count-adjusted novelty
 
 ---
 

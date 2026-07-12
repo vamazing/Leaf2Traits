@@ -201,8 +201,7 @@ def load_cabo_v2(timeout=120):
     Load CABO 2018-2019 leaf-level spectra via EcoSIS export API.
 
     CABO v2 is a broad multispecies trait-linked leaf spectroscopy dataset that
-    is useful as additional background diversity and for searching candidate
-    hyperaccumulator genera/species in metadata.
+    is useful as additional background diversity.
     """
     df = fetch_package_csv(CABO_V2_PACKAGE_ID, metadata=True, timeout=timeout)
     if df.empty:

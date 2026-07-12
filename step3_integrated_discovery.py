@@ -6,7 +6,7 @@ Full A->C pipeline across all datasets:
   A. Representation validation  - PCA of embeddings + reconstruction error.
   B. Trait regression comparison - raw spectra vs embeddings (5-fold CV).
      Uses API-provided LOPEX93, Angers, Blackhawk, CABO, NGEE Panama, and Sierra Nevada traits.
-  C. Novel candidate discovery  - Isolation Forest novelty scoring + taxonomic prior.
+  C. Novel candidate discovery  - Isolation Forest novelty scoring.
 
 Run:
     python step3_integrated_discovery.py
@@ -62,7 +62,6 @@ SEED = 42; np.random.seed(SEED)
 TARGET_WL = np.arange(400, 2401, 10)
 DEFAULT_AE_CONFIG = {"hidden": [1024, 512, 256, 128], "latent_dim": 192, "dropout": 0.05}
 RIDGE_ALPHAS = np.logspace(-3, 3, 13)
-NOVELTY_CONFIDENCE_K = 5.0
 
 LOPEX93_TRAIT_COLS = [
     "Chlorophyll_a+b (µg/cm²)", "Equivalent Water Thickness (g/cm²)",
@@ -140,11 +139,6 @@ NGEE_PANAMA_TRAIT_COLS = [
 ]
 SIERRA_TRAIT_COLS = ["LMA_g_m2", "LWC_percent", "Chlorophyll_mg_m2"]
 
-KNOWN_HYPERACCUMULATOR_GENERA = {
-    "Noccaea","Thlaspi","Arabidopsis","Alyssum","Brassica",
-    "Pteris","Sedum","Mesembryanthemum","Haumaniastrum",
-    "Viola","Minuartia","Silene","Astragalus",
-}
 DATASET_TRAIT_MAP = {
     "lopex93": LOPEX93_TRAIT_COLS,
     "angers2003": ANGERS_2003_TRAIT_COLS,
@@ -739,10 +733,8 @@ def run_discovery(X_raw, Z, meta):
         "genus":          genera.values,
         "dataset":        ds_col.values,
         "novelty_score":  novelty,
-        "known_hyperacc": genera.apply(lambda g: g in KNOWN_HYPERACCUMULATOR_GENERA).values,
     })
-    all_spectra["prior_boost"]     = all_spectra["known_hyperacc"].astype(float) * 0.15
-    all_spectra["composite_score"] = all_spectra["novelty_score"] + all_spectra["prior_boost"]
+    all_spectra["composite_score"] = all_spectra["novelty_score"]
     all_spectra.to_csv(OUT_DIR/"all_spectra_novelty.csv", index=False)
 
     # Collapse to one row per species: take the highest novelty scan
@@ -770,21 +762,20 @@ def run_discovery(X_raw, Z, meta):
 
     # Novelty histogram — one bar per species (max score)
     fig, ax = plt.subplots(figsize=(max(10, len(species_ranked)*0.4), 5))
-    colours = species_ranked["known_hyperacc"].map({True: "#e74c3c", False: "#3498db"})
-    ax.bar(range(len(species_ranked)), species_ranked["composite_score"],
-           color=colours, edgecolor="white", linewidth=0.4)
+    ax.bar(
+        range(len(species_ranked)),
+        species_ranked["composite_score"],
+        color="#2563eb",
+        edgecolor="white",
+        linewidth=0.4,
+    )
     ax.axhline(np.percentile(species_ranked["composite_score"], 75),
                color="black", ls="--", lw=1.2, label="75th percentile")
     ax.set_xticks(range(len(species_ranked)))
     ax.set_xticklabels(species_ranked["species"], rotation=60, ha="right", fontsize=7)
-    ax.set_ylabel("Composite Novelty Score (max scan per species)")
+    ax.set_ylabel("Composite Novelty Score")
     ax.set_title("Species-Level Novelty Ranking")
-    from matplotlib.patches import Patch
-    ax.legend(handles=[
-        Patch(color="#e74c3c", label="Known hyperaccumulator genus"),
-        Patch(color="#3498db", label="Other species"),
-        plt.Line2D([0],[0], color="black", ls="--", label="75th percentile"),
-    ])
+    ax.legend(handles=[plt.Line2D([0],[0], color="black", ls="--", label="75th percentile")])
 
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
@@ -792,13 +783,12 @@ def run_discovery(X_raw, Z, meta):
     print("  Saved: novelty_distribution.png")
 
     print(f"\n  Top-10 candidate species (one entry per species, highest novelty scan):")
-    print(f"  {'Rank':>4}  {'Species':<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'HyperAcc?':>9}")
+    print(f"  {'Rank':>4}  {'Species':<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}")
     print("  " + "-"*95)
     for _, row in species_ranked.head(10).iterrows():
-        ha = "YES" if row["known_hyperacc"] else "-"
         print(f"  {int(row['rank']):>4}  {str(row['species']):<30} "
               f"{str(row['genus']):<15} {str(row['dataset']):<16} "
-              f"{row['novelty_score']:>8.4f}  {int(row['n_spectra']):>7}  {ha:>9}")
+              f"{row['novelty_score']:>8.4f}  {int(row['n_spectra']):>7}")
 
 
 # ── Custom candidates ─────────────────────────────────────────────────────────
@@ -908,7 +898,7 @@ def normalize_zero_one(values):
     return (values - vmin) / (vmax - vmin)
 
 
-def confidence_from_count(counts, k=NOVELTY_CONFIDENCE_K):
+def confidence_from_count(counts, k=5.0):
     counts = np.asarray(counts, dtype=float)
     return 1.0 - np.exp(-counts / max(k, 1e-8))
 
@@ -958,7 +948,6 @@ def run_discovery_v2(X_raw, Z, meta):
     genera = sp_col.apply(genus_from_species)
     if entity_col != "Species":
         genera = pd.Series(["Unknown"] * len(sp_col), index=sp_col.index)
-    known_hyper = genera.apply(lambda g: g in KNOWN_HYPERACCUMULATOR_GENERA).values
 
     all_spectra = pd.DataFrame(
         {
@@ -967,54 +956,40 @@ def run_discovery_v2(X_raw, Z, meta):
             "dataset": ds_col.values,
             "novelty_raw": novelty_raw,
             "novelty_score": novelty_norm,
-            "known_hyperacc": known_hyper,
         }
     )
-    all_spectra["prior_boost"] = all_spectra["known_hyperacc"].astype(float) * 0.15
     all_spectra["dataset_novelty_percentile"] = (
         all_spectra.groupby("dataset")["novelty_score"].rank(pct=True)
     )
     species_q95 = all_spectra.groupby("species")["novelty_score"].quantile(0.95)
     all_spectra["species_q95_novelty"] = all_spectra["species"].map(species_q95).astype(float)
-    all_spectra["composite_score"] = all_spectra["novelty_score"] + all_spectra["prior_boost"]
-    all_spectra["species_q95_composite"] = (
-        all_spectra["species_q95_novelty"] + all_spectra["prior_boost"]
-    )
+    all_spectra["composite_score"] = all_spectra["novelty_score"]
+    all_spectra["species_q95_composite"] = all_spectra["species_q95_novelty"]
     all_spectra.to_csv(OUT_DIR / "all_spectra_novelty.csv", index=False)
 
     representative = (
         all_spectra.sort_values("novelty_score", ascending=False)
         .groupby("species", sort=False)
-        .first()[["genus", "dataset", "known_hyperacc", "prior_boost"]]
+        .first()[["genus", "dataset"]]
     )
     species_ranked = pd.DataFrame(
         {
             "species": species_q95.index,
             "genus": representative["genus"].reindex(species_q95.index).values,
             "dataset": representative["dataset"].reindex(species_q95.index).values,
-            "known_hyperacc": representative["known_hyperacc"].reindex(species_q95.index).values,
-            "prior_boost": representative["prior_boost"].reindex(species_q95.index).values,
             "novelty_score": species_q95.values,
         }
     )
-    species_ranked["composite_score"] = species_ranked["novelty_score"] + species_ranked["prior_boost"]
     species_ranked["n_spectra"] = (
         all_spectra.groupby("species")["novelty_score"]
         .count()
         .reindex(species_ranked["species"])
         .values
     )
-    species_ranked["confidence_weight"] = confidence_from_count(
-        species_ranked["n_spectra"].values
-    )
-    species_ranked["penalized_novelty_score"] = (
-        species_ranked["novelty_score"] * species_ranked["confidence_weight"]
-    )
-    species_ranked["penalized_composite_score"] = (
-        species_ranked["penalized_novelty_score"] + species_ranked["prior_boost"]
-    )
+    species_ranked["confidence_weight"] = confidence_from_count(species_ranked["n_spectra"].values)
+    species_ranked["adjusted_score"] = species_ranked["novelty_score"] * species_ranked["confidence_weight"]
     species_ranked = species_ranked.sort_values(
-        ["penalized_composite_score", "novelty_score"], ascending=False
+        ["adjusted_score", "novelty_score"], ascending=False
     ).reset_index(drop=True)
     species_ranked["rank"] = species_ranked.index + 1
     species_ranked.to_csv(OUT_DIR / "ranked_candidates.csv", index=False)
@@ -1022,16 +997,15 @@ def run_discovery_v2(X_raw, Z, meta):
     print(f"  Saved: all_spectra_novelty.csv  ({len(all_spectra)} individual spectra)")
 
     fig, ax = plt.subplots(figsize=(max(10, len(species_ranked) * 0.4), 5))
-    colours = species_ranked["known_hyperacc"].map({True: "#e74c3c", False: "#3498db"})
     ax.bar(
         range(len(species_ranked)),
-        species_ranked["penalized_composite_score"],
-        color=colours,
+        species_ranked["adjusted_score"],
+        color="#2563eb",
         edgecolor="white",
         linewidth=0.4,
     )
     ax.axhline(
-        np.percentile(species_ranked["penalized_composite_score"], 75),
+        np.percentile(species_ranked["adjusted_score"], 75),
         color="black",
         ls="--",
         lw=1.2,
@@ -1040,15 +1014,8 @@ def run_discovery_v2(X_raw, Z, meta):
     ax.set_xticks(range(len(species_ranked)))
     ax.set_xticklabels(species_ranked["species"], rotation=60, ha="right", fontsize=7)
     ax.set_ylabel("Confidence-adjusted novelty score")
-    ax.set_title("Novelty Ranking (within-dataset normalized, scan-count adjusted)")
-    from matplotlib.patches import Patch
-    ax.legend(
-        handles=[
-            Patch(color="#e74c3c", label="Known hyperaccumulator genus"),
-            Patch(color="#3498db", label="Other species"),
-            plt.Line2D([0], [0], color="black", ls="--", label="75th percentile"),
-        ]
-    )
+    ax.set_title("Novelty Ranking (within-dataset normalized)")
+    ax.legend(handles=[plt.Line2D([0], [0], color="black", ls="--", label="75th percentile")])
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(OUT_DIR / "novelty_species_ranking.png", dpi=150)
@@ -1056,15 +1023,13 @@ def run_discovery_v2(X_raw, Z, meta):
     print("  Saved: novelty_species_ranking.png")
 
     print(f"\n  Top-10 candidate labels (95th percentile novelty, confidence-adjusted):")
-    print(f"  {'Rank':>4}  {entity_label:<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'Conf':>6}  {'HyperAcc?':>9}")
+    print(f"  {'Rank':>4}  {entity_label:<30} {'Genus':<15} {'Dataset':<16} {'Novelty':>8}  {'N scans':>7}  {'Conf':>6}")
     print("  " + "-" * 95)
     for _, row in species_ranked.head(10).iterrows():
-        ha = "YES" if row["known_hyperacc"] else "-"
         print(
             f"  {int(row['rank']):>4}  {str(row['species']):<30} "
             f"{str(row['genus']):<15} {str(row['dataset']):<16} "
-            f"{row['novelty_score']:>8.4f}  {int(row['n_spectra']):>7}  "
-            f"{row['confidence_weight']:>6.3f}  {ha:>9}"
+            f"{row['novelty_score']:>8.4f}  {int(row['n_spectra']):>7}  {row['confidence_weight']:>6.3f}"
         )
 
 
