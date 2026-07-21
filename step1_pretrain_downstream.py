@@ -46,13 +46,12 @@ try:
 except ImportError:
     torch_directml = None
 from scipy.signal import savgol_filter
-from scipy.stats import entropy
 from sklearn.base import BaseEstimator, RegressorMixin, clone
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.linear_model import LogisticRegression, RidgeCV
-from sklearn.metrics import classification_report, mean_squared_error, r2_score, silhouette_score
+from sklearn.metrics import classification_report, mean_squared_error, r2_score
 from sklearn.model_selection import (
     GroupKFold,
     GroupShuffleSplit,
@@ -62,7 +61,6 @@ from sklearn.model_selection import (
     train_test_split,
 )
 from sklearn.pipeline import Pipeline
-from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -664,45 +662,10 @@ def plot_loss(hist):
     print("  Saved: autoencoder_loss.png")
 
 
-def compute_embedding_quality_metrics(Z, labels, n_neighbors=15):
-    labels = np.asarray(labels)
-    if len(Z) < 3 or len(np.unique(labels)) < 2:
-        return np.nan, np.nan
-
-    try:
-        silhouette = silhouette_score(
-            Z,
-            labels,
-            metric="euclidean",
-            sample_size=min(2000, len(Z)),
-            random_state=SEED,
-        )
-    except Exception:
-        silhouette = np.nan
-
-    k = max(2, min(int(n_neighbors), len(Z) - 1))
-    nn = NearestNeighbors(n_neighbors=k + 1, metric="euclidean")
-    nn.fit(Z)
-    neigh = nn.kneighbors(return_distance=False)[:, 1:]
-
-    classes = np.unique(labels)
-    class_to_idx = {lab: i for i, lab in enumerate(classes)}
-    label_idx = np.array([class_to_idx[lab] for lab in labels], dtype=int)
-
-    ent = np.zeros(len(Z), dtype=float)
-    for i, row in enumerate(neigh):
-        counts = np.bincount(label_idx[row], minlength=len(classes)).astype(float)
-        probs = counts / max(counts.sum(), 1.0)
-        ent[i] = entropy(probs, base=len(classes)) if len(classes) > 1 else 0.0
-
-    return silhouette, float(np.mean(ent))
-
-
 def plot_pca(Z, labels):
     pca = PCA(n_components=2, random_state=SEED)
     Z2 = pca.fit_transform(Z)
     colours = ["#e74c3c", "#2ecc71", "#3498db", "#f39c12"]
-    silhouette, batch_entropy = compute_embedding_quality_metrics(Z, labels)
     fig, ax = plt.subplots(figsize=(9, 6))
     for i, u in enumerate(np.unique(labels)):
         m = labels == u
@@ -719,31 +682,9 @@ def plot_pca(Z, labels):
     ax.set_title("PCA of Spectral Embeddings (by dataset)")
     ax.legend()
     ax.grid(alpha=0.3)
-    metric_text = (
-        f"Silhouette: {silhouette:.3f}\n"
-        f"kNN batch entropy (k=15): {batch_entropy:.3f}"
-        if np.isfinite(silhouette) and np.isfinite(batch_entropy)
-        else "Silhouette: n/a\nkNN batch entropy (k=15): n/a"
-    )
-    ax.text(
-        0.02,
-        0.98,
-        metric_text,
-        transform=ax.transAxes,
-        va="top",
-        ha="left",
-        fontsize=9,
-        bbox=dict(boxstyle="round,pad=0.35", facecolor="white", alpha=0.85, edgecolor="#cccccc"),
-    )
     fig.tight_layout()
     fig.savefig(OUT_DIR / "embedding_pca.png", dpi=150)
     plt.close(fig)
-    print(f"  Silhouette coefficient: {silhouette:.3f}" if np.isfinite(silhouette) else "  Silhouette coefficient: n/a")
-    print(
-        f"  kNN batch mixing entropy (k=15): {batch_entropy:.3f}"
-        if np.isfinite(batch_entropy)
-        else "  kNN batch mixing entropy (k=15): n/a"
-    )
     print("  Saved: embedding_pca.png")
 
 
