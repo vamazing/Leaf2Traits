@@ -264,84 +264,60 @@ def fetch_csv(did, timeout=120):
             return pd.DataFrame()
         df = pd.read_csv(io.StringIO(raw))
         return df if not df.empty else pd.DataFrame()
-    except Exception:
-        return pd.DataFrame()
+    except Exception as exc:
+        print(f"    ERROR: EcoSIS download failed for {did}: {exc}")
+        raise
 
 
 def load_dataset(name, ids):
     print(f"  {name} ...")
     if name == "aqgrad":
         df = load_aqgrad()
-        if not df.empty:
-            print(f"    OK {AQGRAD_PACKAGE_ID}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: AQGRAD download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {AQGRAD_PACKAGE_ID}: {df.shape}")
+        df["_dataset"] = name
+        return df
     if name == "talladega2018":
         df = load_tall2018()
-        if not df.empty:
-            print(f"    OK {TALL2018_PACKAGE_ID}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: Talladega 2018 download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {TALL2018_PACKAGE_ID}: {df.shape}")
+        df["_dataset"] = name
+        return df
     if name == "angers2003":
         df = load_angers_2003()
-        if not df.empty:
-            print(f"    OK {ANGERS_2003_PACKAGE_ID}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: Angers 2003 download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {ANGERS_2003_PACKAGE_ID}: {df.shape}")
+        df["_dataset"] = name
+        return df
     if name == "blackhawk_wi":
         df = load_blackhawk_island_wi()
-        if not df.empty:
-            print(f"    OK {BLACKHAWK_ISLAND_WI_PACKAGE_ID}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: Blackhawk Island WI download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {BLACKHAWK_ISLAND_WI_PACKAGE_ID}: {df.shape}")
+        df["_dataset"] = name
+        return df
     if name == "cabo_v2":
         df = load_cabo_v2()
-        if not df.empty:
-            print(f"    OK {CABO_V2_PACKAGE_ID}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: CABO v2 download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {CABO_V2_PACKAGE_ID}: {df.shape}")
+        df["_dataset"] = name
+        return df
     if name == "ngee_panama":
         df = load_ngee_panama()
-        if not df.empty:
-            print(f"    OK {NGEE_PANAMA_PACKAGE_ID}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: NGEE Panama download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {NGEE_PANAMA_PACKAGE_ID}: {df.shape}")
+        df["_dataset"] = name
+        return df
     if name == "lopex93":
         df = load_lopex93()
-        if not df.empty:
-            print(f"    OK {LOPEX93_PACKAGE_IDS[0]}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: LOPEX93 download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {LOPEX93_PACKAGE_IDS[0]}: {df.shape}")
+        df["_dataset"] = name
+        return df
     if name == "sierranevada2023":
         df = load_sierra_nevada_2023()
-        if not df.empty:
-            print(f"    OK {SIERRA_NEVADA_2023_PACKAGE_ID}: {df.shape}")
-            df["_dataset"] = name
-            return df
-        print(f"    WARN: Sierra Nevada 2023 download failed -> synthetic fallback")
-        return pd.DataFrame()
+        print(f"    OK {SIERRA_NEVADA_2023_PACKAGE_ID}: {df.shape}")
+        df["_dataset"] = name
+        return df
     for did in ids:
         df = fetch_csv(did)
         if not df.empty:
             print(f"    OK {did}: {df.shape}")
             df["_dataset"] = name
             return df
-    print(f"    WARN: download failed -> synthetic fallback")
-    return pd.DataFrame()
+    raise RuntimeError(f"EcoSIS download failed for dataset '{name}'")
 
 def make_synthetic(name, n=120):
     rng = np.random.default_rng(abs(hash(name)) % (2**31))

@@ -5,7 +5,8 @@ EcoSIS helpers for Leaf2Traits.
 import io
 import urllib.request
 from pathlib import Path
-
+import ssl
+import certifi
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import IsolationForest
@@ -108,14 +109,16 @@ def fetch_package_csv(package_id, metadata=False, timeout=120):
                 "Accept": "text/csv,text/plain,*/*",
             },
         )
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+        context = ssl.create_default_context(cafile=certifi.where())
+        with urllib.request.urlopen(req, timeout=timeout, context=context) as r:
             raw = r.read().decode("utf-8", errors="replace")
         if raw.strip().startswith("{") or raw.strip().startswith("["):
             return pd.DataFrame()
         df = pd.read_csv(io.StringIO(raw))
         return df if not df.empty else pd.DataFrame()
-    except Exception:
-        return pd.DataFrame()
+    except Exception as exc:
+        print(f"    ERROR: EcoSIS download failed for {package_id}: {exc}")
+        raise
 
 
 def attach_species_column(df):
