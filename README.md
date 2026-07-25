@@ -76,7 +76,7 @@ plots from prior runs do not mix with current results.
 | AQGRAD | 2021 | EcoSIS | Leaf spectra and traits along a water-affinity gradient in Mantua lakes, Italy |
 | Talladega 2018 | 2018 | EcoSIS | Leaf reflectance and foliar traits from Talladega National Forest, Alabama |
 | Angers 2003 | 2003 | EcoSIS | Leaf optical properties database with pigments, water content, mass per area, SPAD, and structure traits |
-| Blackhawk Island WI | n.d. | EcoSIS | Seasonal fresh leaf spectra with species labels and inline chlorophyll-a and LMA traits |
+| Blackhawk Island WI | 2018 | EcoSIS | Seasonal fresh leaf spectra with species labels and inline chlorophyll-a and LMA traits |
 | CABO 2018-2019 v2 | 2023 update | EcoSIS | Broad multispecies leaf-level spectra with inline trait metadata |
 | NGEE Tropics Panama 2016 | 2019 | EcoSIS | Leaf spectral reflectance from Panama with species labels and leaf structural/chemical traits |
 | LOPEX93 | 1993 | JRC / EcoSIS | Lab spectra with biochemical traits provided by the EcoSIS `metadata=true` export |
