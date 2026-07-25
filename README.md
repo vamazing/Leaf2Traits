@@ -83,8 +83,7 @@ plots from prior runs do not mix with current results.
 | Sierra Nevada 2023 | 2023 | EcoSIS | Field spectra with measured traits from California; retained as an auxiliary stress-test dataset rather than a core benchmark |
 
 AQGRAD, Angers, Blackhawk, CABO, the NGEE Panama dataset, LOPEX93, and Sierra Nevada use EcoSIS `metadata=true` exports so
-their trait and taxonomy fields come directly from the API. Talladega still falls
-back to the local metadata CSV only if the richer EcoSIS export is unavailable.
+their trait and taxonomy fields come directly from the API.
 
 ```mermaid
 flowchart TD
