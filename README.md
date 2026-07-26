@@ -83,8 +83,7 @@ plots from prior runs do not mix with current results.
 | Sierra Nevada 2023 | 363 | 363 | 15 | Field spectra, Sierra Nevada, California, USA | Field leaf-clip spectrometer | 400-2400 nm | `LMA_g_m2`, `LWC_percent`, `Chlorophyll_mg_m2` | `sample_number` | 363 |
 
 AQGRAD, Angers, Blackhawk, CABO, the NGEE Panama dataset, LOPEX93, and Sierra Nevada use EcoSIS `metadata=true` exports so
-their trait and taxonomy fields come directly from the API. Talladega still falls
-back to the local metadata CSV only if the richer EcoSIS export is unavailable.
+their trait and taxonomy fields come directly from the API.
 
 LOPEX93 is the only dataset that uses sample-level aggregation for supervised regression; its `n samples` value reflects the aggregated units used for modeling, while the scan counts shown above are the raw export and the post-filter total.
 
