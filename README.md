@@ -71,20 +71,22 @@ plots from prior runs do not mix with current results.
 
 ## Datasets
 
-| Name | Year | Source | Description |
-|---|---|---|---|
-| AQGRAD | 2021 | EcoSIS | Leaf spectra and traits along a water-affinity gradient in Mantua lakes, Italy |
-| Talladega 2018 | 2018 | EcoSIS | Leaf reflectance and foliar traits from Talladega National Forest, Alabama |
-| Angers 2003 | 2003 | EcoSIS | Leaf optical properties database with pigments, water content, mass per area, SPAD, and structure traits |
-| Blackhawk Island WI | n.d. | EcoSIS | Seasonal fresh leaf spectra with species labels and inline chlorophyll-a and LMA traits |
-| CABO 2018-2019 v2 | 2023 update | EcoSIS | Broad multispecies leaf-level spectra with inline trait metadata |
-| NGEE Tropics Panama 2016 | 2019 | EcoSIS | Leaf spectral reflectance from Panama with species labels and leaf structural/chemical traits |
-| LOPEX93 | 1993 | JRC / EcoSIS | Lab spectra with biochemical traits provided by the EcoSIS `metadata=true` export |
-| Sierra Nevada 2023 | 2023 | EcoSIS | Field spectra with measured traits from California; retained as an auxiliary stress-test dataset rather than a core benchmark |
+| Dataset | n spectra | n samples | n species | Biome / setting | Instrument | Spectral range | Traits available | Split group | n after outlier filtering |
+|---|---:|---:|---:|---|---|---|---|---|---:|
+| AQGRAD | 190 | 190 | 13 | Water-affinity gradient, Mantua lakes, Italy | Field leaf-clip spectrometer | 400-2400 nm | Species labels and foliar traits | `Species` | 190 |
+| Talladega 2018 | 156 | 156 | 10 | Talladega National Forest, Alabama, USA | Field leaf-clip spectrometer | 400-2400 nm | Species labels and foliar traits | `Sample_ID` | 156 |
+| Angers 2003 | 276 | 276 | 43 | Laboratory leaf optical properties database | Laboratory spectrometer / integrating sphere | 400-2400 nm | Carotenoid, chlorophyll a, chlorophyll a+b, chlorophyll b, EWT, LMA, SPAD, structure parameter | `Sample_#` | 276 |
+| Blackhawk Island WI | 3248 | 3248 | 10 | Seasonal fresh leaves, Blackhawk Island, Wisconsin, USA | Field leaf-clip spectrometer | 400-2400 nm | `chl_a_mmol_m2`, `lma_g_m2` | `Species` | 3248 |
+| CABO 2018-2019 v2 | 7821 | 7821 | 103 | Broad multispecies leaf-level trait library | Field leaf-level spectrometer | 400-2400 nm | LMA, EWT, LDMC, C/N ratio, pigments, cellulose, hemicellulose, lignin, solubles, and multiple elemental traits | `Sample_ID` | 7821 |
+| NGEE Tropics Panama 2016 | 855 | 855 | 48 | Tropical leaf reflectance, Panama | Field leaf-clip spectrometer | 400-2400 nm | CNratio, Cmass_pc, H20_pc, LMA_gDW_m2, LWP_bar, Nmass_pc, SLA_cm2_gDW | `Sample_ID` | 855 |
+| LOPEX93 | 660 | 325 | 46 | Laboratory leaf optical properties database | Laboratory spectrometer / integrating sphere | 400-2400 nm | Chlorophyll a+b, EWT, LMA, protein, cellulose, carotenoid | `Species` | 640 |
+| Sierra Nevada 2023 | 363 | 363 | 15 | Field spectra, Sierra Nevada, California, USA | Field leaf-clip spectrometer | 400-2400 nm | `LMA_g_m2`, `LWC_percent`, `Chlorophyll_mg_m2` | `sample_number` | 363 |
 
 AQGRAD, Angers, Blackhawk, CABO, the NGEE Panama dataset, LOPEX93, and Sierra Nevada use EcoSIS `metadata=true` exports so
 their trait and taxonomy fields come directly from the API. Talladega still falls
 back to the local metadata CSV only if the richer EcoSIS export is unavailable.
+
+LOPEX93 is the only dataset that uses sample-level aggregation for supervised regression; its `n samples` value reflects the aggregated units used for modeling, while the scan counts shown above are the raw export and the post-filter total.
 
 ```mermaid
 flowchart TD

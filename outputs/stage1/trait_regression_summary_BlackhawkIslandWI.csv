@@ -1,3 +1,0 @@
-dataset,trait,aggregation,group_col,n_rows,n_groups,raw_model,raw_cv_r2,raw_test_r2,raw_rmse,emb_model,emb_cv_r2,emb_test_r2,emb_rmse,mt_model,mt_test_r2,mt_rmse,gain_emb_minus_raw,winner
-BlackhawkIslandWI,chl_a_mmol_m2,none,Species,62,7,hist_gbr,0.4251523914384995,0.8717331899503242,62.85734641838509,hist_gbr,0.6480318880431051,0.7361117549470695,90.15896517404894,multitask_probe,0.7733241841198916,83.56058843852934,-0.13562143500325474,raw
-BlackhawkIslandWI,lma_g_m2,none,Species,471,7,ridge_cv,0.6417139876149687,0.9196021268141701,7.181590973675667,ridge_cv,0.6033101506836092,0.8668997939026376,9.2403357174423,multitask_probe,0.8430636816735858,10.033676997919832,-0.05270233291153248,raw
