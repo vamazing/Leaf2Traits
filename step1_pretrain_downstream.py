@@ -735,6 +735,112 @@ def plot_latent_sweep(df):
     print("  Saved: latent_sweep.png")
 
 
+def run_pca_baseline(X, labels, meta):
+    print("\n" + "=" * 65)
+    print("  PCA Baseline Comparison")
+    print("=" * 65)
+    pca_dims = [20, 64, 192]
+    results = []
+    for n_comp in pca_dims:
+        print(f"\n  --- PCA n_components = {n_comp} ---")
+        pca = PCA(n_components=n_comp, random_state=SEED)
+        Z_pca = pca.fit_transform(X)
+        explained_var = pca.explained_variance_ratio_.sum()
+        print(f"    Explained variance: {explained_var:.3f}")
+        r2_scores = {"raw": [], "pca": []}
+        for dataset_name, (trait_col, tag) in SWEEP_TRAITS.items():
+            ds_mask = labels == LABEL_MAP.get(dataset_name, -1)
+            if ds_mask.sum() == 0:
+                continue
+            ds_meta = meta[ds_mask].reset_index(drop=True)
+            if trait_col not in ds_meta.columns:
+                continue
+            y = ds_meta[trait_col].values.astype(float)
+            ok = ~np.isnan(y)
+            if ok.sum() < 20:
+                continue
+            yr = y[ok]
+            Xr_raw = X[ds_mask][ok]
+            Xr_pca = Z_pca[ds_mask][ok]
+            cv = KFold(n_splits=min(5, max(3, len(yr) // 10)), shuffle=True, random_state=SEED)
+            raw_scores = cross_val_score(RidgeCV(), Xr_raw, yr, cv=cv, scoring="r2")
+            pca_scores = cross_val_score(RidgeCV(), Xr_pca, yr, cv=cv, scoring="r2")
+            r2_scores["raw"].append(raw_scores.mean())
+            r2_scores["pca"].append(pca_scores.mean())
+        mean_raw = np.mean(r2_scores["raw"]) if r2_scores["raw"] else np.nan
+        mean_pca = np.mean(r2_scores["pca"]) if r2_scores["pca"] else np.nan
+        results.append({
+            "method": f"PCA_{n_comp}",
+            "n_components": n_comp,
+            "explained_variance": explained_var,
+            "r2_raw_mean": mean_raw,
+            "r2_embedding_mean": mean_pca,
+        })
+        print(f"    R2_raw={mean_raw:.3f}  R2_pca={mean_pca:.3f}")
+    ae_r2 = np.nan
+    results.append({
+        "method": "Autoencoder_192",
+        "n_components": 192,
+        "explained_variance": np.nan,
+        "r2_raw_mean": mean_raw,
+        "r2_embedding_mean": ae_r2,
+    })
+    df = pd.DataFrame(results)
+    df.to_csv(OUT_DIR / "pca_vs_autoencoder.csv", index=False)
+    print(f"\n  Saved: pca_vs_autoencoder.csv")
+    return df
+
+
+def compute_reconstruction_error(model, X, mu, std, device, dataset_name="all"):
+    model.eval()
+    Xn = (X - mu) / std
+    with torch.no_grad():
+        X_tensor = torch.tensor(Xn, dtype=torch.float32).to(device)
+        recon, _ = model(X_tensor)
+        per_band_mse = ((recon - X_tensor) ** 2).mean(dim=0).cpu().numpy()
+        per_band_rmse = np.sqrt(per_band_mse)
+        overall_mse = per_band_mse.mean()
+    return overall_mse, per_band_rmse
+
+
+def run_reconstruction_analysis(model, X, labels, mu, std):
+    print("\n" + "=" * 65)
+    print("  Reconstruction Error Analysis")
+    print("=" * 65)
+    device, _ = resolve_device()
+    Xn = (X - mu) / std
+    with torch.no_grad():
+        X_tensor = torch.tensor(Xn, dtype=torch.float32).to(device)
+        model.eval()
+        recon, _ = model(X_tensor)
+        per_band_mse = ((recon - X_tensor) ** 2).mean(dim=0).cpu().numpy()
+        per_band_rmse = np.sqrt(per_band_mse)
+        overall_mse = per_band_mse.mean()
+    print(f"  Overall reconstruction MSE: {overall_mse:.6f}")
+    print(f"  Overall reconstruction RMSE: {np.sqrt(overall_mse):.6f}")
+    df = pd.DataFrame({
+        "wavelength_nm": TARGET_WL,
+        "mse": per_band_mse,
+        "rmse": per_band_rmse,
+    })
+    df.to_csv(OUT_DIR / "reconstruction_error_by_band.csv", index=False)
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.plot(TARGET_WL, per_band_rmse, color="#2563eb", linewidth=1.5)
+    ax.set_xlabel("Wavelength (nm)")
+    ax.set_ylabel("RMSE")
+    ax.set_title("Per-Band Reconstruction RMSE")
+    ax.axvspan(1350, 1450, alpha=0.2, color="red", label="Water-vapor band")
+    ax.axvspan(1800, 1950, alpha=0.2, color="red", label="Water-vapor band")
+    ax.legend()
+    ax.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "reconstruction_error_by_band.png", dpi=150)
+    plt.close(fig)
+    print(f"  Saved: reconstruction_error_by_band.png")
+    print(f"  Saved: reconstruction_error_by_band.csv")
+    return overall_mse, per_band_rmse
+
+
 def prepare_multitask_targets(meta_df, trait_cols):
     Y = (
         meta_df[trait_cols]
@@ -1317,7 +1423,7 @@ def main():
         print("=" * 65 + "\n")
         return
 
-    print("\n[3/6] Training autoencoder ...")
+    print("\n[3/8] Training autoencoder ...")
     model, hist, mu, std = train_ae(X)
     torch.save(model.state_dict(), OUT_DIR / "encoder.pt")
     with open(OUT_DIR / "ae_config.json", "w", encoding="utf-8") as f:
@@ -1327,16 +1433,22 @@ def main():
     np.save(OUT_DIR / "target_wl.npy", TARGET_WL)
     print(f"  Final loss: {hist[-1]:.5f}")
 
-    print("\n[4/6] Extracting embeddings ...")
+    print("\n[4/8] Extracting embeddings ...")
     Z = get_embeddings(model, X, mu, std)
     np.savez(OUT_DIR / "embeddings_all.npz", Z=Z, labels=labels, X=X)
     print(f"  Embedding shape: {Z.shape}")
 
-    print("\n[5/6] Plots ...")
+    print("\n[5/8] Reconstruction error analysis ...")
+    run_reconstruction_analysis(model, X, labels, mu, std)
+
+    print("\n[6/8] PCA baseline comparison ...")
+    run_pca_baseline(X, labels, meta)
+
+    print("\n[7/8] Plots ...")
     plot_loss(hist)
     plot_pca(Z, labels)
 
-    print("\n[6/6] Downstream tasks ...")
+    print("\n[8/8] Downstream tasks ...")
     trait_found = False
 
     # LOPEX93 traits (joined at load; row-aligned with filtered spectra)

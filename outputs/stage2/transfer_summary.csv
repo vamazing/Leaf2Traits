@@ -13,7 +13,7 @@ tall→cabo,1.0,1.0
 tall→ngee,1.0,0.9950738916256158
 tall→lope,1.0,1.0
 tall→sier,1.0,1.0
-angr→aqgr,1.0,0.9893617021276596
+angr→aqgr,1.0,1.0
 angr→tall,1.0,1.0
 angr→bhwk,1.0,0.9985835694050992
 angr→cabo,1.0,0.999383096853794
@@ -32,7 +32,7 @@ cabo→tall,1.0,1.0
 cabo→angr,1.0,0.9981492905613819
 cabo→bhwk,1.0,1.0
 cabo→ngee,1.0,1.0
-cabo→lope,1.0,1.0
+cabo→lope,1.0,0.9994093325457767
 cabo→sier,1.0,1.0
 ngee→aqgr,1.0,1.0
 ngee→tall,1.0,1.0
@@ -44,7 +44,7 @@ ngee→sier,0.9877049180327869,0.9508196721311475
 lope→aqgr,0.9819277108433735,1.0
 lope→tall,1.0,1.0
 lope→angr,1.0,1.0
-lope→bhwk,0.9974293059125964,0.9961439588688946
+lope→bhwk,0.9974293059125964,0.9974293059125964
 lope→cabo,1.0,1.0
 lope→ngee,1.0,1.0
 lope→sier,1.0,1.0
@@ -53,5 +53,5 @@ sier→tall,1.0,1.0
 sier→angr,1.0,1.0
 sier→bhwk,1.0,1.0
 sier→cabo,1.0,1.0
-sier→ngee,0.9795081967213115,0.9590163934426229
+sier→ngee,0.9795081967213115,0.9549180327868853
 sier→lope,1.0,1.0

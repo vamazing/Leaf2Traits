@@ -35,6 +35,9 @@ outputs/
 |-- stage1/
 |   |-- autoencoder_loss.png
 |   |-- embedding_pca.png
+|   |-- reconstruction_error_by_band.png
+|   |-- reconstruction_error_by_band.csv
+|   |-- pca_vs_autoencoder.csv
 |   |-- trait_compare_LOPEX93_<trait>.png
 |   |-- trait_compare_Angers2003_<trait>.png
 |   |-- trait_compare_BlackhawkIslandWI_<trait>.png
@@ -56,7 +59,8 @@ outputs/
 |   `-- embeddings_all.npz
 |-- stage2/
 |   |-- baseline_comparison.png
-|   `-- transfer_summary.csv
+|   |-- transfer_summary.csv
+|   `-- leave_one_out_transfer.csv
 `-- stage3/
     |-- novelty_distribution.png
     |-- novelty_species_ranking.png

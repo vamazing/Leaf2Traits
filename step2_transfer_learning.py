@@ -30,7 +30,8 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-import torch, torch.nn as nn
+import torch, torch.nn as nn, torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
 try:
     import torch_directml
 except ImportError:
@@ -334,6 +335,68 @@ def plot_comparison(results):
     print("  Saved: baseline_comparison.png")
 
 
+def run_leave_one_out(all_data, all_ids):
+    print("\n" + "=" * 65)
+    print("  Leave-One-Dataset-Out Transfer")
+    print("=" * 65)
+    print("  NOTE: Autoencoder was trained on pooled data (transductive).")
+    print("  This evaluates generalization to unseen spectral distributions.\n")
+    rows = []
+    for held_out in list(all_data.keys()):
+        print(f"  Held out: {held_out}")
+        train_datasets = {k: v for k, v in all_data.items() if k != held_out}
+        X_train = np.vstack([train_datasets[k] for k in train_datasets])
+        X_test = all_data[held_out]
+        device, device_name = resolve_device()
+        mu = X_train.mean(0)
+        std = X_train.std(0) + 1e-8
+        model = Autoencoder(
+            X_train.shape[1], DEFAULT_AE_CONFIG["hidden"],
+            DEFAULT_AE_CONFIG["latent_dim"], DEFAULT_AE_CONFIG["dropout"]
+        ).to(device)
+        Xn = (X_train - mu) / std
+        batch_size = 256 if device_name in {"cuda", "directml"} else 64
+        dl = DataLoader(
+            TensorDataset(torch.tensor(Xn, dtype=torch.float32)),
+            batch_size=batch_size, shuffle=True,
+        )
+        opt = optim.AdamW(model.parameters(), lr=7.5e-4, weight_decay=1e-5)
+        fn = nn.MSELoss()
+        model.train()
+        for ep in range(50):
+            for (b,) in dl:
+                b = b.to(device)
+                noisy = b + 0.03 * torch.randn_like(b)
+                r, _ = model(noisy)
+                loss = fn(r, b)
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+        model.eval()
+        with torch.no_grad():
+            X_test_tensor = torch.tensor((X_test - mu) / std, dtype=torch.float32).to(device)
+            recon, _ = model(X_test_tensor)
+            test_mse = fn(recon, X_test_tensor).item()
+        Z_train = embed(X_train, model, mu, std)
+        Z_test = embed(X_test, model, mu, std)
+        raw_acc, emb_acc = run_transfer(X_train, X_test, model, mu, std)
+        rows.append({
+            "held_out_dataset": held_out,
+            "n_train": len(X_train),
+            "n_test": len(X_test),
+            "test_recon_mse": test_mse,
+            "transfer_raw_acc": raw_acc,
+            "transfer_emb_acc": emb_acc,
+        })
+        raw_str = f"{raw_acc:.3f}" if raw_acc is not None else "SKIP"
+        emb_str = f"{emb_acc:.3f}" if emb_acc is not None else "SKIP"
+        print(f"    Test MSE={test_mse:.5f}  raw_acc={raw_str}  emb_acc={emb_str}")
+    df = pd.DataFrame(rows)
+    df.to_csv(OUT_DIR / "leave_one_out_transfer.csv", index=False)
+    print(f"\n  Saved: leave_one_out_transfer.csv")
+    return df
+
+
 def main():
     print("\n" + "="*65)
     print("  Stage 2 - Cross-Domain Transfer Learning")
@@ -365,12 +428,15 @@ def main():
         else:
             print(f"  SKIP {direction}: too few samples")
 
-    print("\n[4/4] Plotting ...")
+    print("\n[4/5] Plotting ...")
     plot_comparison(results)
     pd.DataFrame([(d, v[0], v[1]) for d, v in results.items()],
                  columns=["direction","raw_accuracy","emb_accuracy"]
                  ).to_csv(OUT_DIR/"transfer_summary.csv", index=False)
     print("  Saved: transfer_summary.csv")
+
+    print("\n[5/5] Leave-one-dataset-out transfer ...")
+    run_leave_one_out(proc_data, DATASETS.keys())
 
     print(f"\n{'='*65}")
     print(f"  Stage 2 complete. Outputs in: {OUT_DIR.resolve()}")
