@@ -7,10 +7,50 @@ all eight datasets, and discovers spectrally unusual candidate plants.
 
 ```mermaid
 flowchart LR
-    A["EcoSIS Datasets"] --> B["Stage 1<br/>Pretrain + Trait Prediction"]
-    B --> C["192-D Embeddings"]
-    C --> D["Stage 2<br/>Cross-Domain Transfer"]
-    C --> E["Stage 3<br/>Discovery + Novelty Ranking"]
+    subgraph Input["Input Datasets"]
+        A1["AQGRAD (n=190)"]
+        A2["Talladega (n=156)"]
+        A3["Angers (n=276)"]
+        A4["Blackhawk (n=3,248)"]
+        A5["CABO (n=7,821)"]
+        A6["NGEE Panama (n=855)"]
+        A7["LOPEX93 (n=660)"]
+        A8["Sierra Nevada (n=363)"]
+    end
+
+    subgraph Preprocessing["Preprocessing"]
+        B1["Resample to 400–2400 nm\n(10 nm spacing, 201 bands)"]
+        B2["Water-vapor masking\n(field datasets only)"]
+        B3["Savitzky-Golay\n(window=11, order=3)"]
+        B4["SNV normalization"]
+        B5["LOPEX93 outlier filter\n(IsolationForest)"]
+    end
+
+    subgraph AE["Autoencoder (Unsupervised)"]
+        C1["Encoder\n201 → 1024 → 512 → 256 → 128 → 192"]
+        C2["Decoder\n192 → 128 → 256 → 512 → 1024 → 201"]
+    end
+
+    subgraph Views["Feature Views"]
+        D1["Raw Spectra\n(201-D)"]
+        D2["Embeddings\n(192-D)"]
+        D3["Multitask Probe\n(192-D → traits)"]
+    end
+
+    subgraph Evaluation["Evaluation Tasks"]
+        E1["Trait Prediction\n(per-dataset regression)"]
+        E2["Cross-Domain Transfer\n(dataset separability)"]
+    end
+
+    A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 --> B1
+    B1 --> B2 --> B3 --> B4 --> B5
+    B5 --> C1
+    C1 --> C2
+    C1 --> D2
+    B5 --> D1
+    D2 --> D3
+    D1 & D2 & D3 --> E1
+    D2 --> E2
 ```
 
 ---
