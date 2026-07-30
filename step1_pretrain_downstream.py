@@ -24,10 +24,12 @@ Run:
 """
 
 
+import argparse
 import io
 import json
 import os
 import shutil
+import sys
 import urllib.request
 import warnings
 from pathlib import Path
@@ -100,6 +102,7 @@ TARGET_WL = np.arange(400, 2401, 10)  # 201 bands
 WATER_VAPOR_BANDS = [(1350, 1450), (1800, 1950)]
 FIELD_DATASETS = {"sierranevada2023", "talladega2018", "ngee_panama"}
 LATENT_DIM = 192
+LATENT_SWEEP = [8, 16, 32, 64, 128, 192]
 HIDDEN = [1024, 512, 256, 128]
 DROPOUT = 0.05
 BATCH_SIZE = 64
@@ -556,9 +559,10 @@ def resolve_device():
     return torch.device("cpu"), "cpu"
 
 
-def train_ae(X):
+def train_ae(X, latent_dim=LATENT_DIM, quiet=False):
     device, device_name = resolve_device()
-    print(f"  Device: {device_name} ({device})")
+    if not quiet:
+        print(f"  Device: {device_name} ({device})")
     mu = X.mean(0)
     std = X.std(0) + 1e-8
     Xn = (X - mu) / std
@@ -569,7 +573,7 @@ def train_ae(X):
         shuffle=True,
     )
     model = Autoencoder(
-        X.shape[1], HIDDEN, LATENT_DIM, dropout=DROPOUT
+        X.shape[1], HIDDEN, latent_dim, dropout=DROPOUT
     ).to(device)
     opt = optim.AdamW(model.parameters(), lr=LR, weight_decay=WEIGHT_DECAY)
     sched = optim.lr_scheduler.CosineAnnealingLR(opt, T_max=N_EPOCHS)
@@ -603,13 +607,14 @@ def train_ae(X):
             patience_left = AE_EARLY_STOP_PATIENCE
         elif ep >= AE_MIN_EPOCHS:
             patience_left -= 1
-        if ep % 10 == 0 or ep == 1:
+        if not quiet and (ep % 10 == 0 or ep == 1):
             print(f"    Epoch {ep:3d}/{N_EPOCHS}  loss={el:.5f}")
         if ep >= AE_MIN_EPOCHS and patience_left <= 0:
-            print(f"    Early stopping at epoch {ep:3d}  best_loss={best_loss:.5f}")
+            if not quiet:
+                print(f"    Early stopping at epoch {ep:3d}  best_loss={best_loss:.5f}")
             stopped_early = True
             break
-    if not stopped_early:
+    if not stopped_early and not quiet:
         print(f"    Completed schedule at epoch {len(hist):3d}  best_loss={best_loss:.5f}")
     if best_state is not None:
         model.load_state_dict(best_state)
@@ -623,6 +628,111 @@ def get_embeddings(model, X, mu, std):
     with torch.no_grad():
         z = model.encode(torch.tensor(Xn, dtype=torch.float32).to(device))
     return z.cpu().numpy()
+
+
+def compute_reconstruction_mse(model, X, mu, std, device):
+    model.eval()
+    Xn = (X - mu) / std
+    with torch.no_grad():
+        X_tensor = torch.tensor(Xn, dtype=torch.float32).to(device)
+        recon, _ = model(X_tensor)
+        mse = nn.MSELoss()(recon, X_tensor).item()
+    return mse
+
+
+SWEEP_TRAITS = {
+    "lopex93": ("Leaf mass per area (g/cm²)", "LOPEX93"),
+    "cabo_v2": ("LMA_g_m2", "CABOv2"),
+    "ngee_panama": ("LMA_gDW_m2", "NGEEPanama"),
+}
+
+
+def run_latent_sweep(X, labels, meta):
+    print("\n" + "=" * 65)
+    print("  Latent Dimension Sweep")
+    print("=" * 65)
+    print(f"  Dimensions: {LATENT_SWEEP}")
+
+    device, device_name = resolve_device()
+
+    Xtr, Xval = train_test_split(X, test_size=0.1, random_state=SEED)
+    results = []
+
+    for ld in LATENT_SWEEP:
+        print(f"\n  --- Latent dim = {ld} ---")
+        model, hist, mu, std = train_ae(Xtr, latent_dim=ld, quiet=True)
+        val_mse = compute_reconstruction_mse(model, Xval, mu, std, device)
+        train_mse = hist[-1]
+        Z = get_embeddings(model, X, mu, std)
+        r2_scores = {"raw": [], "emb": []}
+        for dataset_name, (trait_col, tag) in SWEEP_TRAITS.items():
+            ds_mask = labels == LABEL_MAP.get(dataset_name, -1)
+            if ds_mask.sum() == 0:
+                continue
+            ds_meta = meta[ds_mask].reset_index(drop=True)
+            if trait_col not in ds_meta.columns:
+                continue
+            y = ds_meta[trait_col].values.astype(float)
+            ok = ~np.isnan(y)
+            if ok.sum() < 20:
+                continue
+            yr = y[ok]
+            Xr_raw = X[ds_mask][ok]
+            Xr_emb = Z[ds_mask][ok]
+            cv = KFold(n_splits=min(5, max(3, len(yr) // 10)), shuffle=True, random_state=SEED)
+            raw_scores = cross_val_score(RidgeCV(), Xr_raw, yr, cv=cv, scoring="r2")
+            emb_scores = cross_val_score(RidgeCV(), Xr_emb, yr, cv=cv, scoring="r2")
+            r2_scores["raw"].append(raw_scores.mean())
+            r2_scores["emb"].append(emb_scores.mean())
+        mean_raw = np.mean(r2_scores["raw"]) if r2_scores["raw"] else np.nan
+        mean_emb = np.mean(r2_scores["emb"]) if r2_scores["emb"] else np.nan
+        results.append({
+            "latent_dim": ld,
+            "train_mse": train_mse,
+            "val_mse": val_mse,
+            "r2_raw_mean": mean_raw,
+            "r2_emb_mean": mean_emb,
+        })
+        print(f"    Train MSE={train_mse:.5f}  Val MSE={val_mse:.5f}  "
+              f"R2_raw={mean_raw:.3f}  R2_emb={mean_emb:.3f}")
+
+    df = pd.DataFrame(results)
+    df.to_csv(OUT_DIR / "latent_sweep_summary.csv", index=False)
+    print(f"\n  Saved: latent_sweep_summary.csv")
+    plot_latent_sweep(df)
+    return df
+
+
+def plot_latent_sweep(df):
+    fig, ax1 = plt.subplots(figsize=(8, 5))
+    color_mse = "#2563eb"
+    color_raw = "#94a3b8"
+    color_emb = "#10b981"
+
+    ax1.set_xlabel("Latent Dimension")
+    ax1.set_ylabel("Reconstruction MSE", color=color_mse)
+    ax1.plot(df["latent_dim"], df["val_mse"], "o-", color=color_mse, label="Val MSE")
+    ax1.plot(df["latent_dim"], df["train_mse"], "s--", color=color_mse, alpha=0.5, label="Train MSE")
+    ax1.tick_params(axis="y", labelcolor=color_mse)
+    ax1.set_xscale("log", base=2)
+    ax1.set_xticks(df["latent_dim"])
+    ax1.set_xticklabels(df["latent_dim"])
+
+    ax2 = ax1.twinx()
+    ax2.set_ylabel("Mean R² (LMA)", color=color_raw)
+    ax2.plot(df["latent_dim"], df["r2_raw_mean"], "o-", color=color_raw, label="Raw R²")
+    ax2.plot(df["latent_dim"], df["r2_emb_mean"], "s-", color=color_emb, label="Embedding R²")
+    ax2.tick_params(axis="y", labelcolor=color_raw)
+
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc="center right")
+    ax1.set_title("Latent Dimension Sweep: Reconstruction MSE vs Downstream R²")
+    ax1.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "latent_sweep.png", dpi=150)
+    plt.close(fig)
+    print("  Saved: latent_sweep.png")
 
 
 def prepare_multitask_targets(meta_df, trait_cols):
@@ -1177,6 +1287,10 @@ def run_classification_fallback(Z, labels):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
+    parser = argparse.ArgumentParser(description="Stage 1: Pretraining + Downstream Prediction")
+    parser.add_argument("--sweep", action="store_true", help="Run latent dimension sweep")
+    args = parser.parse_args()
+
     print("\n" + "=" * 65)
     print("  Stage 1 - Pretraining + Downstream Prediction")
     print("=" * 65)
@@ -1195,6 +1309,13 @@ def main():
     print("\n[2/6] Preprocessing ...")
     X, labels, meta = preprocess_all(raws)
     print(f"  Pooled: {X.shape}")
+
+    if args.sweep:
+        run_latent_sweep(X, labels, meta)
+        print(f"\n{'=' * 65}")
+        print(f"  Sweep complete. Outputs in: {OUT_DIR.resolve()}")
+        print("=" * 65 + "\n")
+        return
 
     print("\n[3/6] Training autoencoder ...")
     model, hist, mu, std = train_ae(X)

@@ -47,6 +47,8 @@ outputs/
 |   |-- trait_regression_summary_SierraNevada.csv
 |   |-- trait_regression_summary_CABOv2.csv
 |   |-- trait_regression_summary_NGEEPanama.csv
+|   |-- latent_sweep.png              # (with --sweep)
+|   |-- latent_sweep_summary.csv      # (with --sweep)
 |   |-- encoder.pt
 |   |-- scaler_mean.npy
 |   |-- scaler_std.npy
@@ -125,6 +127,18 @@ python step2_transfer_learning.py
 python step3_integrated_discovery.py
 ```
 
+### Latent Dimension Sweep
+
+To evaluate the effect of latent dimension on reconstruction and downstream performance:
+
+```bash
+python step1_pretrain_downstream.py --sweep
+```
+
+This trains autoencoders with latent dimensions [8, 16, 32, 64, 128, 192] and outputs:
+- `outputs/stage1/latent_sweep_summary.csv` — reconstruction MSE and mean LMA R² per dimension
+- `outputs/stage1/latent_sweep.png` — dual-axis plot of MSE vs R²
+
 ---
 
 ## Stage 1
@@ -157,6 +171,21 @@ embedding-space novelty with a scan-count adjustment to reduce small-sample bias
 - Latent space: 192-dimensional embedding
 - Training: 140 epochs, batch size 64, learning rate `7.5e-4`, weight decay `1e-5`,
   Gaussian input noise `std=0.03`
+
+### Latent Dimension Selection
+
+The latent dimension was selected via a sweep over [8, 16, 32, 64, 128, 192]:
+
+| Latent dim | Val MSE | R² (LMA) | Δ R² from dim 8 |
+|---:|---:|---:|---:|
+| 8 | 0.00316 | 0.640 | — |
+| 16 | 0.00150 | 0.691 | +0.051 |
+| 32 | 0.00153 | 0.806 | +0.166 |
+| 64 | 0.00244 | 0.833 | +0.193 |
+| 128 | 0.00187 | 0.848 | +0.208 |
+| 192 | 0.00202 | 0.856 | +0.216 |
+
+Dimension 192 was retained as it yielded the highest downstream performance (R² = 0.856 for LMA), with the majority of gains achieved by dim 32 and diminishing returns thereafter.
 
 ## Preprocessing
 
