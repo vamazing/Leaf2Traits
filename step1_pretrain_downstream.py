@@ -208,6 +208,44 @@ SIERRA_TRAIT_COLS = [
     "Chlorophyll_mg_m2",
 ]
 
+# ── Trait harmonization ────────────────────────────────────────────────────────
+# Maps: harmonized_name -> { dataset: (source_col, conversion_fn) }
+# conversion_fn takes the raw value and returns the value in target units.
+# Target units: LMA in g/cm², Chlorophyll in µg/cm², EWT in g/cm².
+HARMONIZATION_MAP = {
+    "LMA_g_cm2": {
+        "lopex93": ("Leaf mass per area (g/cm²)", lambda x: x),
+        "angers2003": ("Leaf mass per area (g/cm )", lambda x: x),
+        "cabo_v2": ("LMA_g_m2", lambda x: x / 1e4),
+        "ngee_panama": ("LMA_gDW_m2", lambda x: x / 1e4),
+        "sierranevada2023": ("LMA_g_m2", lambda x: x / 1e4),
+        "blackhawk_wi": ("lma_g_m2", lambda x: x / 1e4),
+    },
+    "Chlorophyll_a_b_ug_cm2": {
+        "lopex93": ("Chlorophyll_a+b (µg/cm²)", lambda x: x),
+        "angers2003": ("Chlorophyll_a+b ( g/cm )", lambda x: x),
+    },
+    "EWT_g_cm2": {
+        "lopex93": ("Equivalent Water Thickness (g/cm²)", lambda x: x),
+        "angers2003": ("Equivalent Water Thickness (g/cm )", lambda x: x),
+        "cabo_v2": ("EWT_g_cm2", lambda x: x),
+    },
+    "Carotenoid_ug_cm2": {
+        "lopex93": ("Carotenoid (µg/cm²)", lambda x: x),
+        "angers2003": ("Carotenoid ( g/cm )", lambda x: x),
+    },
+    "LWC_percent": {
+        "sierranevada2023": ("LWC_percent", lambda x: x),
+        "ngee_panama": ("H20_pc", lambda x: x),
+    },
+    "CN_ratio": {
+        "cabo_v2": ("CN_ratio", lambda x: x),
+        "ngee_panama": ("CNratio", lambda x: x),
+    },
+}
+
+HARMONIZED_TRAIT_COLS = list(HARMONIZATION_MAP.keys())
+
 ECOSIS_API = "https://ecosis.org/api/package/{id}/export?format=csv"
 DATASETS = {
     "aqgrad": [AQGRAD_PACKAGE_ID],
@@ -407,6 +445,27 @@ def preprocess_all(datasets):
         np.array(all_y, dtype=np.int64),
         pd.concat(all_meta, ignore_index=True),
     )
+
+
+def harmonize_traits(meta_df, dataset_name):
+    """Add harmonized trait columns to meta_df for the given dataset.
+
+    Returns the list of harmonized column names that were actually created.
+    """
+    df = meta_df.copy()
+    created = []
+    for harmonized_name, dataset_map in HARMONIZATION_MAP.items():
+        if dataset_name not in dataset_map:
+            continue
+        source_col, convert_fn = dataset_map[dataset_name]
+        if source_col not in df.columns:
+            continue
+        vals = pd.to_numeric(df[source_col], errors="coerce")
+        if vals.notna().sum() < 10:
+            continue
+        df[harmonized_name] = convert_fn(vals)
+        created.append(harmonized_name)
+    return df, created
 
 
 # ── Autoencoder ───────────────────────────────────────────────────────────────
@@ -1168,6 +1227,12 @@ def main():
             ok = run_trait_regression(X[lmask], Z[lmask], lm, trait_cols, tag="LOPEX93")
             if ok:
                 trait_found = True
+        # Harmonized traits
+        lm_h, hcols = harmonize_traits(lm, "lopex93")
+        if hcols:
+            ok = run_trait_regression(X[lmask], Z[lmask], lm_h, hcols, tag="LOPEX93_harmonized")
+            if ok:
+                trait_found = True
 
     # Sierra Nevada traits (inline in CSV)
     smask = labels == LABEL_MAP["sierranevada2023"]
@@ -1192,6 +1257,12 @@ def main():
             )
             if ok:
                 trait_found = True
+        # Harmonized traits
+        sm_h, hcols = harmonize_traits(sm, "sierranevada2023")
+        if hcols:
+            ok = run_trait_regression(X[smask], Z[smask], sm_h, hcols, tag="SierraNevada_harmonized")
+            if ok:
+                trait_found = True
 
     # CABO v2 traits (inline in EcoSIS export)
     cmask = labels == LABEL_MAP["cabo_v2"]
@@ -1202,6 +1273,12 @@ def main():
         ]
         if cabo_traits:
             ok = run_trait_regression(X[cmask], Z[cmask], cm, cabo_traits, tag="CABOv2")
+            if ok:
+                trait_found = True
+        # Harmonized traits
+        cm_h, hcols = harmonize_traits(cm, "cabo_v2")
+        if hcols:
+            ok = run_trait_regression(X[cmask], Z[cmask], cm_h, hcols, tag="CABOv2_harmonized")
             if ok:
                 trait_found = True
 
@@ -1222,6 +1299,12 @@ def main():
             )
             if ok:
                 trait_found = True
+        # Harmonized traits
+        nm_h, hcols = harmonize_traits(nm, "ngee_panama")
+        if hcols:
+            ok = run_trait_regression(X[nmask], Z[nmask], nm_h, hcols, tag="NGEEPanama_harmonized")
+            if ok:
+                trait_found = True
 
     # Blackhawk Island WI traits (inline in EcoSIS export)
     bhmask = labels == LABEL_MAP["blackhawk_wi"]
@@ -1240,6 +1323,12 @@ def main():
             )
             if ok:
                 trait_found = True
+        # Harmonized traits
+        bhm_h, hcols = harmonize_traits(bhm, "blackhawk_wi")
+        if hcols:
+            ok = run_trait_regression(X[bhmask], Z[bhmask], bhm_h, hcols, tag="BlackhawkIslandWI_harmonized")
+            if ok:
+                trait_found = True
 
     # Angers 2003 traits
     amask = labels == LABEL_MAP["angers2003"]
@@ -1256,6 +1345,12 @@ def main():
             ok = run_trait_regression(
                 X[amask], Z[amask], am, angers_traits, tag="Angers2003"
             )
+            if ok:
+                trait_found = True
+        # Harmonized traits
+        am_h, hcols = harmonize_traits(am, "angers2003")
+        if hcols:
+            ok = run_trait_regression(X[amask], Z[amask], am_h, hcols, tag="Angers2003_harmonized")
             if ok:
                 trait_found = True
 

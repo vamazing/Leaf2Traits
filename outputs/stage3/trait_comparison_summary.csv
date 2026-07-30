@@ -1,71 +1,88 @@
 dataset,trait,R2_raw,R2_emb,model_raw,model_emb,aggregation,group_col,label
-lopex93,Chlorophyll_a+b (µg/cm²),-0.04396058531407452,0.11009710226665274,hist_gbr,hist_gbr,sample_mean,Species,lopex93:Chlorophyll_a+b (µg/cm²)
-lopex93,Equivalent Water Thickness (g/cm²),0.8844713987872982,0.8322233797898981,ridge_cv,ridge_cv,sample_mean,Species,lopex93:Equivalent Water Thickness (g/cm²)
-lopex93,Leaf mass per area (g/cm²),0.7944057459089132,0.5202660926323471,ridge_cv,hist_gbr,sample_mean,Species,lopex93:Leaf mass per area (g/cm²)
-lopex93,Protein_1 (% DW),0.18891712097654773,0.06446668404551743,pls,hist_gbr,sample_mean,Species,lopex93:Protein_1 (% DW)
-lopex93,Cellulose_1 (% DW),-0.2056426415093438,-0.37194646342066756,hist_gbr,hist_gbr,sample_mean,Species,lopex93:Cellulose_1 (% DW)
-lopex93,Carotenoid (µg/cm²),-0.29965766674023897,-0.2154172613520519,hist_gbr,hist_gbr,sample_mean,Species,lopex93:Carotenoid (µg/cm²)
-angers2003,Carotenoid ( g/cm ),0.8658109119036826,0.8417842806234332,ridge_cv,ridge_cv,none,Sample_#,angers2003:Carotenoid ( g/cm )
-angers2003,Chlorophyll_a ( g/cm ),0.9523487898828765,0.9540303453125046,ridge_cv,ridge_cv,none,Sample_#,angers2003:Chlorophyll_a ( g/cm )
-angers2003,Chlorophyll_a+b ( g/cm ),0.9455500548681016,0.9514661428551541,ridge_cv,ridge_cv,none,Sample_#,angers2003:Chlorophyll_a+b ( g/cm )
-angers2003,Chlorophyll_b ( g/cm ),0.9087010925750253,0.9215271006784713,ridge_cv,ridge_cv,none,Sample_#,angers2003:Chlorophyll_b ( g/cm )
-angers2003,Equivalent Water Thickness (g/cm ),0.9310712193291231,0.9318721100097861,ridge_cv,ridge_cv,none,Sample_#,angers2003:Equivalent Water Thickness (g/cm )
-angers2003,Leaf mass per area (g/cm ),0.9593724410084281,0.8624829273180534,ridge_cv,pls,none,Sample_#,angers2003:Leaf mass per area (g/cm )
-angers2003,SPAD,0.6632148611843531,0.6840941438718458,ridge_cv,hist_gbr,none,Sample_#,angers2003:SPAD
-angers2003,Structure parameter,0.688207969385472,0.49638680631421883,ridge_cv,hist_gbr,none,Sample_#,angers2003:Structure parameter
-blackhawk_wi,chl_a_mmol_m2,0.5812873837790482,0.6134785511838869,hist_gbr,hist_gbr,none,Species,blackhawk_wi:chl_a_mmol_m2
-blackhawk_wi,lma_g_m2,0.7397535271435786,0.5966622286284837,ridge_cv,hist_gbr,none,Species,blackhawk_wi:lma_g_m2
-cabo_v2,LMA_g_m2,0.8748071592648012,0.8779205283175001,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:LMA_g_m2
-cabo_v2,EWT_g_cm2,0.889751235467425,0.895694256250675,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:EWT_g_cm2
-cabo_v2,LDMC_mg_g,0.8042898457034033,0.8225711157192286,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:LDMC_mg_g
-cabo_v2,C_mass_g_g,0.6277819820537109,0.6019515897921925,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:C_mass_g_g
-cabo_v2,N_mass_g_g,0.6391652060776642,0.6442635038507534,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:N_mass_g_g
-cabo_v2,C_area_g_m2,0.9207742610758926,0.8890849617740058,ridge_cv,ridge_cv,none,Sample_ID,cabo_v2:C_area_g_m2
-cabo_v2,N_area_g_m2,0.7888521307415864,0.7684817044141556,ridge_cv,hist_gbr,none,Sample_ID,cabo_v2:N_area_g_m2
-cabo_v2,CN_ratio,0.8119397718767409,0.7835840269217597,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:CN_ratio
-cabo_v2,Carotenoid_mass_g_g,0.6270226220816948,0.6229998169427111,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Carotenoid_mass_g_g
-cabo_v2,Carotenoid_area_g_m2,0.6829040976357338,0.6665770248784826,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Carotenoid_area_g_m2
-cabo_v2,Chlorophyll_A_mass_g_g,0.6775735859016934,0.6800957580091787,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_A_mass_g_g
-cabo_v2,Chlorophyll_A_area_g_m2,0.7513804030047744,0.737209713964516,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_A_area_g_m2
-cabo_v2,Chlorophyll_B_mass_g_g,0.6611343918816125,0.6743406731974353,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_B_mass_g_g
-cabo_v2,Chlorophyll_B_area_g_m2,0.7310605365466258,0.7171525339068593,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_B_area_g_m2
-cabo_v2,Cellulose_mass_g_g,0.6000461229422673,0.5877948164393071,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cellulose_mass_g_g
-cabo_v2,Cellulose_area_g_m2,0.8233462284108445,0.7950539704747983,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cellulose_area_g_m2
-cabo_v2,Hemicellulose_mass_g_g,0.52073008629518,0.4912156191296768,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Hemicellulose_mass_g_g
-cabo_v2,Hemicellulose_area_g_m2,0.7531867688986942,0.734221682883405,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Hemicellulose_area_g_m2
-cabo_v2,Lignin_mass_g_g,0.43565876771517215,0.4135577207921236,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Lignin_mass_g_g
-cabo_v2,Lignin_area_g_m2,0.8669755260548087,0.8110790699420392,ridge_cv,hist_gbr,none,Sample_ID,cabo_v2:Lignin_area_g_m2
-cabo_v2,Solubles_mass_g_g,0.5050269918418759,0.4886859532365473,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Solubles_mass_g_g
-cabo_v2,Solubles_area_g_m2,0.9266993955044291,0.8937456841976195,ridge_cv,ridge_cv,none,Sample_ID,cabo_v2:Solubles_area_g_m2
-cabo_v2,Al_mass_mg_g,0.18882709110997148,0.13691230896138226,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Al_mass_mg_g
-cabo_v2,Al_area_g_m2,0.2646493769130977,0.18806388214103573,pls,hist_gbr,none,Sample_ID,cabo_v2:Al_area_g_m2
-cabo_v2,B2089_mass_mg_g,0.052606026019699256,0.06371973159429792,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:B2089_mass_mg_g
-cabo_v2,B2498_mass_mg_g,0.05388472978412473,0.06180611987901541,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:B2498_mass_mg_g
-cabo_v2,Ca_mass_mg_g,0.3587065044123964,0.3534613051775132,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Ca_mass_mg_g
-cabo_v2,Ca_area_g_m2,0.5003939717106691,0.39050655344405627,pls,pls,none,Sample_ID,cabo_v2:Ca_area_g_m2
-cabo_v2,Cu_mass_mg_g,0.37293287951495585,0.36854573145838704,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cu_mass_mg_g
-cabo_v2,Cu_area_g_m2,0.36822552396956276,0.3595477856202932,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cu_area_g_m2
-cabo_v2,Fe_mass_mg_g,0.289324573012534,0.3018490779976567,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Fe_mass_mg_g
-cabo_v2,Fe_area_g_m2,0.12857050943598988,0.11515234732054844,hist_gbr,pls,none,Sample_ID,cabo_v2:Fe_area_g_m2
-cabo_v2,K_mass_mg_g,0.539390895371981,0.4969021866881017,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:K_mass_mg_g
-cabo_v2,K_area_g_m2,0.5360043633982107,0.49620588815779093,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:K_area_g_m2
-cabo_v2,Mg_mass_mg_g,0.3243236910788819,0.3740042660892745,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Mg_mass_mg_g
-cabo_v2,Mg_area_g_m2,0.5320318035452667,0.5489871491658798,pls,pls,none,Sample_ID,cabo_v2:Mg_area_g_m2
-cabo_v2,Mn_mass_mg_g,0.19776832081050727,0.15847680704998207,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Mn_mass_mg_g
-cabo_v2,Mn_area_g_m2,0.3297944168277877,0.3009788883819585,pls,pls,none,Sample_ID,cabo_v2:Mn_area_g_m2
-cabo_v2,Na_mass_mg_g,0.3971787791262359,0.351397213356046,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Na_mass_mg_g
-cabo_v2,Na_area_g_m2,0.653909774862508,0.5877742061689986,pls,hist_gbr,none,Sample_ID,cabo_v2:Na_area_g_m2
-cabo_v2,P_mass_mg_g,0.4189600456306645,0.4433793031887059,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:P_mass_mg_g
-cabo_v2,P_area_g_m2,0.38487001158008377,0.4762214341283098,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:P_area_g_m2
-cabo_v2,Zn_mass_mg_g,0.4168468958893432,0.3853996658499589,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Zn_mass_mg_g
-cabo_v2,Zn_area_g_m2,0.40745492196294253,0.2957262970320496,pls,hist_gbr,none,Sample_ID,cabo_v2:Zn_area_g_m2
-ngee_panama,CNratio,0.7939982532636346,0.6002566073655794,ridge_cv,hist_gbr,none,Sample_ID,ngee_panama:CNratio
-ngee_panama,Cmass_pc,0.6695956971996122,0.49219610936406016,ridge_cv,hist_gbr,none,Sample_ID,ngee_panama:Cmass_pc
-ngee_panama,H20_pc,0.7523720744412034,0.7170397138028296,pls,ridge_cv,none,Sample_ID,ngee_panama:H20_pc
-ngee_panama,LMA_gDW_m2,0.8523706758782719,0.8105007381153093,ridge_cv,ridge_cv,none,Sample_ID,ngee_panama:LMA_gDW_m2
-ngee_panama,LWP_bar,-0.021830955680876472,-0.008821244388117221,ridge_cv,ridge_cv,none,Sample_ID,ngee_panama:LWP_bar
-ngee_panama,Nmass_pc,0.783794397909155,0.5952690513795746,ridge_cv,hist_gbr,none,Sample_ID,ngee_panama:Nmass_pc
-ngee_panama,SLA_cm2_gDW,0.8218172971393738,0.8052773455037467,ridge_cv,ridge_cv,none,Sample_ID,ngee_panama:SLA_cm2_gDW
-sierranevada2023,LMA_g_m2,0.8519770765621013,0.7506471156161444,pls,hist_gbr,none,sample_number,sierranevada2023:LMA_g_m2
-sierranevada2023,LWC_percent,0.3769893106849987,0.37160987463948647,pls,hist_gbr,none,sample_number,sierranevada2023:LWC_percent
-sierranevada2023,Chlorophyll_mg_m2,-0.003466632774955758,0.17224415947269792,hist_gbr,hist_gbr,none,sample_number,sierranevada2023:Chlorophyll_mg_m2
+lopex93,Chlorophyll_a+b (µg/cm²),-0.04396058531407452,0.11466453958815423,hist_gbr,hist_gbr,sample_mean,Species,lopex93:Chlorophyll_a+b (µg/cm²)
+lopex93,Equivalent Water Thickness (g/cm²),0.8844713987872982,0.8269105669291816,ridge_cv,ridge_cv,sample_mean,Species,lopex93:Equivalent Water Thickness (g/cm²)
+lopex93,Leaf mass per area (g/cm²),0.7944057459089132,0.6618987469164351,ridge_cv,pls,sample_mean,Species,lopex93:Leaf mass per area (g/cm²)
+lopex93,Protein_1 (% DW),0.18891712097654773,0.3801644513721283,pls,ridge_cv,sample_mean,Species,lopex93:Protein_1 (% DW)
+lopex93,Cellulose_1 (% DW),-0.2056426415093438,-0.5522093838300653,hist_gbr,hist_gbr,sample_mean,Species,lopex93:Cellulose_1 (% DW)
+lopex93,Carotenoid (µg/cm²),-0.29965766674023897,-0.28692250790242824,hist_gbr,hist_gbr,sample_mean,Species,lopex93:Carotenoid (µg/cm²)
+lopex93_harmonized,LMA_g_cm2,0.7944057459089132,0.6618987469164351,ridge_cv,pls,sample_mean,Species,lopex93_harmonized:LMA_g_cm2
+lopex93_harmonized,Chlorophyll_a_b_ug_cm2,-0.04396058531407452,0.11466453958815423,hist_gbr,hist_gbr,sample_mean,Species,lopex93_harmonized:Chlorophyll_a_b_ug_cm2
+lopex93_harmonized,EWT_g_cm2,0.8844713987872982,0.8269105669291816,ridge_cv,ridge_cv,sample_mean,Species,lopex93_harmonized:EWT_g_cm2
+lopex93_harmonized,Carotenoid_ug_cm2,-0.29965766674023897,-0.28692250790242824,hist_gbr,hist_gbr,sample_mean,Species,lopex93_harmonized:Carotenoid_ug_cm2
+angers2003,Carotenoid ( g/cm ),0.8658109119036826,0.8609692184063304,ridge_cv,ridge_cv,none,Sample_#,angers2003:Carotenoid ( g/cm )
+angers2003,Chlorophyll_a ( g/cm ),0.9523487898828765,0.9547129716520665,ridge_cv,ridge_cv,none,Sample_#,angers2003:Chlorophyll_a ( g/cm )
+angers2003,Chlorophyll_a+b ( g/cm ),0.9455500548681016,0.952116953575117,ridge_cv,hist_gbr,none,Sample_#,angers2003:Chlorophyll_a+b ( g/cm )
+angers2003,Chlorophyll_b ( g/cm ),0.9087010925750253,0.9306291944592966,ridge_cv,hist_gbr,none,Sample_#,angers2003:Chlorophyll_b ( g/cm )
+angers2003,Equivalent Water Thickness (g/cm ),0.9310712193291231,0.928187595480588,ridge_cv,ridge_cv,none,Sample_#,angers2003:Equivalent Water Thickness (g/cm )
+angers2003,Leaf mass per area (g/cm ),0.9593724410084281,0.9170336423562142,ridge_cv,pls,none,Sample_#,angers2003:Leaf mass per area (g/cm )
+angers2003,SPAD,0.6632148611843531,0.6667380757283442,ridge_cv,hist_gbr,none,Sample_#,angers2003:SPAD
+angers2003,Structure parameter,0.688207969385472,0.5793250574893865,ridge_cv,pls,none,Sample_#,angers2003:Structure parameter
+angers2003_harmonized,LMA_g_cm2,0.9593724410084281,0.9170336423562142,ridge_cv,pls,none,Sample_#,angers2003_harmonized:LMA_g_cm2
+angers2003_harmonized,Chlorophyll_a_b_ug_cm2,0.9455500548681016,0.952116953575117,ridge_cv,hist_gbr,none,Sample_#,angers2003_harmonized:Chlorophyll_a_b_ug_cm2
+angers2003_harmonized,EWT_g_cm2,0.9310712193291231,0.928187595480588,ridge_cv,ridge_cv,none,Sample_#,angers2003_harmonized:EWT_g_cm2
+angers2003_harmonized,Carotenoid_ug_cm2,0.8658109119036826,0.8609692184063304,ridge_cv,ridge_cv,none,Sample_#,angers2003_harmonized:Carotenoid_ug_cm2
+blackhawk_wi,chl_a_mmol_m2,0.5812873837790482,0.5713641261176535,hist_gbr,hist_gbr,none,Species,blackhawk_wi:chl_a_mmol_m2
+blackhawk_wi,lma_g_m2,0.7397535271435786,0.6012256929200667,ridge_cv,hist_gbr,none,Species,blackhawk_wi:lma_g_m2
+blackhawk_wi_harmonized,LMA_g_cm2,0.7397534977116351,0.6011753591710978,ridge_cv,hist_gbr,none,Species,blackhawk_wi_harmonized:LMA_g_cm2
+cabo_v2,LMA_g_m2,0.8748071592648012,0.8807295452078858,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:LMA_g_m2
+cabo_v2,EWT_g_cm2,0.889751235467425,0.9019715770095384,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:EWT_g_cm2
+cabo_v2,LDMC_mg_g,0.8042898457034033,0.832366275047581,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:LDMC_mg_g
+cabo_v2,C_mass_g_g,0.6277819820537109,0.6434883633331674,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:C_mass_g_g
+cabo_v2,N_mass_g_g,0.6391652060776642,0.6713883820139495,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:N_mass_g_g
+cabo_v2,C_area_g_m2,0.9207742610758926,0.8934004940384259,ridge_cv,hist_gbr,none,Sample_ID,cabo_v2:C_area_g_m2
+cabo_v2,N_area_g_m2,0.7888521307415864,0.7730762046961936,ridge_cv,hist_gbr,none,Sample_ID,cabo_v2:N_area_g_m2
+cabo_v2,CN_ratio,0.8119397718767409,0.8234402820551077,hist_gbr,ridge_cv,none,Sample_ID,cabo_v2:CN_ratio
+cabo_v2,Carotenoid_mass_g_g,0.6270226220816948,0.6500858635740008,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Carotenoid_mass_g_g
+cabo_v2,Carotenoid_area_g_m2,0.6829040976357338,0.6796928782207875,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Carotenoid_area_g_m2
+cabo_v2,Chlorophyll_A_mass_g_g,0.6775735859016934,0.712217530416895,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_A_mass_g_g
+cabo_v2,Chlorophyll_A_area_g_m2,0.7513804030047744,0.7531885095429953,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_A_area_g_m2
+cabo_v2,Chlorophyll_B_mass_g_g,0.6611343918816125,0.705403744294171,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_B_mass_g_g
+cabo_v2,Chlorophyll_B_area_g_m2,0.7310605365466258,0.7308628833719663,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Chlorophyll_B_area_g_m2
+cabo_v2,Cellulose_mass_g_g,0.6000461229422673,0.616773899661745,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cellulose_mass_g_g
+cabo_v2,Cellulose_area_g_m2,0.8233462284108445,0.7799024260891764,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cellulose_area_g_m2
+cabo_v2,Hemicellulose_mass_g_g,0.52073008629518,0.5430991561260125,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Hemicellulose_mass_g_g
+cabo_v2,Hemicellulose_area_g_m2,0.7531867688986942,0.7521682014302794,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Hemicellulose_area_g_m2
+cabo_v2,Lignin_mass_g_g,0.43565876771517215,0.43574635637580916,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Lignin_mass_g_g
+cabo_v2,Lignin_area_g_m2,0.8669755260548087,0.8359616032127144,ridge_cv,hist_gbr,none,Sample_ID,cabo_v2:Lignin_area_g_m2
+cabo_v2,Solubles_mass_g_g,0.5050269918418759,0.5258978847890765,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Solubles_mass_g_g
+cabo_v2,Solubles_area_g_m2,0.9266993955044291,0.901350937970031,ridge_cv,ridge_cv,none,Sample_ID,cabo_v2:Solubles_area_g_m2
+cabo_v2,Al_mass_mg_g,0.18882709110997148,0.1773500795272574,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Al_mass_mg_g
+cabo_v2,Al_area_g_m2,0.2646493769130977,0.2996676478654993,pls,hist_gbr,none,Sample_ID,cabo_v2:Al_area_g_m2
+cabo_v2,B2089_mass_mg_g,0.052606026019699256,0.08340364307038214,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:B2089_mass_mg_g
+cabo_v2,B2498_mass_mg_g,0.05388472978412473,0.07139897774752198,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:B2498_mass_mg_g
+cabo_v2,Ca_mass_mg_g,0.3587065044123964,0.3839568021164399,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Ca_mass_mg_g
+cabo_v2,Ca_area_g_m2,0.5003939717106691,0.44467237980138563,pls,hist_gbr,none,Sample_ID,cabo_v2:Ca_area_g_m2
+cabo_v2,Cu_mass_mg_g,0.37293287951495585,0.3788831170030666,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cu_mass_mg_g
+cabo_v2,Cu_area_g_m2,0.36822552396956276,0.3881628767354105,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Cu_area_g_m2
+cabo_v2,Fe_mass_mg_g,0.289324573012534,0.3225536416481258,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Fe_mass_mg_g
+cabo_v2,Fe_area_g_m2,0.12857050943598988,0.15657566520309157,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Fe_area_g_m2
+cabo_v2,K_mass_mg_g,0.539390895371981,0.5091257391315313,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:K_mass_mg_g
+cabo_v2,K_area_g_m2,0.5360043633982107,0.5225544844426013,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:K_area_g_m2
+cabo_v2,Mg_mass_mg_g,0.3243236910788819,0.397295938441549,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Mg_mass_mg_g
+cabo_v2,Mg_area_g_m2,0.5320318035452667,0.5788531528998775,pls,hist_gbr,none,Sample_ID,cabo_v2:Mg_area_g_m2
+cabo_v2,Mn_mass_mg_g,0.19776832081050727,0.20665423824533408,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Mn_mass_mg_g
+cabo_v2,Mn_area_g_m2,0.3297944168277877,0.37665627063278495,pls,hist_gbr,none,Sample_ID,cabo_v2:Mn_area_g_m2
+cabo_v2,Na_mass_mg_g,0.3971787791262359,0.37328309461834375,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Na_mass_mg_g
+cabo_v2,Na_area_g_m2,0.653909774862508,0.6260023857602751,pls,hist_gbr,none,Sample_ID,cabo_v2:Na_area_g_m2
+cabo_v2,P_mass_mg_g,0.4189600456306645,0.4482091963731258,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:P_mass_mg_g
+cabo_v2,P_area_g_m2,0.38487001158008377,0.39078111119088244,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:P_area_g_m2
+cabo_v2,Zn_mass_mg_g,0.4168468958893432,0.3995107655345578,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2:Zn_mass_mg_g
+cabo_v2,Zn_area_g_m2,0.40745492196294253,0.30174644424193026,pls,hist_gbr,none,Sample_ID,cabo_v2:Zn_area_g_m2
+cabo_v2_harmonized,LMA_g_cm2,0.8748071592653138,0.8807295452101551,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2_harmonized:LMA_g_cm2
+cabo_v2_harmonized,EWT_g_cm2,0.889751235467425,0.9019715770095384,hist_gbr,hist_gbr,none,Sample_ID,cabo_v2_harmonized:EWT_g_cm2
+cabo_v2_harmonized,CN_ratio,0.8119397718767409,0.8234402820551077,hist_gbr,ridge_cv,none,Sample_ID,cabo_v2_harmonized:CN_ratio
+ngee_panama,CNratio,0.7933276373228366,0.5275095471232583,ridge_cv,hist_gbr,none,Sample_ID,ngee_panama:CNratio
+ngee_panama,Cmass_pc,0.6307062328413202,0.5022472142763432,ridge_cv,hist_gbr,none,Sample_ID,ngee_panama:Cmass_pc
+ngee_panama,H20_pc,0.7521401759296985,0.7365901553503671,pls,ridge_cv,none,Sample_ID,ngee_panama:H20_pc
+ngee_panama,LMA_gDW_m2,0.8474983494912056,0.8244473276390677,ridge_cv,ridge_cv,none,Sample_ID,ngee_panama:LMA_gDW_m2
+ngee_panama,LWP_bar,-0.007793104541239626,-0.010659468899248714,ridge_cv,ridge_cv,none,Sample_ID,ngee_panama:LWP_bar
+ngee_panama,Nmass_pc,0.7864252932181743,0.5957529728963854,ridge_cv,hist_gbr,none,Sample_ID,ngee_panama:Nmass_pc
+ngee_panama,SLA_cm2_gDW,0.8029200147814592,0.8411811337034981,ridge_cv,ridge_cv,none,Sample_ID,ngee_panama:SLA_cm2_gDW
+ngee_panama_harmonized,LMA_g_cm2,0.8474983852798086,0.82444738862321,ridge_cv,ridge_cv,none,Sample_ID,ngee_panama_harmonized:LMA_g_cm2
+ngee_panama_harmonized,LWC_percent,0.7521401759296985,0.7365901553503671,pls,ridge_cv,none,Sample_ID,ngee_panama_harmonized:LWC_percent
+ngee_panama_harmonized,CN_ratio,0.7933276373228366,0.5275095471232583,ridge_cv,hist_gbr,none,Sample_ID,ngee_panama_harmonized:CN_ratio
+sierranevada2023,LMA_g_m2,0.8141942919057078,0.7575812927593949,ridge_cv,hist_gbr,none,sample_number,sierranevada2023:LMA_g_m2
+sierranevada2023,LWC_percent,0.4953633081570287,0.26231336083425766,pls,hist_gbr,none,sample_number,sierranevada2023:LWC_percent
+sierranevada2023,Chlorophyll_mg_m2,-0.12651687820996874,0.18502538075328076,hist_gbr,hist_gbr,none,sample_number,sierranevada2023:Chlorophyll_mg_m2
+sierranevada2023_harmonized,LMA_g_cm2,0.8141944051024563,0.7580772418428037,ridge_cv,hist_gbr,none,sample_number,sierranevada2023_harmonized:LMA_g_cm2
+sierranevada2023_harmonized,LWC_percent,0.4953633081570287,0.26231336083425766,pls,hist_gbr,none,sample_number,sierranevada2023_harmonized:LWC_percent

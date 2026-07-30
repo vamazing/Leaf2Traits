@@ -164,6 +164,26 @@ Spectra were standardized to the same 400-2400 nm wavelength space at 10 nm spac
 
 Additionally, LOPEX93 outliers were filtered using Isolation Forest (Contamination = 0.03, n_estimators = 100, random_state = 42), reducing the influence these outliers had on the learned representation. Datasets with multiple scans per biological sample were grouped during downstream evaluation to reduce leakage between train and test splits. Sample-level aggregation was used for LOPEX93 trait prediction when appropriate.
 
+## Trait Harmonization
+
+Cross-dataset trait comparisons require harmonized names and units. The following traits were harmonized across datasets with unit conversions to SI units:
+
+| Harmonized trait | Target unit | Datasets |
+|---|---|---|
+| `LMA_g_cm2` | g/cm² | LOPEX93, Angers, CABO, NGEE Panama, Sierra Nevada, Blackhawk |
+| `Chlorophyll_a_b_ug_cm2` | µg/cm² | LOPEX93, Angers |
+| `EWT_g_cm2` | g/cm² | LOPEX93, Angers, CABO |
+| `Carotenoid_ug_cm2` | µg/cm² | LOPEX93, Angers |
+| `LWC_percent` | % | Sierra Nevada, NGEE Panama |
+| `CN_ratio` | ratio | CABO, NGEE Panama |
+
+**Unit conversions applied:**
+- LMA: g/m² → g/cm² (÷ 10,000) for CABO, NGEE Panama, Sierra Nevada, Blackhawk
+- LMA: g/cm² (no conversion) for LOPEX93, Angers
+- EWT, Chlorophyll, Carotenoid: already in target units for source datasets
+
+Dataset-specific traits (e.g., SPAD, LWP, LDMC, C/N ratio, elemental traits) are retained alongside harmonized traits for within-dataset analysis. Both harmonized and dataset-specific traits are evaluated in the downstream regression pipeline.
+
 ## Discovery
 
 - Isolation Forest with 200 trees on the learned embeddings

@@ -145,6 +145,44 @@ NGEE_PANAMA_TRAIT_COLS = [
 ]
 SIERRA_TRAIT_COLS = ["LMA_g_m2", "LWC_percent", "Chlorophyll_mg_m2"]
 
+# ── Trait harmonization ────────────────────────────────────────────────────────
+# Maps: harmonized_name -> { dataset: (source_col, conversion_fn) }
+# conversion_fn takes the raw value and returns the value in target units.
+# Target units: LMA in g/cm², Chlorophyll in µg/cm², EWT in g/cm².
+HARMONIZATION_MAP = {
+    "LMA_g_cm2": {
+        "lopex93": ("Leaf mass per area (g/cm²)", lambda x: x),
+        "angers2003": ("Leaf mass per area (g/cm )", lambda x: x),
+        "cabo_v2": ("LMA_g_m2", lambda x: x / 1e4),
+        "ngee_panama": ("LMA_gDW_m2", lambda x: x / 1e4),
+        "sierranevada2023": ("LMA_g_m2", lambda x: x / 1e4),
+        "blackhawk_wi": ("lma_g_m2", lambda x: x / 1e4),
+    },
+    "Chlorophyll_a_b_ug_cm2": {
+        "lopex93": ("Chlorophyll_a+b (µg/cm²)", lambda x: x),
+        "angers2003": ("Chlorophyll_a+b ( g/cm )", lambda x: x),
+    },
+    "EWT_g_cm2": {
+        "lopex93": ("Equivalent Water Thickness (g/cm²)", lambda x: x),
+        "angers2003": ("Equivalent Water Thickness (g/cm )", lambda x: x),
+        "cabo_v2": ("EWT_g_cm2", lambda x: x),
+    },
+    "Carotenoid_ug_cm2": {
+        "lopex93": ("Carotenoid (µg/cm²)", lambda x: x),
+        "angers2003": ("Carotenoid ( g/cm )", lambda x: x),
+    },
+    "LWC_percent": {
+        "sierranevada2023": ("LWC_percent", lambda x: x),
+        "ngee_panama": ("H20_pc", lambda x: x),
+    },
+    "CN_ratio": {
+        "cabo_v2": ("CN_ratio", lambda x: x),
+        "ngee_panama": ("CNratio", lambda x: x),
+    },
+}
+
+HARMONIZED_TRAIT_COLS = list(HARMONIZATION_MAP.keys())
+
 DATASET_TRAIT_MAP = {
     "lopex93": LOPEX93_TRAIT_COLS,
     "angers2003": ANGERS_2003_TRAIT_COLS,
@@ -491,6 +529,27 @@ def preprocess_all(df):
     if not all_X:
         return np.zeros((0, len(TARGET_WL)), dtype=np.float32), pd.DataFrame()
     return np.vstack(all_X).astype(np.float32), pd.concat(all_meta, ignore_index=True)
+
+
+def harmonize_traits(meta_df, dataset_name):
+    """Add harmonized trait columns to meta_df for the given dataset.
+
+    Returns the list of harmonized column names that were actually created.
+    """
+    df = meta_df.copy()
+    created = []
+    for harmonized_name, dataset_map in HARMONIZATION_MAP.items():
+        if dataset_name not in dataset_map:
+            continue
+        source_col, convert_fn = dataset_map[dataset_name]
+        if source_col not in df.columns:
+            continue
+        vals = pd.to_numeric(df[source_col], errors="coerce")
+        if vals.notna().sum() < 10:
+            continue
+        df[harmonized_name] = convert_fn(vals)
+        created.append(harmonized_name)
+    return df, created
 
 
 def encode(X, model, mu, std):
@@ -941,6 +1000,49 @@ def compare_trait_regression_v2(X_raw, Z, meta):
                 f"      {trait:<38}  raw={raw_name}:{r2_raw:.3f}  "
                 f"emb={emb_name}:{r2_emb:.3f}  gain={r2_emb-r2_raw:+.3f}"
             )
+        # Harmonized traits
+        meta_h, hcols = harmonize_traits(meta_ds, dataset)
+        if hcols:
+            print(f"    Dataset={dataset}  harmonized_traits={len(hcols)}")
+            for trait in hcols:
+                y = meta_h[trait].values.astype(float)
+                ok = ~np.isnan(y)
+                if ok.sum() < 15:
+                    continue
+                yr = y[ok]
+                Xr = Xr_ds[ok]
+                Xz = Xz_ds[ok]
+                meta_t = meta_h.loc[ok].reset_index(drop=True).copy()
+                aggregated = False
+                if dataset == "lopex93":
+                    Xr, Xz, meta_t, aggregated = aggregate_sample_level(Xr, Xz, meta_t)
+                    yr = meta_t[trait].values.astype(float)
+                group_col = choose_group_column(meta_t, prefer_species=aggregated)
+                groups = None
+                if group_col is not None:
+                    group_series = meta_t[group_col].copy()
+                    group_series = group_series.where(group_series.notna(), "__missing_group__")
+                    candidate_groups = group_series.astype(str).values
+                    if pd.Series(candidate_groups).nunique() >= 2:
+                        groups = candidate_groups
+                raw_name, r2_raw = select_best_regressor_cv(Xr, yr, groups)
+                emb_name, r2_emb = select_best_regressor_cv(Xz, yr, groups)
+                rows.append(
+                    {
+                        "dataset": f"{dataset}_harmonized",
+                        "trait": trait,
+                        "R2_raw": r2_raw,
+                        "R2_emb": r2_emb,
+                        "model_raw": raw_name,
+                        "model_emb": emb_name,
+                        "aggregation": "sample_mean" if aggregated else "none",
+                        "group_col": group_col or "",
+                    }
+                )
+                print(
+                    f"      {trait:<38}  raw={raw_name}:{r2_raw:.3f}  "
+                    f"emb={emb_name}:{r2_emb:.3f}  gain={r2_emb-r2_raw:+.3f}"
+                )
 
     if not rows:
         print("    No trait rows available after dataset-specific filtering.")
