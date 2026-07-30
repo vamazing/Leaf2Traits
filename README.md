@@ -160,9 +160,9 @@ embedding-space novelty with a scan-count adjustment to reduce small-sample bias
 
 ## Preprocessing
 
-1. Savitzky-Golay smoothing with window `11` and polynomial order `3`
-2. Standard normal variate normalization
-3. Linear interpolation to the shared 400-2400 nm grid
+Spectra were standardized to the same 400-2400 nm wavelength space at 10 nm spacing, yielding 201 bands per scan. For field datasets (Sierra Nevada, Talladega, NGEE Panama), the ~1350-1450 nm and ~1800-1950 nm water-vapor absorption regions were masked and replaced by linear interpolation from adjacent valid bands. The spectra were further smoothed using the Savitzky-Golay method (window length 11, polynomial order 3), scaled using standard normal variate normalization (SNV), and wavelength-aligned to the standard wavelength space.
+
+Additionally, LOPEX93 outliers were filtered using Isolation Forest (Contamination = 0.03, n_estimators = 100, random_state = 42), reducing the influence these outliers had on the learned representation. Datasets with multiple scans per biological sample were grouped during downstream evaluation to reduce leakage between train and test splits. Sample-level aggregation was used for LOPEX93 trait prediction when appropriate.
 
 ## Discovery
 

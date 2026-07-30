@@ -96,6 +96,9 @@ torch.manual_seed(SEED)
 np.random.seed(SEED)
 
 TARGET_WL = np.arange(400, 2401, 10)  # 201 bands
+# Water-vapor absorption regions (nm) – masked before smoothing for field datasets
+WATER_VAPOR_BANDS = [(1350, 1450), (1800, 1950)]
+FIELD_DATASETS = {"sierranevada2023", "talladega2018", "ngee_panama"}
 LATENT_DIM = 192
 HIDDEN = [1024, 512, 256, 128]
 DROPOUT = 0.05
@@ -349,13 +352,33 @@ def is_wl(col):
         return False
 
 
-def preprocess_dataset(df):
+def _mask_water_vapor(wl, mat):
+    """Set water-vapor absorption bands to NaN and interpolate over them."""
+    mask = np.zeros(len(wl), dtype=bool)
+    for lo, hi in WATER_VAPOR_BANDS:
+        mask |= (wl >= lo) & (wl <= hi)
+    if not mask.any():
+        return mat
+    mat = mat.copy()
+    mat[:, mask] = np.nan
+    valid = ~mask
+    for i in range(mat.shape[0]):
+        row = mat[i]
+        nans = np.isnan(row)
+        if nans.any() and valid.any():
+            row[nans] = np.interp(wl[nans], wl[valid], row[valid])
+    return mat
+
+
+def preprocess_dataset(df, dataset_name=None):
     wl_cols = sorted([c for c in df.columns if is_wl(c)], key=float)
     wl = np.array([float(c) for c in wl_cols])
     mat = df[wl_cols].values.astype(np.float32)
     bad = np.isnan(mat).mean(1) > 0.5
     mat = mat[~bad]
     df = df.loc[df.index[~bad]].reset_index(drop=True)
+    if dataset_name in FIELD_DATASETS:
+        mat = _mask_water_vapor(wl, mat)
     mat = np.nan_to_num(mat, nan=0.0)
     mat = savgol_filter(mat, window_length=11, polyorder=3, axis=1)
     mu = mat.mean(1, keepdims=True)
@@ -370,7 +393,7 @@ def preprocess_dataset(df):
 def preprocess_all(datasets):
     all_X, all_y, all_meta = [], [], []
     for name, df in datasets.items():
-        Xp, dfp = preprocess_dataset(df)
+        Xp, dfp = preprocess_dataset(df, dataset_name=name)
         if name == "lopex93" and Xp.shape[0] > 0:
             Xp, dfp = filter_lopex_spectral_outliers(Xp, dfp)
         if Xp.shape[0] == 0:
