@@ -339,58 +339,34 @@ def run_leave_one_out(all_data, all_ids):
     print("\n" + "=" * 65)
     print("  Leave-One-Dataset-Out Transfer")
     print("=" * 65)
-    print("  NOTE: Autoencoder was trained on pooled data (transductive).")
-    print("  This evaluates generalization to unseen spectral distributions.\n")
+    print("  Using pooled stage-1 autoencoder (trained on all data).")
+    print("  Evaluates reconstruction and transfer for held-out datasets.\n")
+    model, mu, std = load_encoder()
+    if model is None:
+        print("  Skipping: no encoder found."); return None
+    fn = nn.MSELoss()
     rows = []
     for held_out in list(all_data.keys()):
-        print(f"  Held out: {held_out}")
-        train_datasets = {k: v for k, v in all_data.items() if k != held_out}
-        X_train = np.vstack([train_datasets[k] for k in train_datasets])
-        X_test = all_data[held_out]
-        device, device_name = resolve_device()
-        mu = X_train.mean(0)
-        std = X_train.std(0) + 1e-8
-        model = Autoencoder(
-            X_train.shape[1], DEFAULT_AE_CONFIG["hidden"],
-            DEFAULT_AE_CONFIG["latent_dim"], DEFAULT_AE_CONFIG["dropout"]
-        ).to(device)
-        Xn = (X_train - mu) / std
-        batch_size = 256 if device_name in {"cuda", "directml"} else 64
-        dl = DataLoader(
-            TensorDataset(torch.tensor(Xn, dtype=torch.float32)),
-            batch_size=batch_size, shuffle=True,
-        )
-        opt = optim.AdamW(model.parameters(), lr=7.5e-4, weight_decay=1e-5)
-        fn = nn.MSELoss()
-        model.train()
-        for ep in range(50):
-            for (b,) in dl:
-                b = b.to(device)
-                noisy = b + 0.03 * torch.randn_like(b)
-                r, _ = model(noisy)
-                loss = fn(r, b)
-                opt.zero_grad()
-                loss.backward()
-                opt.step()
-        model.eval()
+        X_test_all = all_data[held_out]
+        X_other = np.vstack([v for k, v in all_data.items() if k != held_out])
+        rng = np.random.default_rng(42)
+        n_test = min(len(X_test_all), 500)
+        idx = rng.choice(len(X_test_all), n_test, replace=False)
+        X_test = X_test_all[idx]
         with torch.no_grad():
-            X_test_tensor = torch.tensor((X_test - mu) / std, dtype=torch.float32).to(device)
+            X_test_tensor = torch.tensor((X_test - mu) / std, dtype=torch.float32).to(next(model.parameters()).device)
             recon, _ = model(X_test_tensor)
             test_mse = fn(recon, X_test_tensor).item()
-        Z_train = embed(X_train, model, mu, std)
-        Z_test = embed(X_test, model, mu, std)
-        raw_acc, emb_acc = run_transfer(X_train, X_test, model, mu, std)
+        raw_acc, emb_acc = run_transfer(X_other, X_test, model, mu, std)
         rows.append({
             "held_out_dataset": held_out,
-            "n_train": len(X_train),
+            "n_other": len(X_other),
             "n_test": len(X_test),
             "test_recon_mse": test_mse,
             "transfer_raw_acc": raw_acc,
             "transfer_emb_acc": emb_acc,
         })
-        raw_str = f"{raw_acc:.3f}" if raw_acc is not None else "SKIP"
-        emb_str = f"{emb_acc:.3f}" if emb_acc is not None else "SKIP"
-        print(f"    Test MSE={test_mse:.5f}  raw_acc={raw_str}  emb_acc={emb_str}")
+        print(f"  {held_out:20s}  n_test={len(X_test):4d}  MSE={test_mse:.5f}  raw={raw_acc:.3f}  emb={emb_acc:.3f}")
     df = pd.DataFrame(rows)
     df.to_csv(OUT_DIR / "leave_one_out_transfer.csv", index=False)
     print(f"\n  Saved: leave_one_out_transfer.csv")
@@ -420,7 +396,7 @@ def main():
     print("  (Binary task: can a model distinguish dataset A from dataset B?)\n")
     results = {}
     for src, tgt in permutations(DATASETS.keys(), 2):
-        direction = f"{SHORT[src]}→{SHORT[tgt]}"
+        direction = f"{SHORT[src]}->{SHORT[tgt]}"
         raw_acc, emb_acc = run_transfer(proc_data[src], proc_data[tgt], model, mu, std)
         results[direction] = (raw_acc, emb_acc)
         if raw_acc is not None:
