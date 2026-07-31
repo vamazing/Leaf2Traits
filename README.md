@@ -207,6 +207,12 @@ embedding-space novelty with a scan-count adjustment to reduce small-sample bias
 
 ---
 
+## Statistical Concerns
+
+All model selection in this pipeline uses training folds only. The autoencoder's latent dimension was chosen by validation reconstruction error and cross-validated downstream R² computed on training data; the regressor type (Ridge, Gradient Boosting, etc.) was selected by K-fold cross-validation within each training split; and early stopping used validation loss held out from training. The test set was touched exactly once per dataset–trait–view combination to report final R² and RMSE. Had any test information influenced these choices, every reported test R² would be optimistically biased. The best-of-three view comparison (raw spectra, frozen embeddings, multitask probe) across eight datasets, six harmonized traits, and up to three additional dataset-specific traits constitutes a multiple-comparison surface of roughly 100+ hypothesis tests; reported R² values are not adjusted for multiplicity and should be interpreted as descriptive rather than confirmatory.
+
+---
+
 ## Autoencoder
 
 - Input: 201-band spectrum sampled every 10 nm from 400 to 2400 nm
