@@ -232,9 +232,6 @@ The latent dimension was selected via a sweep over [8, 16, 32, 64, 128, 192]:
 
 Dimension 192 was retained as it yielded the highest downstream performance (R² = 0.856 for LMA), with the majority of gains achieved by dim 32 and diminishing returns thereafter.
 
-### Latent Space Analysis
-
-Although the embedding is 192-dimensional, PCA reveals that only 11 principal components are needed to explain 95% of the variance, and the participation ratio is 4.9 (out of 192), indicating that the encoder learns a representation with an effective dimensionality of approximately 5. The first two PCs explain 57.5% of variance (PC1: 37.9%, PC2: 19.6%) and show a predominantly 1-D filamentary structure. A fully detached cluster of ~1,900 points (24% of CABO spectra) appears along PC2, suggesting a distinct CABO subgroup — possibly reflecting measurement protocol differences (e.g., adaxial vs. abaxial leaf surfaces) or sensor calibration batches within that dataset. This partial latent collapse is consistent with the autoencoder optimizing for spectral reconstruction rather than trait-relevant variation, which may explain why the multitask supervised probe outperforms frozen embeddings on downstream trait prediction.
 
 ## Preprocessing
 
