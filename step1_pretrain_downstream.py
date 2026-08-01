@@ -973,31 +973,53 @@ def compute_embedding_quality_metrics(Z, labels, n_neighbors=15):
 
 
 def plot_pca(Z, labels):
-    pca = PCA(n_components=2, random_state=SEED)
-    Z2 = pca.fit_transform(Z)
-    colours = ["#e74c3c", "#2ecc71", "#3498db", "#f39c12"]
+    pca = PCA(random_state=SEED)
+    pca.fit(Z)
+    cumvar = np.cumsum(pca.explained_variance_ratio_)
+    n95 = int(np.searchsorted(cumvar, 0.95)) + 1
+    eigvals = pca.explained_variance_
+    participation_ratio = float((eigvals.sum() ** 2) / (eigvals ** 2).sum())
+
+    pca2 = PCA(n_components=2, random_state=SEED)
+    Z2 = pca2.fit_transform(Z)
+
+    # Wong (2011) colorblind-safe palette for 8 classes
+    colours = [
+        "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+        "#0072B2", "#D55E00", "#CC79A7", "#999999",
+    ]
+    max_pts = 1000
+    rng = np.random.default_rng(SEED)
+
     silhouette, batch_entropy = compute_embedding_quality_metrics(Z, labels)
     fig, ax = plt.subplots(figsize=(9, 6))
     for i, u in enumerate(np.unique(labels)):
         m = labels == u
+        idx = np.flatnonzero(m)
+        if len(idx) > max_pts:
+            idx = rng.choice(idx, max_pts, replace=False)
         ax.scatter(
-            Z2[m, 0],
-            Z2[m, 1],
+            Z2[idx, 0],
+            Z2[idx, 1],
             label=LABEL_NAMES.get(u, str(u)),
-            alpha=0.6,
-            s=25,
+            alpha=0.5,
+            s=18,
             color=colours[i % len(colours)],
+            rasterized=True,
         )
-    ax.set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0] * 100:.1f}%)")
-    ax.set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1] * 100:.1f}%)")
+    ax.set_xlabel(f"PC1 ({pca2.explained_variance_ratio_[0] * 100:.1f}%)")
+    ax.set_ylabel(f"PC2 ({pca2.explained_variance_ratio_[1] * 100:.1f}%)")
     ax.set_title("PCA of Spectral Embeddings (by dataset)")
-    ax.legend()
+    ax.legend(fontsize=7, loc="upper left", markerscale=1.5)
     ax.grid(alpha=0.3)
     metric_text = (
         f"Silhouette: {silhouette:.3f}\n"
-        f"kNN batch entropy (k=15): {batch_entropy:.3f}"
+        f"kNN batch entropy (k=15): {batch_entropy:.3f}\n"
+        f"Participation ratio: {participation_ratio:.1f} / {Z.shape[1]}\n"
+        f"PCs for 95% var: {n95}"
         if np.isfinite(silhouette) and np.isfinite(batch_entropy)
-        else "Silhouette: n/a\nkNN batch entropy (k=15): n/a"
+        else f"Participation ratio: {participation_ratio:.1f} / {Z.shape[1]}\n"
+             f"PCs for 95% var: {n95}"
     )
     ax.text(
         0.02,
@@ -1006,7 +1028,7 @@ def plot_pca(Z, labels):
         transform=ax.transAxes,
         va="top",
         ha="left",
-        fontsize=9,
+        fontsize=8,
         bbox=dict(boxstyle="round,pad=0.35", facecolor="white", alpha=0.85, edgecolor="#cccccc"),
     )
     fig.tight_layout()
@@ -1022,6 +1044,8 @@ def plot_pca(Z, labels):
         if np.isfinite(batch_entropy)
         else "  kNN batch mixing entropy (k=15): n/a"
     )
+    print(f"  Participation ratio: {participation_ratio:.1f} / {Z.shape[1]}")
+    print(f"  PCs for 95% variance: {n95}")
     print("  Saved: embedding_pca.png")
 
 
