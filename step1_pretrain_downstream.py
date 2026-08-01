@@ -939,6 +939,28 @@ def plot_loss(hist):
 
 
 def compute_embedding_quality_metrics(Z, labels, n_neighbors=15):
+    """Compute silhouette coefficient and kNN batch mixing entropy.
+
+    Parameters
+    ----------
+    Z : array, shape (n_samples, n_features)
+        Embedding matrix.
+    labels : array, shape (n_samples,)
+        Integer dataset labels.
+    n_neighbors : int, default 15
+        Number of nearest neighbors for entropy computation.
+
+    Returns
+    -------
+    silhouette : float
+        Silhouette coefficient (Euclidean, subsampled to ≤2000 points).
+    batch_entropy : float
+        Mean kNN batch mixing entropy.  For each point, the class proportions
+        among its k nearest neighbors form a probability vector p.  Shannon
+        entropy H = −Σ pᵢ log(pᵢ) is computed with **base = number of
+        classes** (here 8), so H ∈ [0, 1].  H = 0 means all neighbors belong
+        to the same dataset; H = 1 means uniform mixing across all datasets.
+    """
     labels = np.asarray(labels)
     if len(Z) < 3 or len(np.unique(labels)) < 2:
         return np.nan, np.nan
