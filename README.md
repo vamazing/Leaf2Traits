@@ -57,26 +57,26 @@ flowchart LR
     style AE fill:#292626,stroke:#333,stroke-width:2px
     style Views fill:#292626,stroke:#333,stroke-width:2px
     style Evaluation fill:#292626,stroke:#333,stroke-width:2px
-    style A1 font-size:16px
-    style A2 font-size:16px
-    style A3 font-size:16px
-    style A4 font-size:16px
-    style A5 font-size:16px
-    style A6 font-size:16px
-    style A7 font-size:16px
-    style A8 font-size:16px
-    style B1 font-size:16px
-    style B2 font-size:16px
-    style B3 font-size:16px
-    style B4 font-size:16px
-    style B5 font-size:16px
-    style C1 font-size:16px
-    style C2 font-size:16px
-    style D1 font-size:16px
-    style D2 font-size:16px
-    style D3 font-size:16px
-    style E1 font-size:16px
-    style E2 font-size:16px
+    style A1 font-size:35px
+    style A2 font-size:35px
+    style A3 font-size:35px
+    style A4 font-size:35px
+    style A5 font-size:35px
+    style A6 font-size:35px
+    style A7 font-size:35px
+    style A8 font-size:35px
+    style B1 font-size:40px
+    style B2 font-size:40px
+    style B3 font-size:40px
+    style B4 font-size:40px
+    style B5 font-size:40px
+    style C1 font-size:35px
+    style C2 font-size:35px
+    style D1 font-size:35px
+    style D2 font-size:35px
+    style D3 font-size:35px
+    style E1 font-size:35px
+    style E2 font-size:35px
 ```
 
 ---
