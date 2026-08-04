@@ -52,11 +52,11 @@ flowchart LR
     D1 & D2 & D3 --> E1
     D2 --> E2
 
-    style Input fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style Preprocessing fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style AE fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style Views fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style Evaluation fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style Input fill:#292626,stroke:#333,stroke-width:2px
+    style Preprocessing fill:#292626,stroke:#333,stroke-width:2px
+    style AE fill:#292626,stroke:#333,stroke-width:2px
+    style Views fill:#292626,stroke:#333,stroke-width:2px
+    style Evaluation fill:#292626,stroke:#333,stroke-width:2px
     style A1 font-size:16px
     style A2 font-size:16px
     style A3 font-size:16px
