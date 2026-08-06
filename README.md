@@ -21,7 +21,7 @@ flowchart LR
     subgraph Preprocessing["Preprocessing"]
         B1["Resample to 400–2400 nm\n(10 nm spacing, 201 bands)"]
         B2["Water-vapor masking\n(field datasets only)"]
-        B3["Savitzky-Golay\n(window=11, order=3)"]
+        B3["Savitzky–Golay\n(window=11, order=3)"]
         B4["SNV normalization"]
         B5["LOPEX93 outlier filter\n(IsolationForest)"]
     end
@@ -32,9 +32,9 @@ flowchart LR
     end
 
     subgraph Views["Feature Views"]
-        D1["Raw Spectra\n(201-D)"]
-        D2["Embeddings\n(192-D)"]
-        D3["Multitask Probe\n(192-D → traits)"]
+        D1["Raw Spectra (201-D)"]
+        D2["Embeddings (192-D)"]
+        D3["Multitask Probe (192-D → traits)"]
     end
 
     subgraph Evaluation["Evaluation Tasks"]
@@ -51,6 +51,32 @@ flowchart LR
     D2 --> D3
     D1 & D2 & D3 --> E1
     D2 --> E2
+
+    style Input fill:#292626,stroke:#333,stroke-width:2px
+    style Preprocessing fill:#292626,stroke:#333,stroke-width:2px
+    style AE fill:#292626,stroke:#333,stroke-width:2px
+    style Views fill:#292626,stroke:#333,stroke-width:2px
+    style Evaluation fill:#292626,stroke:#333,stroke-width:2px
+    style A1 font-size:35px
+    style A2 font-size:35px
+    style A3 font-size:35px
+    style A4 font-size:35px
+    style A5 font-size:35px
+    style A6 font-size:35px
+    style A7 font-size:35px
+    style A8 font-size:35px
+    style B1 font-size:40px
+    style B2 font-size:40px
+    style B3 font-size:40px
+    style B4 font-size:40px
+    style B5 font-size:40px
+    style C1 font-size:35px
+    style C2 font-size:35px
+    style D1 font-size:35px
+    style D2 font-size:35px
+    style D3 font-size:35px
+    style E1 font-size:35px
+    style E2 font-size:35px
 ```
 
 ---
