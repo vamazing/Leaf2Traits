@@ -280,6 +280,79 @@ LABEL_NAMES = {
     6: "LOPEX93",
     7: "Sierra Nevada 2023",
 }
+TRAIT_LABELS = {
+    "Solubles_area_g_m2": "Solubles (g/m$^2$)",
+    "Solubles_mass_g_g": "Solubles (g/g)",
+    "LMA_g_m2": "LMA (g/m$^2$)",
+    "LMA_g_cm2": "LMA (g/cm$^2$)",
+    "EWT_g_cm2": "EWT (g/cm$^2$)",
+    "LDMC_mg_g": "LDMC (mg/g)",
+    "C_mass_g_g": "Carbon (g/g)",
+    "N_mass_g_g": "Nitrogen (g/g)",
+    "CN_ratio": "C/N ratio",
+    "C_area_g_m2": "Carbon (g/m$^2$)",
+    "N_area_g_m2": "Nitrogen (g/m$^2$)",
+    "Carotenoid_mass_g_g": "Carotenoid (g/g)",
+    "Carotenoid_area_g_m2": "Carotenoid (g/m$^2$)",
+    "Chlorophyll_A_mass_g_g": "Chlorophyll a (g/g)",
+    "Chlorophyll_A_area_g_m2": "Chlorophyll a (g/m$^2$)",
+    "Chlorophyll_B_mass_g_g": "Chlorophyll b (g/g)",
+    "Chlorophyll_B_area_g_m2": "Chlorophyll b (g/m$^2$)",
+    "Cellulose_mass_g_g": "Cellulose (g/g)",
+    "Cellulose_area_g_m2": "Cellulose (g/m$^2$)",
+    "Hemicellulose_mass_g_g": "Hemicellulose (g/g)",
+    "Hemicellulose_area_g_m2": "Hemicellulose (g/m$^2$)",
+    "Lignin_mass_g_g": "Lignin (g/g)",
+    "Lignin_area_g_m2": "Lignin (g/m$^2$)",
+    "Al_mass_mg_g": "Aluminum (mg/g)",
+    "Al_area_g_m2": "Aluminum (g/m$^2$)",
+    "Ca_mass_mg_g": "Calcium (mg/g)",
+    "Ca_area_g_m2": "Calcium (g/m$^2$)",
+    "Cu_mass_mg_g": "Copper (mg/g)",
+    "Cu_area_g_m2": "Copper (g/m$^2$)",
+    "Fe_mass_mg_g": "Iron (mg/g)",
+    "Fe_area_g_m2": "Iron (g/m$^2$)",
+    "K_mass_mg_g": "Potassium (mg/g)",
+    "K_area_g_m2": "Potassium (g/m$^2$)",
+    "Mg_mass_mg_g": "Magnesium (mg/g)",
+    "Mg_area_g_m2": "Magnesium (g/m$^2$)",
+    "Mn_mass_mg_g": "Manganese (mg/g)",
+    "Mn_area_g_m2": "Manganese (g/m$^2$)",
+    "Na_mass_mg_g": "Sodium (mg/g)",
+    "Na_area_g_m2": "Sodium (g/m$^2$)",
+    "P_mass_mg_g": "Phosphorus (mg/g)",
+    "P_area_g_m2": "Phosphorus (g/m$^2$)",
+    "Zn_mass_mg_g": "Zinc (mg/g)",
+    "Zn_area_g_m2": "Zinc (g/m$^2$)",
+    "B2089_mass_mg_g": "Boron B2089 (mg/g)",
+    "B2498_mass_mg_g": "Boron B2498 (mg/g)",
+    "chl_a_mmol_m2": "Chlorophyll a (mmol/m$^2$)",
+    "lma_g_m2": "LMA (g/m$^2$)",
+    "Chlorophyll_a+b_ug_cm2": "Chlorophyll a+b ($\\mu$g/cm$^2$)",
+    "Carotenoid_ug_cm2": "Carotenoid ($\\mu$g/cm$^2$)",
+    "LWC_percent": "Leaf water content (%)",
+    "CN_ratio": "C/N ratio",
+    "Chlorophyll_a+b (µg/cm²)": "Chlorophyll a+b (µg/cm²)",
+    "Equivalent Water Thickness (g/cm²)": "EWT (g/cm²)",
+    "Leaf mass per area (g/cm²)": "LMA (g/cm²)",
+    "Protein_1 (% DW)": "Protein (% DW)",
+    "Cellulose_1 (% DW)": "Cellulose (% DW)",
+    "Carotenoid (µg/cm²)": "Carotenoid (µg/cm²)",
+    "Chlorophyll_a (µg/cm²)": "Chlorophyll a (µg/cm²)",
+    "Chlorophyll_b (µg/cm²)": "Chlorophyll b (µg/cm²)",
+    "SPAD": "SPAD",
+    "Structure parameter": "Structure parameter",
+    "CNratio": "C/N ratio",
+    "Cmass_pc": "Carbon (%)",
+    "H20_pc": "Water (%)",
+    "LMA_gDW_m2": "LMA (g/m$^2$)",
+    "LWP_bar": "LWP (bar)",
+    "Nmass_pc": "Nitrogen (%)",
+    "SLA_cm2_gDW": "SLA (cm²/g)",
+    "chl_a_mmol_m2": "Chlorophyll a (mmol/m$^2$)",
+    "lma_g_m2": "LMA (g/m$^2$)",
+    "Chlorophyll_mg_m2": "Chlorophyll (mg/m$^2$)",
+}
 AE_CONFIG = {"hidden": HIDDEN, "latent_dim": LATENT_DIM, "dropout": DROPOUT}
 
 
@@ -1044,12 +1117,12 @@ def plot_pca(Z, labels):
              f"PCs for 95% var: {n95}"
     )
     ax.text(
-        0.02,
         0.98,
+        0.02,
         metric_text,
         transform=ax.transAxes,
-        va="top",
-        ha="left",
+        va="bottom",
+        ha="right",
         fontsize=8,
         bbox=dict(boxstyle="round,pad=0.35", facecolor="white", alpha=0.85, edgecolor="#cccccc"),
     )
@@ -1202,12 +1275,15 @@ def plot_trait_comparison(
     emb_r2,
     mt_r2,
 ):
+    from numpy.polynomial import polynomial as P
+
     fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharex=True, sharey=True)
     pred_values = [raw_pred, emb_pred]
     if mt_pred is not None:
         pred_values.append(mt_pred)
     mn = min([yte.min(), *[p.min() for p in pred_values]])
     mx = max([yte.max(), *[p.max() for p in pred_values]])
+    x_label = TRAIT_LABELS.get(trait, trait)
     specs = [
         (axes[0], raw_pred, f"Raw ({raw_name})  R2={raw_r2:.3f}", "#64748b"),
         (axes[1], emb_pred, f"Embedding ({emb_name})  R2={emb_r2:.3f}", "#2563eb"),
@@ -1224,12 +1300,17 @@ def plot_trait_comparison(
     ]
     for ax, pred, title, color in specs:
         ax.scatter(yte, pred, alpha=0.7, s=30, color=color)
-        ax.plot([mn, mx], [mn, mx], "r--", lw=1.5)
-        ax.set_xlabel(f"True {trait}")
+        ax.plot([mn, mx], [mn, mx], "r--", lw=1.5, label="1:1")
+        coef = np.polyfit(yte, pred, 1)
+        fit_x = np.linspace(mn, mx, 100)
+        fit_y = np.polyval(coef, fit_x)
+        ax.plot(fit_x, fit_y, color="black", lw=1, ls="-", label="Fitted")
+        ax.set_xlabel(f"True {x_label}")
         ax.set_title(title)
+        ax.legend(fontsize=7, loc="upper left")
         ax.grid(alpha=0.25)
     axes[0].set_ylabel("Predicted")
-    fig.suptitle(trait)
+    fig.suptitle(x_label)
     fig.tight_layout()
     fig.savefig(OUT_DIR / f"trait_compare_{tag}_{sanitize_trait_name(trait)}.png", dpi=150)
     plt.close(fig)
