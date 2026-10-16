@@ -29,7 +29,7 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import balanced_accuracy_score
 import torch, torch.nn as nn, torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 try:
@@ -304,11 +304,11 @@ def run_transfer(src_X, tgt_X, model, mu, std):
     tri = np.concatenate([str_, ttr_]); tei = np.concatenate([ste, tte])
     clf_raw = LogisticRegression(max_iter=500, random_state=SEED, C=1.0)
     clf_raw.fit(X_all[tri], y_all[tri])
-    raw_acc = accuracy_score(y_all[tei], clf_raw.predict(X_all[tei]))
+    raw_acc = balanced_accuracy_score(y_all[tei], clf_raw.predict(X_all[tei]))
     X_emb = embed(X_all, model, mu, std)
     clf_emb = LogisticRegression(max_iter=500, random_state=SEED, C=1.0)
     clf_emb.fit(X_emb[tri], y_all[tri])
-    emb_acc = accuracy_score(y_all[tei], clf_emb.predict(X_emb[tei]))
+    emb_acc = balanced_accuracy_score(y_all[tei], clf_emb.predict(X_emb[tei]))
     return raw_acc, emb_acc
 
 
@@ -322,7 +322,7 @@ def plot_comparison(results):
     bars1 = ax.bar(x - w/2, raw_vals, w, label="Raw Spectra",  color="#94a3b8")
     bars2 = ax.bar(x + w/2, emb_vals, w, label="Embeddings",   color="#2563eb")
     ax.axhline(0.5, color="red", ls="--", lw=1.2, label="Chance")
-    ax.set_ylabel("Dataset Discriminability Accuracy (chance = 0.5)")
+    ax.set_ylabel("Balanced Accuracy (chance = 0.5)")
     ax.set_title("Cross-Domain Transfer: Raw vs Embedding")
     ax.set_xticks(x); ax.set_xticklabels(dirs, rotation=35, ha="right")
     ax.set_ylim(0, 1.05); ax.legend(); ax.grid(axis="y", alpha=0.3)
@@ -363,8 +363,8 @@ def run_leave_one_out(all_data, all_ids):
             "n_other": len(X_other),
             "n_test": len(X_test),
             "test_recon_mse": test_mse,
-            "transfer_raw_acc": raw_acc,
-            "transfer_emb_acc": emb_acc,
+            "transfer_raw_bal_acc": raw_acc,
+            "transfer_emb_bal_acc": emb_acc,
         })
         print(f"  {held_out:20s}  n_test={len(X_test):4d}  MSE={test_mse:.5f}  raw={raw_acc:.3f}  emb={emb_acc:.3f}")
     df = pd.DataFrame(rows)
@@ -407,7 +407,7 @@ def main():
     print("\n[4/5] Plotting ...")
     plot_comparison(results)
     pd.DataFrame([(d, v[0], v[1]) for d, v in results.items()],
-                 columns=["direction","raw_accuracy","emb_accuracy"]
+                 columns=["direction","raw_bal_accuracy","emb_bal_accuracy"]
                  ).to_csv(OUT_DIR/"transfer_summary.csv", index=False)
     print("  Saved: transfer_summary.csv")
 
