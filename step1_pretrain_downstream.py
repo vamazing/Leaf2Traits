@@ -911,7 +911,54 @@ def run_reconstruction_analysis(model, X, labels, mu, std):
     plt.close(fig)
     print(f"  Saved: reconstruction_error_by_band.png")
     print(f"  Saved: reconstruction_error_by_band.csv")
+
+    plot_reconstruction_examples(model, X, labels, mu, std)
+
     return overall_mse, per_band_rmse
+
+
+def plot_reconstruction_examples(model, X, labels, mu, std, n_per_dataset=3):
+    print("\n  Reconstruction examples ...")
+    device, _ = resolve_device()
+    model.eval()
+    example_labels = [0, 2, 4, 6]
+    example_names = [LABEL_NAMES[l] for l in example_labels]
+    fig, axes = plt.subplots(len(example_labels), 2, figsize=(14, 10), sharex=True)
+    for row, (lab, name) in enumerate(zip(example_labels, example_names)):
+        idx = np.flatnonzero(labels == lab)[:n_per_dataset]
+        if len(idx) == 0:
+            continue
+        X_sub = X[idx]
+        Xn = (X_sub - mu) / std
+        with torch.no_grad():
+            recon, _ = model(torch.tensor(Xn, dtype=torch.float32).to(device))
+            recon = recon.cpu().numpy()
+        recon_orig = recon * std + mu
+        ax_spec = axes[row, 0]
+        ax_res = axes[row, 1]
+        for i in range(len(idx)):
+            ax_spec.plot(TARGET_WL, X_sub[i], color="#94a3b8", alpha=0.5, lw=0.8)
+            ax_spec.plot(TARGET_WL, recon_orig[i], color="#2563eb", alpha=0.5, lw=0.8)
+            residual = X_sub[i] - recon_orig[i]
+            ax_res.plot(TARGET_WL, residual, color="#dc2626", alpha=0.5, lw=0.8)
+        mse_val = np.mean((X_sub - recon_orig) ** 2)
+        ax_spec.plot([], [], color="#94a3b8", label="Original")
+        ax_spec.plot([], [], color="#2563eb", label="Reconstructed")
+        ax_spec.legend(fontsize=7, loc="upper right")
+        ax_spec.set_title(f"{name}  (MSE={mse_val:.5f})", fontsize=9)
+        ax_spec.set_ylabel("SNV reflectance")
+        ax_res.set_title("Residual", fontsize=9)
+        ax_res.set_ylabel("Original − Recon")
+        ax_spec.grid(alpha=0.25)
+        ax_res.grid(alpha=0.25)
+        ax_res.axhline(0, color="black", lw=0.5, ls="--")
+    axes[-1, 0].set_xlabel("Wavelength (nm)")
+    axes[-1, 1].set_xlabel("Wavelength (nm)")
+    fig.suptitle("Original vs. Reconstructed Spectra by Dataset", y=1.01)
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "reconstruction_examples.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"  Saved: reconstruction_examples.png")
 
 
 def prepare_multitask_targets(meta_df, trait_cols):
