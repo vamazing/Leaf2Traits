@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import balanced_accuracy_score
+from sklearn.preprocessing import StandardScaler
 import torch, torch.nn as nn, torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 try:
@@ -335,6 +336,84 @@ def plot_comparison(results):
     print("  Saved: baseline_comparison.png")
 
 
+def _top_regions(wl, importances, top_frac=0.10, min_width=20):
+    """Group the top top_frac of bands into contiguous wavelength regions."""
+    n_top = max(int(top_frac * len(wl)), 1)
+    order = np.argsort(importances)[::-1]
+    top_mask = np.zeros(len(wl), dtype=bool)
+    top_mask[order[:n_top]] = True
+    regions = []
+    i = 0
+    while i < len(wl):
+        if top_mask[i]:
+            j = i
+            while j + 1 < len(wl) and top_mask[j + 1]:
+                j += 1
+            lo, hi = wl[i], wl[j]
+            if hi - lo >= min_width:
+                regions.append((lo, hi, importances[i:j + 1].sum()))
+            i = j + 1
+        else:
+            i += 1
+    regions.sort(key=lambda r: r[2], reverse=True)
+    return regions
+
+
+def analyze_domain_coefficients(all_data):
+    """Fit the Stage-2 domain-classification logistic regression on standardized
+    raw spectra for every directed pair, average absolute coefficient magnitudes
+    across pairs, and plot them against wavelength."""
+    print("\n" + "=" * 65)
+    print("  Domain-Classification Coefficient Analysis")
+    print("=" * 65)
+    names = [k for k, v in all_data.items() if len(v) >= MIN_SAMPLES]
+    wl = TARGET_WL.astype(float)
+    coef_sum = np.zeros(len(wl))
+    n_pairs = 0
+    for src, tgt in permutations(names, 2):
+        X_all = np.vstack([all_data[src], all_data[tgt]])
+        y_all = np.concatenate([np.zeros(len(all_data[src]), dtype=int),
+                                np.ones(len(all_data[tgt]), dtype=int)])
+        scaler = StandardScaler()
+        Xs = scaler.fit_transform(X_all)
+        clf = LogisticRegression(max_iter=500, random_state=SEED, C=1.0)
+        clf.fit(Xs, y_all)
+        coef_sum += np.abs(clf.coef_[0])
+        n_pairs += 1
+    mean_coef = coef_sum / n_pairs
+    df = pd.DataFrame({"wavelength_nm": wl, "mean_abs_coef": mean_coef})
+    df.to_csv(OUT_DIR / "domain_coefficients.csv", index=False)
+    print(f"  Averaged |coefficients| over {n_pairs} directed pairs")
+    print(f"  Saved: domain_coefficients.csv")
+
+    regions = _top_regions(wl, mean_coef)
+    fig, ax = plt.subplots(figsize=(11, 5))
+    ax.plot(wl, mean_coef, color="#1e293b", lw=1.6, label="Mean |coefficient|")
+    ymax = mean_coef.max() * 1.35
+    for k, (lo, hi, _) in enumerate(regions[:5]):
+        ax.axvspan(lo, hi, color="#f59e0b", alpha=0.25 if k == 0 else 0.15,
+                   zorder=0)
+        ax.annotate(f"{int(lo)}–{int(hi)} nm",
+                    xy=((lo + hi) / 2, ymax * 0.92), ha="center", va="top",
+                    fontsize=9, color="#b45309", fontweight="bold")
+    for lo, hi in WATER_VAPOR_BANDS:
+        ax.axvspan(lo, hi, color="#94a3b8", alpha=0.15, zorder=0)
+    ax.set_xlabel("Wavelength (nm)")
+    ax.set_ylabel("Mean |logistic-regression coefficient|")
+    ax.set_title("Wavelengths Driving Dataset Discriminability\n"
+                 "(standardized features, averaged over 56 directed pairs)")
+    ax.set_xlim(wl[0], wl[-1]); ax.set_ylim(0, ymax)
+    ax.grid(alpha=0.3)
+    ax.legend(loc="upper left", framealpha=0.9)
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "domain_coefficients.png", dpi=150); plt.close(fig)
+    print("  Saved: domain_coefficients.png")
+    print("  Top discriminative regions (mean |coef|):")
+    for lo, hi, s in regions[:5]:
+        print(f"    {int(lo):4d}-{int(hi):4d} nm  (importance sum {s:.3f})")
+    return df, regions
+
+
 def run_leave_one_out(all_data, all_ids):
     print("\n" + "=" * 65)
     print("  Leave-One-Dataset-Out Transfer")
@@ -380,10 +459,10 @@ def main():
     clear_stage_outputs(OUT_DIR)
     print(f"  Cleared previous Stage 2 outputs in: {OUT_DIR.resolve()}")
 
-    print("\n[1/4] Loading encoder ...")
+    print("\n[1/6] Loading encoder ...")
     model, mu, std = load_encoder()
 
-    print("\n[2/4] Loading datasets ...")
+    print("\n[2/6] Loading datasets ...")
     proc_data = {}
     for name, ids in DATASETS.items():
         df = load_dataset(name, ids)
@@ -392,7 +471,7 @@ def main():
             Xp, _ = filter_lopex_spectral_outliers(Xp, dfp)
         proc_data[name] = Xp
 
-    print("\n[3/4] Running transfer experiments ...")
+    print("\n[3/6] Running transfer experiments ...")
     print("  (Binary task: can a model distinguish dataset A from dataset B?)\n")
     results = {}
     for src, tgt in permutations(DATASETS.keys(), 2):
@@ -404,14 +483,17 @@ def main():
         else:
             print(f"  SKIP {direction}: too few samples")
 
-    print("\n[4/5] Plotting ...")
+    print("\n[4/6] Plotting ...")
     plot_comparison(results)
     pd.DataFrame([(d, v[0], v[1]) for d, v in results.items()],
                  columns=["direction","raw_bal_accuracy","emb_bal_accuracy"]
                  ).to_csv(OUT_DIR/"transfer_summary.csv", index=False)
     print("  Saved: transfer_summary.csv")
 
-    print("\n[5/5] Leave-one-dataset-out transfer ...")
+    print("\n[5/6] Domain-classification coefficient analysis ...")
+    analyze_domain_coefficients(proc_data)
+
+    print("\n[6/6] Leave-one-dataset-out transfer ...")
     run_leave_one_out(proc_data, DATASETS.keys())
 
     print(f"\n{'='*65}")
